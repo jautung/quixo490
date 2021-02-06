@@ -6,6 +6,8 @@ namespace {
   state_t tileMask = 0b1;
   state_t rowMaskFull = 0b11111;
   state_t colMaskFull = 0b100001000010000100001;
+  state_t diag1MaskFull = 0b1000001000001000001000001;
+  state_t diag2MaskFull = 0b0000100010001000100010000;
 }
 
 Move::Move(dir_t initDir, index_t initSlideIndex, index_t initCrossIndex) {
@@ -99,6 +101,7 @@ void GameState::makeMove(Move move) {
   } else {
     mask = (colMaskFull >> (5 * (5 - maskNumBits))) << maskStartBit;
   }
+  mask = (mask << halfBits) | mask; // mask both X's and O's
 
   if (move.dir == DIR_LEFT) { // applying the shift using the mask and newTile
     state = (((state & mask) >> 1) & mask) | newTile | (state & ~mask);
@@ -113,6 +116,30 @@ void GameState::makeMove(Move move) {
 
 void GameState::swapPlayers() {
   state = state << halfBits | state >> halfBits;
+}
+
+bool GameState::containsLine(tile_t tileType) const {
+  state_t mask = rowMaskFull << ((tileType == TILE_X) ? halfBits : 0);
+  for (index_t i = 0; i < 5; i++, mask <<= 5) { // along rows
+    if ((state & mask) == mask) {
+      return true;
+    }
+  }
+  mask = colMaskFull << ((tileType == TILE_X) ? halfBits : 0);
+  for (index_t j = 0; j < 5; j++, mask <<= 1) { // along columns
+    if ((state & mask) == mask) {
+      return true;
+    }
+  }
+  mask = diag1MaskFull << ((tileType == TILE_X) ? halfBits : 0);
+  if ((state & mask) == mask) {
+    return true;
+  }
+  mask = diag2MaskFull << ((tileType == TILE_X) ? halfBits : 0);
+  if ((state & mask) == mask) {
+    return true;
+  }
+  return false;
 }
 
 std::ostream &operator<<(std::ostream &os, const GameState& gameState) {

@@ -15,5 +15,12 @@ int main() {
   for (const auto& move: moves) {
     std::cout << move;
   }
+  gameState.makeMove(Move(DIR_UP, 2, 0));
+  gameState.makeMove(Move(DIR_UP, 2, 0));
+  gameState.makeMove(Move(DIR_UP, 2, 0));
+  gameState.makeMove(Move(DIR_UP, 2, 0));
+  std::cout << gameState;
+  std::cout << gameState.containsLine(TILE_X) << "\n";
+  std::cout << gameState.containsLine(TILE_O) << "\n";
   return 0;
 }

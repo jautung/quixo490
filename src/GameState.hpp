@@ -42,6 +42,7 @@ class GameState {
     std::unordered_set<Move, Move::Hash> allMoves() const;
     void makeMove(Move move);
     void swapPlayers();
+    bool containsLine(tile_t tileType) const;
   private:
     state_t state: 64;
 };
