@@ -3,7 +3,7 @@
 #include <random>
 #include <iostream>
 
-Move PlayerRandom::selectMove(GameState gameState) {
-  auto moves = gameState.allMoves();
+Move PlayerRandom::selectMove(const GameState* gameState) {
+  auto moves = gameState->allMoves();
   return *std::next(std::begin(moves), rand() % moves.size());
 }

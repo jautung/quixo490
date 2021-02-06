@@ -8,7 +8,7 @@ int main() {
   GameState gameState(NULL);
   PlayerRandom player1;
   PlayerRandom player2;
-  play(gameState, &player1, &player2);
+  play(&gameState, &player1, &player2);
   // gameState.swapPlayers();
   // gameState.makeMove(Move(DIR_LEFT, 4, 0));
   // gameState.swapPlayers();
