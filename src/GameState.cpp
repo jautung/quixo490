@@ -1,14 +1,134 @@
 #include "GameState.hpp"
 #include <iostream>
 
-GameState::GameState(int init) {
-  board = init;
+namespace {
+  int halfBits = 32;
+  state_t tileMask = 0b1;
+  state_t rowMaskFull = 0b11111;
+  state_t colMaskFull = 0b100001000010000100001;
 }
 
-GameState::~GameState() {
+Move::Move(dir_t initDir, index_t initSlideIndex, index_t initCrossIndex) {
+  dir = initDir;
+  slideIndex = initSlideIndex;
+  crossIndex = initCrossIndex;
 }
 
-int GameState::play() {
-  std::cout << "Play!\n";
-  return 1;
+std::ostream &operator<<(std::ostream &os, const Move& move) {
+  if (move.dir == DIR_LEFT) {
+    return os << "LEFT-" << move.slideIndex << " (" << move.crossIndex << ")\n";
+  } else if (move.dir == DIR_RIGHT) {
+    return os << "RIGHT-" << move.slideIndex << " (" << move.crossIndex << ")\n";
+  } else if (move.dir == DIR_DOWN) {
+    return os << "DOWN-" << move.slideIndex << " (" << move.crossIndex << ")\n";
+  } else {
+    return os << "UP-" << move.slideIndex << " (" << move.crossIndex << ")\n";
+  }
+}
+
+GameState::GameState(state_t* initState) {
+  // TODO: handle different-sized boards appropriately
+  if (initState == NULL) {
+    state = 0; // no Xs or Os
+  } else {
+    state = *initState;
+  }
+}
+
+tile_t GameState::getTile(index_t row, index_t col) const {
+  state_t mask = tileMask << (5 * row + col);
+  if ((state & mask) == mask) {
+    return TILE_O;
+  }
+  mask <<= halfBits;
+  if ((state & mask) == mask) {
+    return TILE_X;
+  }
+  return TILE_EMPTY;
+}
+
+std::unordered_set<Move, Move::Hash> GameState::allMoves() const {
+  std::unordered_set<Move, Move::Hash> moves;
+  for (index_t i = 0; i < 5; i++) {
+    for (index_t j = 0; j < 5; j++) {
+      if (i == 0 || i == 4 || j == 0 || j == 4) {
+        auto tile = getTile(i, j);
+        if (tile == TILE_X || tile == TILE_EMPTY) {
+          if (j != 4) {
+            moves.insert(Move(DIR_LEFT, i, j));
+          }
+          if (j != 0) {
+            moves.insert(Move(DIR_RIGHT, i, j));
+          }
+          if (i != 0) {
+            moves.insert(Move(DIR_DOWN, j, i));
+          }
+          if (i != 4) {
+            moves.insert(Move(DIR_UP, j, i));
+          }
+        }
+      }
+    }
+  }
+  return moves;
+}
+
+void GameState::makeMove(Move move) {
+  // recall that X is always the active player by abuse of notation
+  int maskNumBits = (move.dir == DIR_LEFT || move.dir == DIR_UP) ? 5 - move.crossIndex : 1 + move.crossIndex; // number of tiles moved
+  int maskStartBit; // start bit of the masking sequence (most top or left tile moved)
+  state_t newTile; // position of the new tile inserted
+  if (move.dir == DIR_LEFT) {
+    maskStartBit = 5 * move.slideIndex + move.crossIndex;
+    newTile = tileMask << (5 * move.slideIndex + 4);
+  } else if (move.dir == DIR_RIGHT) {
+    maskStartBit = 5 * move.slideIndex;
+    newTile = tileMask << (5 * move.slideIndex);
+  } else if (move.dir == DIR_DOWN) {
+    maskStartBit = move.slideIndex;
+    newTile = tileMask << (move.slideIndex);
+  } else {
+    maskStartBit = 5 * move.crossIndex + move.slideIndex;
+    newTile = tileMask << (5 * 4 + move.slideIndex);
+  }
+  newTile <<= halfBits; // new tile is inserted as an X
+
+  state_t mask; // creating the mask
+  if (move.dir == DIR_LEFT || move.dir == DIR_RIGHT) {
+    mask = (rowMaskFull >> (5 - maskNumBits)) << maskStartBit;
+  } else {
+    mask = (colMaskFull >> (5 * (5 - maskNumBits))) << maskStartBit;
+  }
+
+  if (move.dir == DIR_LEFT) { // applying the shift using the mask and newTile
+    state = (((state & mask) >> 1) & mask) | newTile | (state & ~mask);
+  } else if (move.dir == DIR_RIGHT) {
+    state = (((state & mask) << 1) & mask) | newTile | (state & ~mask);
+  } else if (move.dir == DIR_DOWN) {
+    state = (((state & mask) << 5) & mask) | newTile | (state & ~mask);
+  } else {
+    state = (((state & mask) >> 5) & mask) | newTile | (state & ~mask);
+  }
+}
+
+void GameState::swapPlayers() {
+  state = state << halfBits | state >> halfBits;
+}
+
+std::ostream &operator<<(std::ostream &os, const GameState& gameState) {
+  // TODO: make a GUI for this
+  for (index_t i = 0; i < 5; i++) {
+    for (index_t j = 0; j < 5; j++) {
+      auto tile = gameState.getTile(i, j);
+      if (tile == TILE_X) {
+        os << "X";
+      } else if (tile == TILE_O) {
+        os << "O";
+      } else {
+        os << ".";
+      }
+    }
+    os << "\n";
+  }
+  return os;
 }
