@@ -77,6 +77,7 @@ std::unordered_set<Move, Move::Hash> GameState::allMoves() const {
 
 void GameState::makeMove(Move move) {
   // recall that X is always the active player by abuse of notation
+  // TODO: if speed-up is necessary, possibly move computation of mask and newTile to an initialization step, and simply store a unordered_map in memory from Move to mask and newTile
   int maskNumBits = (move.dir == DIR_LEFT || move.dir == DIR_UP) ? 5 - move.crossIndex : 1 + move.crossIndex; // number of tiles moved
   int maskStartBit; // start bit of the masking sequence (most top or left tile moved)
   state_t newTile; // position of the new tile inserted

@@ -1,4 +1,5 @@
 #include "GameState.hpp"
+#include "OptCompute.hpp"
 #include <iostream>
 
 int main() {
