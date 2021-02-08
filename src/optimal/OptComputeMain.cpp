@@ -1,10 +1,7 @@
+#include "OptComputeMain.hpp"
 #include <unordered_map>
 
-void saveData(int numX, int numO, std::unordered_map<int, int> results);
-std::unordered_map<int, int> loadData(int numX, int numO);
-std::unordered_map<int, int> valueIteration(int numX, int numO, std::unordered_map<int, int> cache);
-
-void optCompute() {
+void optComputeMain() {
   for (int numTiles = 25; numTiles >= 0; numTiles--) {
     for (int numX = 0; numX < numTiles; numX++) {
       int numO = numTiles - numX;

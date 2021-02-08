@@ -2,26 +2,25 @@
 
 CC := g++
 SRCDIR := src
+BINDIR := bin
 BUILDDIR := build
+BUILDDIRS := build build/game build/optimal build/players
 TARGET := bin/main
 
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 CFLAGS := -g -Wall -Wno-c++11-extensions
-LIB := -pthread
-INC := -I include
 
 $(TARGET): $(OBJECTS)
+	@mkdir -p $(BINDIR)
 	@echo " Linking..."
-	@echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB)
+	@echo " $(CC) $^ -o $(TARGET)"; $(CC) $^ -o $(TARGET)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
-	@mkdir -p $(BUILDDIR)
-	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
+	@mkdir -p $(BUILDDIRS)
+	@echo " $(CC) $(CFLAGS) -c -o $@ $<"; $(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	@echo " Cleaning...";
-	@echo " $(RM) -r $(BUILDDIR) $(TARGET)"; $(RM) -r $(BUILDDIR) $(TARGET)
-
-.PHONY: clean
+	@echo " Cleaning..."
+	@echo " $(RM) -r $(BUILDDIRS) $(TARGET)"; $(RM) -r $(BUILDDIRS) $(TARGET)

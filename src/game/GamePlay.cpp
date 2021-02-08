@@ -1,7 +1,7 @@
 #include "GamePlay.hpp"
 #include <iostream>
-#include <chrono>
-#include <thread>
+// #include <chrono>
+// #include <thread>
 
 void play(GameState* gameState, Player* player1, Player* player2) {
   while (true) {

@@ -1,5 +1,5 @@
 #pragma once
-#include "GameState.hpp"
+#include "../game/GameState.hpp"
 
 class Player {
   public:
@@ -13,14 +13,12 @@ class PlayerRandom : public Player {
     Move selectMove(const GameState* gameState) override;
 };
 
-class PlayerMCTS : public Player {
+class PlayerOptimal : public Player {
   public:
-    PlayerMCTS(int init);
     Move selectMove(const GameState* gameState) override;
 };
 
-class PlayerOptimal : public Player {
+class PlayerMCTS : public Player {
   public:
-    PlayerOptimal(int init);
     Move selectMove(const GameState* gameState) override;
 };

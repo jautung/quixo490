@@ -1,7 +1,7 @@
-#include "GameState.hpp"
+#include "../game/GameState.hpp"
 #include "Players.hpp"
-#include <random>
 #include <iostream>
+#include <random>
 
 Move PlayerRandom::selectMove(const GameState* gameState) {
   auto moves = gameState->allMoves();

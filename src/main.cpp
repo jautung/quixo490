@@ -1,7 +1,7 @@
-#include "GameState.hpp"
-#include "GamePlay.hpp"
-#include "Players.hpp"
-#include "OptCompute.hpp"
+#include "game/GamePlay.hpp"
+#include "game/GameState.hpp"
+#include "optimal/OptComputeMain.hpp"
+#include "players/Players.hpp"
 #include <iostream>
 
 int main() {
