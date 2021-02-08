@@ -28,13 +28,9 @@ std::ostream &operator<<(std::ostream &os, const Move& move) {
   }
 }
 
-GameState::GameState(state_t* initState) {
+GameState::GameState(state_t initState) {
   // TODO: handle different-sized boards appropriately
-  if (initState == NULL) {
-    state = 0; // no Xs or Os
-  } else {
-    state = *initState;
-  }
+  state = initState;
 }
 
 tile_t GameState::getTile(index_t row, index_t col) const {

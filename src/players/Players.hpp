@@ -8,17 +8,17 @@ class Player {
     }
 };
 
-class PlayerRandom : public Player {
+class RandomPlayer : public Player {
   public:
     Move selectMove(const GameState* gameState) override;
 };
 
-class PlayerOptimal : public Player {
+class OptimalPlayer : public Player {
   public:
     Move selectMove(const GameState* gameState) override;
 };
 
-class PlayerMCTS : public Player {
+class MCTSPlayer : public Player {
   public:
     Move selectMove(const GameState* gameState) override;
 };

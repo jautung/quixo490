@@ -16,9 +16,18 @@ void optComputeMain() {
       saveData(numX, numO, results);
     }
   }
+  // TODO
+  // auto moves = gameState.allMoves();
+  // for (const auto& move: moves) {
+  //   std::cout << move;
+  // }
+  // std::cout << gameState;
+  // std::cout << gameState.containsLine(TILE_X) << "\n";
+  // std::cout << gameState.containsLine(TILE_O) << "\n";
 }
 
 void saveData(int numX, int numO, std::unordered_map<int, int> results) {
+  // TODO: probably write raw bytes to file
   return;
 }
 
