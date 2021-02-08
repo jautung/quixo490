@@ -14,13 +14,13 @@ CFLAGS := -g -Wall -Wno-c++11-extensions
 
 $(TARGET): $(OBJECTS)
 	@mkdir -p $(BINDIR)
-	@echo " Linking..."
-	@echo " $(CC) $^ -o $(TARGET)"; $(CC) $^ -o $(TARGET)
+	@echo "Linking..."
+	@echo "$(CC) $^ -o $(TARGET)"; $(CC) $^ -o $(TARGET)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(BUILDDIRS)
-	@echo " $(CC) $(CFLAGS) -c -o $@ $<"; $(CC) $(CFLAGS) -c -o $@ $<
+	@echo "$(CC) $(CFLAGS) -c -o $@ $<"; $(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	@echo " Cleaning..."
-	@echo " $(RM) -r $(BUILDDIRS) $(TARGET)"; $(RM) -r $(BUILDDIRS) $(TARGET)
+	@echo "Cleaning..."
+	@echo "$(RM) -r $(BUILDDIRS) $(TARGET)"; $(RM) -r $(BUILDDIRS) $(TARGET)
