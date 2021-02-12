@@ -7,7 +7,7 @@
 #include <random>
 #include <tclap/CmdLine.h>
 
-void getPlayer(std::string playerType, Player* player);
+Player* getPlayer(std::string playerType);
 
 int main(int argc, char* argv[]) {
   try {
@@ -23,15 +23,10 @@ int main(int argc, char* argv[]) {
     if (prog == "play") {
       auto now = std::chrono::time_point_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now());
       srand(now.time_since_epoch().count());
-      RandomPlayer player1;
-      RandomPlayer player2;
-      // TODO: bugged, maybe we need malloc
-      // Player player1;
-      // Player player2;
-      // getPlayer(player1Type, &player1);
-      // getPlayer(player2Type, &player2);
-      GameState gameState;
-      play(&gameState, &player1, &player2);
+      auto player1 = getPlayer(player1Type);
+      auto player2 = getPlayer(player1Type);
+      auto gameState = new GameState();
+      play(gameState, player1, player2);
     } else if (prog == "opt-compute") {
       optComputeMain();
     } else if (prog == "mcts-compute") {
@@ -45,16 +40,13 @@ int main(int argc, char* argv[]) {
   return 0;
 }
 
-void getPlayer(std::string playerType, Player* player) {
+Player* getPlayer(std::string playerType) {
   if (playerType == "random") {
-    RandomPlayer initPlayer;
-    *player = initPlayer;
+    return new RandomPlayer();
   } else if (playerType == "opt") {
-    OptimalPlayer initPlayer;
-    *player = initPlayer;
+    return new OptimalPlayer();
   } else if (playerType == "mcts") {
-    MCTSPlayer initPlayer;
-    *player = initPlayer;
+    return new MCTSPlayer();
   } else {
     std::cerr << "error: " << "unknown player type: " << playerType << "\n";
     exit(1);
