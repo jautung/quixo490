@@ -2,7 +2,9 @@
 #include "game/GameState.hpp"
 #include "optimal/OptComputeMain.hpp"
 #include "players/Players.hpp"
+#include <chrono>
 #include <iostream>
+#include <random>
 #include <tclap/CmdLine.h>
 
 void getPlayer(std::string playerType, Player* player);
@@ -19,6 +21,8 @@ int main(int argc, char* argv[]) {
     auto player2Type = player2TypeArg.getValue();
 
     if (prog == "play") {
+      auto now = std::chrono::time_point_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now());
+      srand(now.time_since_epoch().count());
       RandomPlayer player1;
       RandomPlayer player2;
       // TODO: bugged, maybe we need malloc
