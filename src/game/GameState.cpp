@@ -18,13 +18,13 @@ Move::Move(dir_t initDir, index_t initSlideIndex, index_t initCrossIndex) {
 
 std::ostream &operator<<(std::ostream &os, const Move& move) {
   if (move.dir == DIR_LEFT) {
-    return os << "LEFT-" << move.slideIndex << " (" << move.crossIndex << ")";
+    return os << "LEFT on row " << move.slideIndex << " (tile from column " << move.crossIndex << ")";
   } else if (move.dir == DIR_RIGHT) {
-    return os << "RIGHT-" << move.slideIndex << " (" << move.crossIndex << ")";
+    return os << "RIGHT on row " << move.slideIndex << " (tile from column " << move.crossIndex << ")";
   } else if (move.dir == DIR_DOWN) {
-    return os << "DOWN-" << move.slideIndex << " (" << move.crossIndex << ")";
+    return os << "DOWN on column " << move.slideIndex << " (tile from row " << move.crossIndex << ")";
   } else {
-    return os << "UP-" << move.slideIndex << " (" << move.crossIndex << ")";
+    return os << "UP on column " << move.slideIndex << " (tile from row " << move.crossIndex << ")";
   }
 }
 
@@ -153,5 +153,5 @@ std::ostream &operator<<(std::ostream &os, const GameState& gameState) {
     }
     os << "\n";
   }
-  return os;
+  return os << "\n";
 }

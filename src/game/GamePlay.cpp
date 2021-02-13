@@ -15,7 +15,9 @@ GamePlay::GamePlay(GameState* initGameState, Player* initPlayerX, Player* initPl
 winner_t GamePlay::playTurn() {
   displayGameState();
   auto move = playerX->selectMove(gameState);
-  std::this_thread::sleep_for(std::chrono::milliseconds(timeStepMs));
+  if (!dynamic_cast<InteractivePlayer*>(playerX)) { // don't pause for interactive player
+    std::this_thread::sleep_for(std::chrono::milliseconds(timeStepMs));
+  }
   std::cout << "X's Move: " << move << "\n\n";
   gameState->makeMove(move);
 
@@ -30,7 +32,9 @@ winner_t GamePlay::playTurn() {
   displayGameState();
   gameState->swapPlayers();
   move = playerO->selectMove(gameState);
-  std::this_thread::sleep_for(std::chrono::milliseconds(timeStepMs));
+  if (!dynamic_cast<InteractivePlayer*>(playerO)) { // don't pause for interactive player
+    std::this_thread::sleep_for(std::chrono::milliseconds(timeStepMs));
+  }
   std::cout << "O's Move: " << move << "\n\n";
   gameState->makeMove(move);
   gameState->swapPlayers();

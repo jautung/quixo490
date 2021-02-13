@@ -9,7 +9,7 @@
 #include <tclap/CmdLine.h>
 #include <thread>
 
-Player* getPlayer(std::string playerType);
+Player* getPlayer(std::string playerType, Graphics* graphics);
 
 int main(int argc, char* argv[]) {
   try {
@@ -31,10 +31,10 @@ int main(int argc, char* argv[]) {
     if (prog == "play") {
       auto now = std::chrono::time_point_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now());
       srand(now.time_since_epoch().count());
-      auto playerX = getPlayer(playerXType);
-      auto playerO = getPlayer(playerOType);
-      auto gameState = new GameState();
       auto graphics = graphicsQ ? new Graphics() : NULL;
+      auto playerX = getPlayer(playerXType, graphics);
+      auto playerO = getPlayer(playerOType, graphics);
+      auto gameState = new GameState();
       auto gamePlay = new GamePlay(gameState, playerX, playerO, timeStepMs, graphics);
       auto winner = nSteps == 0 ? gamePlay->playTillEnd() : gamePlay->playNTurns(nSteps);
       if (winner == WINNER_X) {
@@ -61,9 +61,11 @@ int main(int argc, char* argv[]) {
   return 0;
 }
 
-Player* getPlayer(std::string playerType) {
+Player* getPlayer(std::string playerType, Graphics* graphics) {
   if (playerType == "random") {
     return new RandomPlayer();
+  } else if (playerType == "interactive") {
+    return new InteractivePlayer(graphics);
   } else if (playerType == "opt") {
     return new OptimalPlayer();
   } else if (playerType == "mcts") {

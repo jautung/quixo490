@@ -6,16 +6,50 @@
 #define SCREEN_RES_X (800)
 #define SCREEN_RES_Y (800)
 #define TILE_WIDTH (0.25)
+#define CHOICE_NULL (INT_MAX)
+#define ALPHA_CHOICE (0.8)
+#define ALPHA_INSERTION (0.5)
 
-static void glfwErrorCallback(int error, const char* description) {
+static void getTileLimits(index_t i, index_t j, float* left, float* right, float* top, float* bottom) {
+  *left = (j-2)*TILE_WIDTH - TILE_WIDTH/2;
+  *right = (j-2)*TILE_WIDTH + TILE_WIDTH/2;
+  *top = (2-i)*TILE_WIDTH + TILE_WIDTH/2;
+  *bottom = (2-i)*TILE_WIDTH - TILE_WIDTH/2;
+}
+
+void Graphics::glfwErrorCallback(int error, const char* description) {
   std::cerr << "error: " << "glfw: " << description << "\n";
 }
 
-static void glfwMouseButtonCallbacks(GLFWwindow* window, int button, int action, int mods) {
+void Graphics::glfwMouseButtonCallbacks(GLFWwindow* window, int button, int action, int mods) {
   if (action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_LEFT) {
-    double xpos, ypos;
-    glfwGetCursorPos(window, &xpos, &ypos);
-    std::cerr << xpos << " " << ypos << "\n";
+    double xPos, yPos;
+    glfwGetCursorPos(window, &xPos, &yPos);
+    Graphics* graphics = static_cast<Graphics*>(glfwGetWindowUserPointer(window));
+    graphics->onMouseButtonLeftPress(2*xPos/SCREEN_RES_X-1, 1-2*yPos/SCREEN_RES_Y);
+  }
+}
+
+void Graphics::onMouseButtonLeftPress(double xPos, double yPos) {
+  if (!gettingInputQ) {return;}
+  for (index_t i = -1; i < 6; i++) {
+    for (index_t j = -1; j < 6; j++) {
+      float left, right, top, bottom;
+      getTileLimits(i, j, &left, &right, &top, &bottom);
+      if (xPos >= left && xPos <= right && yPos <= top && yPos >= bottom) {
+        if (i >= 0 && i <= 4 && j >= 0 && j <= 4) { // choose tile
+          tileChoiceX = i;
+          tileChoiceY = j;
+          insertChoiceX = CHOICE_NULL;
+          insertChoiceY = CHOICE_NULL;
+        } else { // choose insertion point
+          if (tileChoiceX != CHOICE_NULL && tileChoiceY != CHOICE_NULL) {
+            insertChoiceX = i;
+            insertChoiceY = j;
+          }
+        }
+      }
+    }
   }
 }
 
@@ -31,6 +65,7 @@ Graphics::Graphics() {
     glfwErrorCallback(1, "create window failed");
     return;
   }
+  glfwSetWindowUserPointer(window, this);
   glfwSetMouseButtonCallback(window, glfwMouseButtonCallbacks);
 
   glfwMakeContextCurrent(window);
@@ -47,17 +82,71 @@ Graphics::Graphics() {
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
+
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_BLEND);
 }
 
-void Graphics::drawBoard(const GameState* gameState) {
-  if (!window) {return;} // initialization unsuccessful
+void Graphics::drawBoardBase(const GameState* gameState) {
   glClear(GL_COLOR_BUFFER_BIT);
 
   glBegin(GL_QUADS); // tiles
   for (index_t i = 0; i < 5; i++) {
     for (index_t j = 0; j < 5; j++) {
       auto tileType = gameState->getTile(i, j);
-      drawTile(i, j, tileType);
+      if (i == tileChoiceX && j == tileChoiceY) {
+        continue;
+      } else {
+        drawTile(i, j, tileType);
+      }
+    }
+  }
+  glEnd();
+
+  glBegin(GL_QUADS); // insertion points
+  if (tileChoiceX != CHOICE_NULL && tileChoiceY != CHOICE_NULL) {
+    auto tileTypeChoice = gameState->getTile(tileChoiceX, tileChoiceY);
+    bool validChoice = false;
+    auto moves = gameState->allMoves();
+    for (const auto& move: moves) {
+      if (move.dir == DIR_LEFT || move.dir == DIR_RIGHT) {
+        if (move.slideIndex != tileChoiceX || move.crossIndex != tileChoiceY) {
+          continue;
+        }
+        validChoice = true;
+        if (move.dir == DIR_LEFT) {
+          drawTile(tileChoiceX, 5, tileTypeChoice, ALPHA_INSERTION);
+          if (insertChoiceX == tileChoiceX && insertChoiceY == 5) {
+            dirChoice = move.dir;
+          }
+        } else {
+          drawTile(tileChoiceX, -1, tileTypeChoice, ALPHA_INSERTION);
+          if (insertChoiceX == tileChoiceX && insertChoiceY == -1) {
+            dirChoice = move.dir;
+          }
+        }
+      } else if (move.dir == DIR_DOWN || move.dir == DIR_UP) {
+        if (move.slideIndex != tileChoiceY || move.crossIndex != tileChoiceX) {
+          continue;
+        }
+        validChoice = true;
+        if (move.dir == DIR_DOWN) {
+          drawTile(-1, tileChoiceY, tileTypeChoice, ALPHA_INSERTION);
+          if (insertChoiceX == -1 && insertChoiceY == tileChoiceY) {
+            dirChoice = move.dir;
+          }
+        } else {
+          drawTile(5, tileChoiceY, tileTypeChoice, ALPHA_INSERTION);
+          if (insertChoiceX == 5 && insertChoiceY == tileChoiceY) {
+            dirChoice = move.dir;
+          }
+        }
+      }
+    }
+    if (validChoice) {
+      drawTile(tileChoiceX, tileChoiceY, tileTypeChoice, ALPHA_CHOICE);
+    } else {
+      drawTile(tileChoiceX, tileChoiceY, tileTypeChoice);
     }
   }
   glEnd();
@@ -76,11 +165,36 @@ void Graphics::drawBoard(const GameState* gameState) {
   glEnd();
 
   glfwSwapBuffers(window);
+}
+
+void Graphics::drawBoard(const GameState* gameState) {
+  if (!window) {return;} // initialization unsuccessful
+  gettingInputQ = false;
+  tileChoiceX = CHOICE_NULL;
+  tileChoiceY = CHOICE_NULL;
+  drawBoardBase(gameState);
   glfwPollEvents();
 }
 
-void Graphics::drawBoardWaitInput(const GameState* gameState) {
-  if (!window) {return;} // initialization unsuccessful
+Move Graphics::drawBoardGetInput(const GameState* gameState) {
+  if (!window) {return Move(DIR_LEFT, 0, 0);} // initialization unsuccessful
+  gettingInputQ = true;
+  tileChoiceX = CHOICE_NULL;
+  tileChoiceY = CHOICE_NULL;
+  insertChoiceX = CHOICE_NULL;
+  insertChoiceY = CHOICE_NULL;
+  dirChoice = DIR_UNDEFINED;
+  while (dirChoice == DIR_UNDEFINED) {
+    drawBoardBase(gameState);
+    glfwPollEvents();
+  }
+  if (dirChoice == DIR_LEFT || dirChoice == DIR_RIGHT) {
+    return Move(dirChoice, tileChoiceX, tileChoiceY);
+  } else if (dirChoice == DIR_DOWN || dirChoice == DIR_UP) {
+    return Move(dirChoice, tileChoiceY, tileChoiceX);
+  } else {
+    return Move(DIR_LEFT, 0, 0); // dummy
+  }
 }
 
 void Graphics::terminate() {
@@ -89,20 +203,13 @@ void Graphics::terminate() {
   glfwTerminate();
 }
 
-static void getTileLimits(index_t i, index_t j, float* left, float* right, float* top, float* bottom) {
-  *left = (j-2)*TILE_WIDTH - TILE_WIDTH/2;
-  *right = (j-2)*TILE_WIDTH + TILE_WIDTH/2;
-  *top = (2-i)*TILE_WIDTH + TILE_WIDTH/2;
-  *bottom = (2-i)*TILE_WIDTH - TILE_WIDTH/2;
-}
-
-void Graphics::drawTile(index_t i, index_t j, tile_t tileType) {
+void Graphics::drawTile(index_t i, index_t j, tile_t tileType, float alpha) {
   if (tileType == TILE_X) {
-    glColor4f(1, 0, 0, 1);
+    glColor4f(1, 0, 0, alpha);
   } else if (tileType == TILE_O) {
-    glColor4f(0, 0, 1, 1);
+    glColor4f(0, 0, 1, alpha);
   } else {
-    glColor4f(0.3, 0.3, 0.3, 1);
+    glColor4f(0.3, 0.3, 0.3, alpha);
   }
   float left, right, top, bottom;
   getTileLimits(i, j, &left, &right, &top, &bottom);

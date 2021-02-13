@@ -14,7 +14,8 @@ enum dir_t {
   DIR_LEFT,
   DIR_RIGHT,
   DIR_DOWN,
-  DIR_UP
+  DIR_UP,
+  DIR_UNDEFINED
 };
 
 class Move {
