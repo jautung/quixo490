@@ -1,5 +1,6 @@
 #include "game/GamePlay.hpp"
 #include "game/GameState.hpp"
+#include "game/Graphics.hpp"
 #include "optimal/OptComputeMain.hpp"
 #include "players/Players.hpp"
 #include <chrono>
@@ -10,6 +11,8 @@
 Player* getPlayer(std::string playerType);
 
 int main(int argc, char* argv[]) {
+  testGraphics();
+  exit(1);
   try {
     TCLAP::CmdLine cmd("Quixo Project");
     TCLAP::ValueArg<std::string> progArg("p", "program", "Program to run (`play`, `opt-compute`, or `mcts-compute`)", false, "play", "string", cmd);

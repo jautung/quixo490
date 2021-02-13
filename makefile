@@ -10,13 +10,14 @@ TARGET := bin/quixo
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -g -Wall -Wno-c++11-extensions
-INC := -I include
+CFLAGS := -g -Wall -std=c++11
+LDFLAGS := -framework OpenGL -L /usr/local/lib -lglfw
+INC := -I include -I /usr/local/include
 
 $(TARGET): $(OBJECTS)
 	@mkdir -p $(BINDIR)
 	@echo "Linking..."
-	@echo "$(CC) $^ -o $(TARGET)"; $(CC) $^ -o $(TARGET)
+	@echo "$(CC) $^ $(LDFLAGS) -o $(TARGET)"; $(CC) $^ $(LDFLAGS) -o $(TARGET)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(BUILDDIRS)
