@@ -87,7 +87,7 @@ Graphics::Graphics() {
   glEnable(GL_BLEND);
 }
 
-void Graphics::drawBoardBase(const GameState* gameState) {
+void Graphics::drawBoardBase(const GameState* gameState, bool flippedColorsQ) {
   glClear(GL_COLOR_BUFFER_BIT);
 
   glBegin(GL_QUADS); // tiles
@@ -97,7 +97,7 @@ void Graphics::drawBoardBase(const GameState* gameState) {
       if (i == tileChoiceX && j == tileChoiceY) {
         continue;
       } else {
-        drawTile(i, j, tileType);
+        drawTile(i, j, tileType, 1, flippedColorsQ);
       }
     }
   }
@@ -115,12 +115,12 @@ void Graphics::drawBoardBase(const GameState* gameState) {
         }
         validChoice = true;
         if (move.dir == DIR_LEFT) {
-          drawTile(tileChoiceX, 5, tileTypeChoice, ALPHA_INSERTION);
+          drawTile(tileChoiceX, 5, tileTypeChoice, ALPHA_INSERTION, flippedColorsQ);
           if (insertChoiceX == tileChoiceX && insertChoiceY == 5) {
             dirChoice = move.dir;
           }
         } else {
-          drawTile(tileChoiceX, -1, tileTypeChoice, ALPHA_INSERTION);
+          drawTile(tileChoiceX, -1, tileTypeChoice, ALPHA_INSERTION, flippedColorsQ);
           if (insertChoiceX == tileChoiceX && insertChoiceY == -1) {
             dirChoice = move.dir;
           }
@@ -131,12 +131,12 @@ void Graphics::drawBoardBase(const GameState* gameState) {
         }
         validChoice = true;
         if (move.dir == DIR_DOWN) {
-          drawTile(-1, tileChoiceY, tileTypeChoice, ALPHA_INSERTION);
+          drawTile(-1, tileChoiceY, tileTypeChoice, ALPHA_INSERTION, flippedColorsQ);
           if (insertChoiceX == -1 && insertChoiceY == tileChoiceY) {
             dirChoice = move.dir;
           }
         } else {
-          drawTile(5, tileChoiceY, tileTypeChoice, ALPHA_INSERTION);
+          drawTile(5, tileChoiceY, tileTypeChoice, ALPHA_INSERTION, flippedColorsQ);
           if (insertChoiceX == 5 && insertChoiceY == tileChoiceY) {
             dirChoice = move.dir;
           }
@@ -144,9 +144,9 @@ void Graphics::drawBoardBase(const GameState* gameState) {
       }
     }
     if (validChoice) {
-      drawTile(tileChoiceX, tileChoiceY, tileTypeChoice, ALPHA_CHOICE);
+      drawTile(tileChoiceX, tileChoiceY, tileTypeChoice, ALPHA_CHOICE, flippedColorsQ);
     } else {
-      drawTile(tileChoiceX, tileChoiceY, tileTypeChoice);
+      drawTile(tileChoiceX, tileChoiceY, tileTypeChoice, 1, flippedColorsQ);
     }
   }
   glEnd();
@@ -176,7 +176,7 @@ void Graphics::drawBoard(const GameState* gameState) {
   glfwPollEvents();
 }
 
-Move Graphics::drawBoardGetInput(const GameState* gameState) {
+Move Graphics::drawBoardGetInput(const GameState* gameState, bool flippedColorsQ) {
   if (!window) {return Move(DIR_LEFT, 0, 0);} // initialization unsuccessful
   gettingInputQ = true;
   tileChoiceX = CHOICE_NULL;
@@ -185,7 +185,7 @@ Move Graphics::drawBoardGetInput(const GameState* gameState) {
   insertChoiceY = CHOICE_NULL;
   dirChoice = DIR_UNDEFINED;
   while (dirChoice == DIR_UNDEFINED) {
-    drawBoardBase(gameState);
+    drawBoardBase(gameState, flippedColorsQ);
     glfwPollEvents();
   }
   if (dirChoice == DIR_LEFT || dirChoice == DIR_RIGHT) {
@@ -203,10 +203,10 @@ void Graphics::terminate() {
   glfwTerminate();
 }
 
-void Graphics::drawTile(index_t i, index_t j, tile_t tileType, float alpha) {
-  if (tileType == TILE_X) {
+void Graphics::drawTile(index_t i, index_t j, tile_t tileType, float alpha, bool flippedColorsQ) {
+  if ((!flippedColorsQ && tileType == TILE_X) || (flippedColorsQ && tileType == TILE_O)) {
     glColor4f(1, 0, 0, alpha);
-  } else if (tileType == TILE_O) {
+  } else if ((!flippedColorsQ && tileType == TILE_O) || (flippedColorsQ && tileType == TILE_X)) {
     glColor4f(0, 0, 1, alpha);
   } else {
     glColor4f(0.3, 0.3, 0.3, alpha);

@@ -7,7 +7,7 @@ InteractivePlayer::InteractivePlayer(Graphics* initGraphics) {
   graphics = initGraphics;
 }
 
-Move InteractivePlayer::selectMove(const GameState* gameState) {
+Move InteractivePlayer::selectMove(const GameState* gameState, bool flippedColorsQ) {
   if (!graphics) {
     auto moves = gameState->allMoves();
     std::cout << "Choose one of:\n";
@@ -36,6 +36,6 @@ Move InteractivePlayer::selectMove(const GameState* gameState) {
     }
     return Move(DIR_LEFT, 0, 0); // dummy
   } else {
-    return graphics->drawBoardGetInput(gameState);
+    return graphics->drawBoardGetInput(gameState, flippedColorsQ);
   }
 }

@@ -31,7 +31,7 @@ winner_t GamePlay::playTurn() {
 
   displayGameState();
   gameState->swapPlayers();
-  move = playerO->selectMove(gameState);
+  move = playerO->selectMove(gameState, true);
   if (!dynamic_cast<InteractivePlayer*>(playerO)) { // don't pause for interactive player
     std::this_thread::sleep_for(std::chrono::milliseconds(timeStepMs));
   }
