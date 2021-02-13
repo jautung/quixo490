@@ -105,7 +105,6 @@ void Graphics::drawBoardBase(const GameState* gameState, bool flippedColorsQ) {
 
   glBegin(GL_QUADS); // insertion points
   if (tileChoiceX != CHOICE_NULL && tileChoiceY != CHOICE_NULL) {
-    auto tileTypeChoice = gameState->getTile(tileChoiceX, tileChoiceY);
     bool validChoice = false;
     auto moves = gameState->allMoves();
     for (const auto& move: moves) {
@@ -115,12 +114,12 @@ void Graphics::drawBoardBase(const GameState* gameState, bool flippedColorsQ) {
         }
         validChoice = true;
         if (move.dir == DIR_LEFT) {
-          drawTile(tileChoiceX, 5, tileTypeChoice, ALPHA_INSERTION, flippedColorsQ);
+          drawTile(tileChoiceX, 5, TILE_X, ALPHA_INSERTION, flippedColorsQ);
           if (insertChoiceX == tileChoiceX && insertChoiceY == 5) {
             dirChoice = move.dir;
           }
         } else {
-          drawTile(tileChoiceX, -1, tileTypeChoice, ALPHA_INSERTION, flippedColorsQ);
+          drawTile(tileChoiceX, -1, TILE_X, ALPHA_INSERTION, flippedColorsQ);
           if (insertChoiceX == tileChoiceX && insertChoiceY == -1) {
             dirChoice = move.dir;
           }
@@ -131,18 +130,19 @@ void Graphics::drawBoardBase(const GameState* gameState, bool flippedColorsQ) {
         }
         validChoice = true;
         if (move.dir == DIR_DOWN) {
-          drawTile(-1, tileChoiceY, tileTypeChoice, ALPHA_INSERTION, flippedColorsQ);
+          drawTile(-1, tileChoiceY, TILE_X, ALPHA_INSERTION, flippedColorsQ);
           if (insertChoiceX == -1 && insertChoiceY == tileChoiceY) {
             dirChoice = move.dir;
           }
         } else {
-          drawTile(5, tileChoiceY, tileTypeChoice, ALPHA_INSERTION, flippedColorsQ);
+          drawTile(5, tileChoiceY, TILE_X, ALPHA_INSERTION, flippedColorsQ);
           if (insertChoiceX == 5 && insertChoiceY == tileChoiceY) {
             dirChoice = move.dir;
           }
         }
       }
     }
+    auto tileTypeChoice = gameState->getTile(tileChoiceX, tileChoiceY);
     if (validChoice) {
       drawTile(tileChoiceX, tileChoiceY, tileTypeChoice, ALPHA_CHOICE, flippedColorsQ);
     } else {
