@@ -14,9 +14,17 @@ void glfwKeyCallbacks(GLFWwindow* window, int key, int scancode, int action, int
   }
 }
 
+void glfwMouseButtonCallbacks(GLFWwindow* window, int button, int action, int mods) {
+  if (action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_LEFT) {
+    double xpos, ypos;
+    glfwGetCursorPos(window, &xpos, &ypos);
+    std::cout << xpos << " " << ypos << "\n";
+  }
+}
+
 void render() {
   glBegin(GL_QUADS);
-  glColor3f(1, 0, 0);
+  glColor4f(1, 0, 0, 1);
   glVertex3f(-0.5, -0.5, 0);
   glVertex3f(-0.5, 0.5, 0);
   glVertex3f(0.5, 0.5, 0);
@@ -37,13 +45,15 @@ void testGraphics() {
     return;
   }
   glfwSetKeyCallback(window, glfwKeyCallbacks);
+  glfwSetMouseButtonCallback(window, glfwMouseButtonCallbacks);
+
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1);
 
   int width, height;
   glfwGetFramebufferSize(window, &width, &height);
   glViewport(0, 0, width, height);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT);
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
