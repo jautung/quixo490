@@ -1,9 +1,10 @@
 #include "GamePlay.hpp"
+#include "Graphics.hpp"
 #include <chrono>
 #include <iostream>
 #include <thread>
 
-GamePlay::GamePlay(GameState* initGameState, Player* initPlayerX, Player* initPlayerO, int initTimeStepMs, bool initGraphics) {
+GamePlay::GamePlay(GameState* initGameState, Player* initPlayerX, Player* initPlayerO, int initTimeStepMs, Graphics* initGraphics) {
   gameState = initGameState;
   playerX = initPlayerX;
   playerO = initPlayerO;
@@ -12,21 +13,21 @@ GamePlay::GamePlay(GameState* initGameState, Player* initPlayerX, Player* initPl
 }
 
 winner_t GamePlay::playTurn() {
-  gameState->display(graphics);
+  displayGameState();
   auto move = playerX->selectMove(gameState);
   std::this_thread::sleep_for(std::chrono::milliseconds(timeStepMs));
   std::cout << "X's Move: " << move << "\n\n";
   gameState->makeMove(move);
 
   if (gameState->containsLine(TILE_O)) {
-    gameState->display(graphics);
+    displayGameState();
     return WINNER_O;
   } else if (gameState->containsLine(TILE_X)) {
-    gameState->display(graphics);
+    displayGameState();
     return WINNER_X;
   }
 
-  gameState->display(graphics);
+  displayGameState();
   gameState->swapPlayers();
   move = playerO->selectMove(gameState);
   std::this_thread::sleep_for(std::chrono::milliseconds(timeStepMs));
@@ -35,10 +36,10 @@ winner_t GamePlay::playTurn() {
   gameState->swapPlayers();
 
   if (gameState->containsLine(TILE_X)) {
-    gameState->display(graphics);
+    displayGameState();
     return WINNER_X;
   } else if (gameState->containsLine(TILE_O)) {
-    gameState->display(graphics);
+    displayGameState();
     return WINNER_O;
   }
 
@@ -52,7 +53,7 @@ winner_t GamePlay::playNTurns(int nTurns) {
       return winner;
     }
   }
-  gameState->display(graphics);
+  displayGameState();
   return WINNER_UNKNOWN;
 }
 
@@ -62,5 +63,13 @@ winner_t GamePlay::playTillEnd() {
     if (winner == WINNER_X || winner == WINNER_O) {
       return winner;
     }
+  }
+}
+
+void GamePlay::displayGameState() {
+  if (!graphics) {
+    std::cout << *gameState;
+  } else {
+    graphics->drawBoard(gameState);
   }
 }

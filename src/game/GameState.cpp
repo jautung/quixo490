@@ -117,13 +117,13 @@ void GameState::swapPlayers() {
 
 bool GameState::containsLine(tile_t tileType) const {
   state_t mask = rowMaskFull << ((tileType == TILE_X) ? halfBits : 0);
-  for (index_t i = 0; i < 5; i++, mask <<= 5) { // along rows
+  for (index_t i = 0; i < 5; i++, mask <<= 5) {
     if ((state & mask) == mask) {
       return true;
     }
   }
   mask = colMaskFull << ((tileType == TILE_X) ? halfBits : 0);
-  for (index_t j = 0; j < 5; j++, mask <<= 1) { // along columns
+  for (index_t j = 0; j < 5; j++, mask <<= 1) {
     if ((state & mask) == mask) {
       return true;
     }
@@ -139,19 +139,19 @@ bool GameState::containsLine(tile_t tileType) const {
   return false;
 }
 
-void GameState::display(bool graphics) const {
-  // TODO: make a GUI for this
+std::ostream &operator<<(std::ostream &os, const GameState& gameState) {
   for (index_t i = 0; i < 5; i++) {
     for (index_t j = 0; j < 5; j++) {
-      auto tile = getTile(i, j);
+      auto tile = gameState.getTile(i, j);
       if (tile == TILE_X) {
-        std::cout << "X";
+        os << "X";
       } else if (tile == TILE_O) {
-        std::cout << "O";
+        os << "O";
       } else {
-        std::cout << ".";
+        os << ".";
       }
     }
-    std::cout << "\n";
+    os << "\n";
   }
+  return os;
 }

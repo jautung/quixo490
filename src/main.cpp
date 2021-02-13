@@ -7,6 +7,7 @@
 #include <iostream>
 #include <random>
 #include <tclap/CmdLine.h>
+#include <thread>
 
 Player* getPlayer(std::string playerType);
 
@@ -18,14 +19,14 @@ int main(int argc, char* argv[]) {
     TCLAP::ValueArg<std::string> playerOTypeArg("O", "playerO", "For `play` program: player O type (`random`, `opt`, or `mcts`)", false, "random", "string", cmd);
     TCLAP::ValueArg<int> nStepsArg("n", "nsteps", "For `play` program: number of steps to run (0: till the end)", false, 0, "integer", cmd);
     TCLAP::ValueArg<int> timeStepMsArg("s", "timestep", "For `play` program: time (in milliseconds) to pause between steps", false, 0, "integer", cmd);
-    TCLAP::SwitchArg graphicsArg("g", "graphics", "For `play` program: graphical output", cmd, false);
+    TCLAP::SwitchArg graphicsQArg("g", "graphics", "For `play` program: graphical output", cmd, false);
     cmd.parse(argc, argv);
     auto prog = progArg.getValue();
     auto playerXType = playerXTypeArg.getValue();
     auto playerOType = playerOTypeArg.getValue();
     auto nSteps = nStepsArg.getValue();
     auto timeStepMs = timeStepMsArg.getValue();
-    auto graphics = graphicsArg.getValue();
+    auto graphicsQ = graphicsQArg.getValue();
 
     if (prog == "play") {
       auto now = std::chrono::time_point_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now());
@@ -33,6 +34,7 @@ int main(int argc, char* argv[]) {
       auto playerX = getPlayer(playerXType);
       auto playerO = getPlayer(playerOType);
       auto gameState = new GameState();
+      auto graphics = graphicsQ ? new Graphics() : NULL;
       auto gamePlay = new GamePlay(gameState, playerX, playerO, timeStepMs, graphics);
       auto winner = nSteps == 0 ? gamePlay->playTillEnd() : gamePlay->playNTurns(nSteps);
       if (winner == WINNER_X) {
@@ -41,6 +43,10 @@ int main(int argc, char* argv[]) {
         std::cout << "O Wins!\n";
       } else {
         std::cout << "No Winner Yet.\n";
+      }
+      if (graphicsQ) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        graphics->terminate();
       }
     } else if (prog == "opt-compute") {
       optComputeMain();

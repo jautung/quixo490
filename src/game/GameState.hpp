@@ -43,7 +43,7 @@ class GameState {
     void makeMove(Move move);
     void swapPlayers();
     bool containsLine(tile_t tileType) const;
-    void display(bool graphics) const;
   private:
     state_t state: 64;
 };
+std::ostream &operator<<(std::ostream &os, const GameState& gameState);
