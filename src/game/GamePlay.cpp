@@ -1,24 +1,38 @@
 #include "GamePlay.hpp"
+#include <chrono>
 #include <iostream>
-// #include <chrono>
-// #include <thread>
+#include <thread>
 
-void play(GameState* gameState, Player* player1, Player* player2) {
+winner_t play(GameState* gameState, Player* playerX, Player* playerO, int timeStepMs, bool graphics) {
   while (true) {
-    auto move = player1->selectMove(gameState);
+    gameState->display(graphics);
+    auto move = playerX->selectMove(gameState);
+    std::this_thread::sleep_for(std::chrono::milliseconds(timeStepMs));
+    std::cout << "X's Move: " << move << "\n\n";
+    gameState->makeMove(move);
+
+    if (gameState->containsLine(TILE_O)) {
+      gameState->display(graphics);
+      return WINNER_O;
+    } else if (gameState->containsLine(TILE_X)) {
+      gameState->display(graphics);
+      return WINNER_X;
+    }
+
+    gameState->display(graphics);
+    gameState->swapPlayers();
+    move = playerO->selectMove(gameState);
+    std::this_thread::sleep_for(std::chrono::milliseconds(timeStepMs));
+    std::cout << "O's Move: " << move << "\n\n";
     gameState->makeMove(move);
     gameState->swapPlayers();
-    std::cout << *gameState << "\n";
-    // std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-    move = player2->selectMove(gameState);
-    gameState->makeMove(move);
-    gameState->swapPlayers();
-    std::cout << *gameState << "\n";
-    // std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-    if (gameState->containsLine(TILE_X) || gameState->containsLine(TILE_O)) {
-      break;
+    if (gameState->containsLine(TILE_X)) {
+      gameState->display(graphics);
+      return WINNER_X;
+    } else if (gameState->containsLine(TILE_O)) {
+      gameState->display(graphics);
+      return WINNER_O;
     }
   }
 }

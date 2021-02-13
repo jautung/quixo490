@@ -2,4 +2,9 @@
 #include "../players/Players.hpp"
 #include "GameState.hpp"
 
-void play(GameState* gameState, Player* player1, Player* player2);
+enum winner_t {
+  WINNER_X,
+  WINNER_O
+};
+
+winner_t play(GameState* gameState, Player* playerX, Player* playerO, int timeStepMs, bool graphics);

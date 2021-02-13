@@ -18,13 +18,13 @@ Move::Move(dir_t initDir, index_t initSlideIndex, index_t initCrossIndex) {
 
 std::ostream &operator<<(std::ostream &os, const Move& move) {
   if (move.dir == DIR_LEFT) {
-    return os << "LEFT-" << move.slideIndex << " (" << move.crossIndex << ")\n";
+    return os << "LEFT-" << move.slideIndex << " (" << move.crossIndex << ")";
   } else if (move.dir == DIR_RIGHT) {
-    return os << "RIGHT-" << move.slideIndex << " (" << move.crossIndex << ")\n";
+    return os << "RIGHT-" << move.slideIndex << " (" << move.crossIndex << ")";
   } else if (move.dir == DIR_DOWN) {
-    return os << "DOWN-" << move.slideIndex << " (" << move.crossIndex << ")\n";
+    return os << "DOWN-" << move.slideIndex << " (" << move.crossIndex << ")";
   } else {
-    return os << "UP-" << move.slideIndex << " (" << move.crossIndex << ")\n";
+    return os << "UP-" << move.slideIndex << " (" << move.crossIndex << ")";
   }
 }
 
@@ -139,20 +139,19 @@ bool GameState::containsLine(tile_t tileType) const {
   return false;
 }
 
-std::ostream &operator<<(std::ostream &os, const GameState& gameState) {
+void GameState::display(bool graphics) const {
   // TODO: make a GUI for this
   for (index_t i = 0; i < 5; i++) {
     for (index_t j = 0; j < 5; j++) {
-      auto tile = gameState.getTile(i, j);
+      auto tile = getTile(i, j);
       if (tile == TILE_X) {
-        os << "X";
+        std::cout << "X";
       } else if (tile == TILE_O) {
-        os << "O";
+        std::cout << "O";
       } else {
-        os << ".";
+        std::cout << ".";
       }
     }
-    os << "\n";
+    std::cout << "\n";
   }
-  return os;
 }
