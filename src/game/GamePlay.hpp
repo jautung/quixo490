@@ -4,7 +4,20 @@
 
 enum winner_t {
   WINNER_X,
-  WINNER_O
+  WINNER_O,
+  WINNER_UNKNOWN
 };
 
-winner_t play(GameState* gameState, Player* playerX, Player* playerO, int timeStepMs, bool graphics);
+class GamePlay {
+  public:
+    GamePlay(GameState* initGameState, Player* initPlayerX, Player* initPlayerO, int initTimeStepMs, bool initGraphics);
+    winner_t playTurn();
+    winner_t playNTurns(int nTurns);
+    winner_t playTillEnd();
+  private:
+    GameState* gameState;
+    Player* playerX;
+    Player* playerO;
+    int timeStepMs;
+    bool graphics;
+};

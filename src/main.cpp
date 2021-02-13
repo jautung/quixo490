@@ -16,12 +16,14 @@ int main(int argc, char* argv[]) {
     TCLAP::ValueArg<std::string> progArg("p", "program", "Program to run (`play`, `opt-compute`, or `mcts-compute`)", false, "play", "string", cmd);
     TCLAP::ValueArg<std::string> playerXTypeArg("X", "playerX", "For `play` program: player X type (`random`, `opt`, or `mcts`)", false, "random", "string", cmd);
     TCLAP::ValueArg<std::string> playerOTypeArg("O", "playerO", "For `play` program: player O type (`random`, `opt`, or `mcts`)", false, "random", "string", cmd);
+    TCLAP::ValueArg<int> nStepsArg("n", "nsteps", "For `play` program: number of steps to run (0: till the end)", false, 0, "integer", cmd);
     TCLAP::ValueArg<int> timeStepMsArg("s", "timestep", "For `play` program: time (in milliseconds) to pause between steps", false, 0, "integer", cmd);
     TCLAP::SwitchArg graphicsArg("g", "graphics", "For `play` program: graphical output", cmd, false);
     cmd.parse(argc, argv);
     auto prog = progArg.getValue();
     auto playerXType = playerXTypeArg.getValue();
     auto playerOType = playerOTypeArg.getValue();
+    auto nSteps = nStepsArg.getValue();
     auto timeStepMs = timeStepMsArg.getValue();
     auto graphics = graphicsArg.getValue();
 
@@ -31,11 +33,14 @@ int main(int argc, char* argv[]) {
       auto playerX = getPlayer(playerXType);
       auto playerO = getPlayer(playerOType);
       auto gameState = new GameState();
-      auto winner = play(gameState, playerX, playerO, timeStepMs, graphics);
+      auto gamePlay = new GamePlay(gameState, playerX, playerO, timeStepMs, graphics);
+      auto winner = nSteps == 0 ? gamePlay->playTillEnd() : gamePlay->playNTurns(nSteps);
       if (winner == WINNER_X) {
         std::cout << "X Wins!\n";
-      } else {
+      } else if (winner == WINNER_O) {
         std::cout << "O Wins!\n";
+      } else {
+        std::cout << "No Winner Yet.\n";
       }
     } else if (prog == "opt-compute") {
       optComputeMain();
