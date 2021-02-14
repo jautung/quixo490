@@ -39,12 +39,11 @@ std::ostream &operator<<(std::ostream &os, const Move& move);
 class GameState {
   public:
     GameState(state_t initState = 0b0);
+    state_t state: 64;
     tile_t getTile(index_t row, index_t col) const;
     std::unordered_set<Move, Move::Hash> allMoves() const;
     void makeMove(Move move);
     void swapPlayers();
     bool containsLine(tile_t tileType) const;
-  private:
-    state_t state: 64;
 };
 std::ostream &operator<<(std::ostream &os, const GameState& gameState);
