@@ -49,7 +49,8 @@ int main(int argc, char* argv[]) {
         graphics->terminate();
       }
     } else if (prog == "opt-compute") {
-      optComputeMain();
+      auto optCompute = new OptCompute();
+      optCompute->optComputeMain();
     } else if (prog == "mcts-compute") {
       // TODO
     }

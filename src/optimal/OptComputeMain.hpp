@@ -1,8 +1,15 @@
 #pragma once
-#include <unordered_map>
+#include "../game/GameState.hpp"
+#include "NcrCalculator.hpp"
+#include "OrdCalculator.hpp"
 
-void optComputeMain(); // writes output to file
-
-void saveData(int numX, int numO, std::unordered_map<int, int> results);
-std::unordered_map<int, int> loadData(int numX, int numO);
-std::unordered_map<int, int> valueIteration(int numX, int numO, std::unordered_map<int, int> cache);
+class OptCompute {
+  public:
+    void optComputeMain();
+  private:
+    NcrCalculator* ncrCalculator;
+    OrdCalculator* ordCalculator;
+    void optComputeClass(int numX, int numO);
+    state_t indexToState(int stateIndex, int numX, int numO);
+    state_t unfilterOState(state_t oFilteredState, state_t xState);
+};
