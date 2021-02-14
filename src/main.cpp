@@ -1,7 +1,7 @@
 #include "game/GamePlay.hpp"
 #include "game/GameState.hpp"
 #include "game/Graphics.hpp"
-#include "optimal/OptComputeMain.hpp"
+#include "optimal/OptCompute.hpp"
 #include "players/Players.hpp"
 #include <chrono>
 #include <iostream>

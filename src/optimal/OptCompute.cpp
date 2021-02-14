@@ -1,7 +1,7 @@
 #include "../game/GameState.hpp"
 #include "NcrCalculator.hpp"
 #include "OrdCalculator.hpp"
-#include "OptComputeMain.hpp"
+#include "OptCompute.hpp"
 #include <iostream>
 #include <bitset>
 
