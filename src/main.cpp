@@ -53,12 +53,13 @@ int main(int argc, char* argv[]) {
       optCompute->optComputeMain();
     } else if (prog == "mcts-compute") {
       // TODO
+    } else {
+      std::cerr << "error: " << "unknown program: " << prog << "\n";
+      exit(1);
     }
-
   } catch (TCLAP::ArgException const &e) {
     std::cerr << "error: " << e.error() << " for arg " << e.argId() << "\n";
   }
-
   return 0;
 }
 
