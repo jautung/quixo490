@@ -1,19 +1,16 @@
-#include "../game/GameState.hpp"
-#include "../game/Graphics.hpp"
+#include "../game/GameStateHandler.hpp"
+#include "../game/GraphicsHandler.hpp"
 #include "Players.hpp"
 #include <iostream>
 
-InteractivePlayer::InteractivePlayer(Graphics* initGraphics) {
-  graphics = initGraphics;
-}
-
-Move InteractivePlayer::selectMove(const GameState* gameState, bool flippedColorsQ) {
-  if (!graphics) {
-    auto moves = gameState->allMoves();
+move_t InteractivePlayer::selectMove(state_t state, colormode_t colorMode) {
+  if (!graphicsHandler) {
+    auto moves = gameStateHandler->allMoves(state);
     std::cout << "Choose one of:\n";
     int i = 0;
     for (auto moveIter = moves.begin(); moveIter != moves.end(); moveIter++, i++) {
-      std::cout << i << " - " << *moveIter << "\n";
+      std::cout << i << " - ";
+      gameStateHandler->moveHandler->print(*moveIter);
     }
 
     int choice;
@@ -34,8 +31,8 @@ Move InteractivePlayer::selectMove(const GameState* gameState, bool flippedColor
         return *moveIter;
       }
     }
-    return Move(DIR_LEFT, 0, 0); // dummy
+    return gameStateHandler->moveHandler->create(DIR_UNDEFINED, 0, 0);
   } else {
-    return graphics->drawBoardGetInput(gameState, flippedColorsQ);
+    return graphicsHandler->drawBoardGetInput(state, colorMode);
   }
 }

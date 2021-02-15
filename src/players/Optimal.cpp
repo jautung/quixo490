@@ -1,9 +1,10 @@
-#include "../game/GameState.hpp"
+#include "../game/GameStateHandler.hpp"
+#include "../game/GraphicsHandler.hpp"
 #include "Players.hpp"
 #include <random>
 
-Move OptimalPlayer::selectMove(const GameState* gameState, bool flippedColorsQ) {
+move_t OptimalPlayer::selectMove(state_t state, colormode_t colorMode) {
   // TODO
-  auto moves = gameState->allMoves();
+  auto moves = gameStateHandler->allMoves(state);
   return *std::next(std::begin(moves), rand() % moves.size());
 }

@@ -1,33 +1,46 @@
 #pragma once
-#include "../game/GameState.hpp"
-#include "../game/Graphics.hpp"
+#include "../game/GameStateHandler.hpp"
+#include "../game/GraphicsHandler.hpp"
 
 class Player {
   public:
-    virtual Move selectMove(const GameState* gameState, bool flippedColorsQ = false) {
-      return Move(DIR_LEFT, 0, 0); // dummy
+    explicit Player(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler = NULL) {
+      gameStateHandler = initGameStateHandler;
+      graphicsHandler = initGraphicsHandler;
     }
+    virtual ~Player() {}
+    virtual move_t selectMove(state_t state, colormode_t colorMode = COLOR_NORM) {
+      return gameStateHandler->moveHandler->create(DIR_UNDEFINED, 0, 0);
+    }
+  protected:
+    GameStateHandler* gameStateHandler;
+    GraphicsHandler* graphicsHandler;
 };
 
 class RandomPlayer : public Player {
+  using Player::Player;
   public:
-    Move selectMove(const GameState* gameState, bool flippedColorsQ = false) override;
+    ~RandomPlayer() {}
+    move_t selectMove(state_t state, colormode_t colorMode) override;
 };
 
 class InteractivePlayer : public Player {
+  using Player::Player;
   public:
-    InteractivePlayer(Graphics* initGraphics);
-    Move selectMove(const GameState* gameState, bool flippedColorsQ = false) override;
-  private:
-    Graphics* graphics;
+    ~InteractivePlayer() {}
+    move_t selectMove(state_t state, colormode_t colorMode) override;
 };
 
 class OptimalPlayer : public Player {
+  using Player::Player;
   public:
-    Move selectMove(const GameState* gameState, bool flippedColorsQ = false) override;
+    ~OptimalPlayer() {}
+    move_t selectMove(state_t state, colormode_t colorMode) override;
 };
 
 class MCTSPlayer : public Player {
+  using Player::Player;
   public:
-    Move selectMove(const GameState* gameState, bool flippedColorsQ = false) override;
+    ~MCTSPlayer() {}
+    move_t selectMove(state_t state, colormode_t colorMode) override;
 };

@@ -3,7 +3,7 @@
 
 struct nrHash {
   std::size_t operator()(const std::tuple<int, int>& nr) const {
-    return std::get<0>(nr) << 5 | std::get<1>(nr);
+    return std::get<0>(nr) << 8 | std::get<1>(nr);
   }
 };
 
