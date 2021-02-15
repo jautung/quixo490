@@ -28,5 +28,5 @@ class GraphicsHandler {
     bindex_t tileChoiceY;
     bindex_t insertChoiceX;
     bindex_t insertChoiceY;
-    dir_t dirChoice;
+    move_t moveChoice;
 };

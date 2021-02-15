@@ -1,15 +1,11 @@
 #pragma once
 #include "../game/GameStateHandler.hpp"
+#include "DataHandler.hpp"
 #include "NcrCalculator.hpp"
 #include "OrdCalculator.hpp"
+#include <vector>
 
 typedef uint64_t sindex_t; // index of a state
-
-enum result_t : uint8_t {
-  RESULT_WIN,
-  RESULT_LOSS,
-  RESULT_DRAW
-};
 
 class OptComputer {
   public:
@@ -21,8 +17,11 @@ class OptComputer {
     GameStateHandler* gameStateHandler;
     NcrCalculator* ncrCalculator;
     OrdCalculator* ordCalculator;
-    void computeClass(nbit_t numX, nbit_t numO);
-    state_t indexToState(sindex_t stateIndex, nbit_t numX, nbit_t numO, sindex_t numStates);
+    DataHandler* dataHandler;
+    void computeClass(nbit_t numA, nbit_t numB, std::vector<result_t> resultsCacheNormPlus, std::vector<result_t> resultsCacheFlipPlus);
+    void initialScanClass(nbit_t numX, nbit_t numO, std::vector<result_t> &results, sindex_t numStates);
+    void valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result_t> &results, sindex_t numStates, std::vector<result_t> &resultsOther, std::vector<result_t> &resultsCachePlus, bool &updateMade);
+    state_t indexToState(sindex_t stateIndex, nbit_t numX, nbit_t numO);
     sindex_t stateToIndex(state_t state);
     state_t unfilterOState(state_t oFilteredState, state_t xState);
     state_t filterOState(state_t oState, state_t xState);

@@ -94,22 +94,26 @@ void GraphicsHandler::drawBoardBase(state_t state, colormode_t colorMode) {
       if (dir == DIR_LEFT) {
         drawTile(tileChoiceX, len, TILE_X, alphaInsert, colorMode);
         if (insertChoiceX == tileChoiceX && insertChoiceY == len) {
-          dirChoice = dir;
+          moveChoice = move;
+          gettingInputQ = false;
         }
       } else if (dir == DIR_RIGHT) {
         drawTile(tileChoiceX, -1, TILE_X, alphaInsert, colorMode);
         if (insertChoiceX == tileChoiceX && insertChoiceY == -1) {
-          dirChoice = dir;
+          moveChoice = move;
+          gettingInputQ = false;
         }
       } else if (dir == DIR_DOWN) {
         drawTile(-1, tileChoiceY, TILE_X, alphaInsert, colorMode);
         if (insertChoiceX == -1 && insertChoiceY == tileChoiceY) {
-          dirChoice = dir;
+          moveChoice = move;
+          gettingInputQ = false;
         }
       } else if (dir == DIR_UP) {
         drawTile(len, tileChoiceY, TILE_X, alphaInsert, colorMode);
         if (insertChoiceX == len && insertChoiceY == tileChoiceY) {
-          dirChoice = dir;
+          moveChoice = move;
+          gettingInputQ = false;
         }
       }
     }
@@ -147,7 +151,6 @@ void GraphicsHandler::drawBoard(state_t state, colormode_t colorMode) {
   tileChoiceY = nullChoice;
   insertChoiceX = nullChoice;
   insertChoiceY = nullChoice;
-  dirChoice = DIR_UNDEFINED;
   drawBoardBase(state, colorMode);
   glfwPollEvents();
 }
@@ -161,12 +164,11 @@ move_t GraphicsHandler::drawBoardGetInput(state_t state, colormode_t colorMode) 
   tileChoiceY = nullChoice;
   insertChoiceX = nullChoice;
   insertChoiceY = nullChoice;
-  dirChoice = DIR_UNDEFINED;
-  while (dirChoice == DIR_UNDEFINED) {
+  while (gettingInputQ) {
     drawBoardBase(state, colorMode);
     glfwPollEvents();
   }
-  return gameStateHandler->moveHandler->create(dirChoice, tileChoiceX, tileChoiceY);
+  return moveChoice;
 }
 
 void GraphicsHandler::drawTile(bindex_t i, bindex_t j, tile_t tileType, float alpha, colormode_t colorMode) {

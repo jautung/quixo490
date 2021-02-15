@@ -7,22 +7,28 @@
 namespace {
   nbit_t stateNBits = 64;
   nbit_t halfStateNBits = stateNBits/2;
+  move_t moveFieldMask = 0b1111;
+  move_t moveMainMask = 0b111111111111;
 }
 
-move_t MoveHandler::create(dir_t dir, bindex_t rowIndex, bindex_t colIndex) {
-  return dir | rowIndex << 4 | colIndex << 10;
+move_t MoveHandler::create(dir_t dir, bindex_t rowIndex, bindex_t colIndex, mkind_t moveKind) {
+  return dir | rowIndex << 4 | colIndex << 8 | moveKind << 12;
 }
 
 dir_t MoveHandler::getDir(move_t move) {
-  return (dir_t)(move & 0b1111);
+  return (dir_t)(move & moveFieldMask);
 }
 
 bindex_t MoveHandler::getRow(move_t move) {
-  return (bindex_t)((move >> 4) & 0b111111);
+  return (bindex_t)((move >> 4) & moveFieldMask);
 }
 
 bindex_t MoveHandler::getCol(move_t move) {
-  return (bindex_t)((move >> 10) & 0b111111);
+  return (bindex_t)((move >> 8) & moveFieldMask);
+}
+
+mkind_t MoveHandler::getKind(move_t move) {
+  return (mkind_t)((move >> 12) & moveFieldMask);
 }
 
 void MoveHandler::print(move_t move) {
@@ -105,7 +111,7 @@ GameStateHandler::GameStateHandler(len_t initLen) {
     }
     mask = (mask << halfStateNBits) | mask; // mask both X's and O's
 
-    makeMoveCache[move] = std::make_tuple(mask, newTile);
+    makeMoveCache[move & moveMainMask] = std::make_tuple(mask, newTile);
   }
 }
 
@@ -134,16 +140,16 @@ std::vector<move_t> GameStateHandler::allMoves(state_t state) {
         auto tile = getTile(state, i, j);
         if (tile == TILE_X || tile == TILE_EMPTY) {
           if (j != len) {
-            moves.push_back(moveHandler->create(DIR_LEFT, i, j));
+            moves.push_back(moveHandler->create(DIR_LEFT, i, j, tile == TILE_EMPTY ? MKIND_PLUS : MKIND_ZERO));
           }
           if (j != 0) {
-            moves.push_back(moveHandler->create(DIR_RIGHT, i, j));
+            moves.push_back(moveHandler->create(DIR_RIGHT, i, j, tile == TILE_EMPTY ? MKIND_PLUS : MKIND_ZERO));
           }
           if (i != 0) {
-            moves.push_back(moveHandler->create(DIR_DOWN, i, j));
+            moves.push_back(moveHandler->create(DIR_DOWN, i, j, tile == TILE_EMPTY ? MKIND_PLUS : MKIND_ZERO));
           }
           if (i != len) {
-            moves.push_back(moveHandler->create(DIR_UP, i, j));
+            moves.push_back(moveHandler->create(DIR_UP, i, j, tile == TILE_EMPTY ? MKIND_PLUS : MKIND_ZERO));
           }
         }
       }
@@ -153,7 +159,7 @@ std::vector<move_t> GameStateHandler::allMoves(state_t state) {
 }
 
 state_t GameStateHandler::makeMove(state_t state, move_t move) {
-  auto cached = makeMoveCache[move];
+  auto cached = makeMoveCache[move & moveMainMask];
   state_t mask = std::get<0>(cached);
   state_t newTile = std::get<1>(cached);
   auto dir = moveHandler->getDir(move);

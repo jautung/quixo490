@@ -24,14 +24,21 @@ enum dir_t : uint8_t {    // direction
   DIR_UNDEFINED
 };
 
-typedef uint16_t move_t;  // from LSB to MSB: 4 bits direction, 6 bits row index, 6 bits column index
+enum mkind_t : uint8_t {
+  MKIND_ZERO,
+  MKIND_PLUS,
+  MKIND_UNDEFINED
+};
+
+typedef uint16_t move_t;  // from LSB to MSB: 4 bits direction, 4 bits row index, 4 bits column index, 4 bits move kind
 
 class MoveHandler {
   public:
-    move_t create(dir_t dir, bindex_t rowIndex, bindex_t colIndex);
+    move_t create(dir_t dir, bindex_t rowIndex, bindex_t colIndex, mkind_t moveKind = MKIND_UNDEFINED);
     dir_t getDir(move_t move);
     bindex_t getRow(move_t move);
     bindex_t getCol(move_t move);
+    mkind_t getKind(move_t move);
     void print(move_t move);
 };
 
