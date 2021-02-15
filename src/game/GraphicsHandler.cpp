@@ -14,9 +14,8 @@ namespace {
   int waitCloseMs = 1000;
 }
 
-GraphicsHandler::GraphicsHandler(int initScreenResX, int initScreenResY, GameStateHandler* initGameStateHandler) {
-  screenResX = initScreenResX;
-  screenResY = initScreenResY;
+GraphicsHandler::GraphicsHandler(int initScreenRes, GameStateHandler* initGameStateHandler) {
+  screenRes = initScreenRes;
   gameStateHandler = initGameStateHandler;
 
   if (!glfwInit()) {
@@ -24,7 +23,7 @@ GraphicsHandler::GraphicsHandler(int initScreenResX, int initScreenResY, GameSta
   }
   glfwSetErrorCallback(glfwErrorCallback);
 
-  window = glfwCreateWindow(screenResX, screenResY, "Quixo", NULL, NULL);
+  window = glfwCreateWindow(screenRes, screenRes, "Quixo", NULL, NULL);
   if (!window) {
     glfwTerminate();
     glfwErrorCallback(1, "create window failed");
@@ -207,8 +206,8 @@ void GraphicsHandler::onMouseButtonLeftPress(double xRawPos, double yRawPos) {
   if (!gettingInputQ) {
     return;
   }
-  auto xPos = 2*xRawPos/screenResX - 1;
-  auto yPos = 1 - 2*yRawPos/screenResY;
+  auto xPos = 2*xRawPos/screenRes - 1;
+  auto yPos = 1 - 2*yRawPos/screenRes;
 
   auto len = gameStateHandler->len;
   for (bindex_t i = -1; i < len+1; i++) {

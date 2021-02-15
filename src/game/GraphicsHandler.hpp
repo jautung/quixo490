@@ -9,13 +9,12 @@ enum colormode_t : uint8_t {
 
 class GraphicsHandler {
   public:
-    GraphicsHandler(int initScreenResX, int initScreenResY, GameStateHandler* initGameStateHandler);
+    GraphicsHandler(int initScreenRes, GameStateHandler* initGameStateHandler);
     ~GraphicsHandler();
     void drawBoard(state_t state, colormode_t colorMode = COLOR_NORM);
     move_t drawBoardGetInput(state_t state, colormode_t colorMode = COLOR_NORM);
   private:
-    int screenResX;
-    int screenResY;
+    int screenRes;
     GameStateHandler* gameStateHandler;
     static void glfwErrorCallback(int error, const char* description);
     GLFWwindow* window;
