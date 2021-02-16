@@ -12,7 +12,7 @@ enum winner_t : uint8_t {
 
 class GamePlayHandler {
   public:
-    GamePlayHandler(Player* initPlayerX, Player* initPlayerO, int initTimePauseMs, GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler);
+    GamePlayHandler(Player* initPlayerX, Player* initPlayerO, int initTimePauseMs, GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler = NULL, bool initSilent = false);
     void startGame(state_t initState = 0b0);
     winner_t playTurn();
     winner_t playNTurns(int nTurns);
@@ -23,6 +23,7 @@ class GamePlayHandler {
     int timePauseMs;
     GameStateHandler* gameStateHandler;
     GraphicsHandler* graphicsHandler;
+    bool silent;
     state_t state;
     void displayGameState();
 };

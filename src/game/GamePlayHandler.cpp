@@ -4,12 +4,13 @@
 #include <iostream>
 #include <thread>
 
-GamePlayHandler::GamePlayHandler(Player* initPlayerX, Player* initPlayerO, int initTimePauseMs, GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler) {
+GamePlayHandler::GamePlayHandler(Player* initPlayerX, Player* initPlayerO, int initTimePauseMs, GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler, bool initSilent) {
   playerX = initPlayerX;
   playerO = initPlayerO;
   timePauseMs = initTimePauseMs;
   gameStateHandler = initGameStateHandler;
   graphicsHandler = initGraphicsHandler;
+  silent = initSilent;
 }
 
 void GamePlayHandler::startGame(state_t initState) {
@@ -23,8 +24,10 @@ winner_t GamePlayHandler::playTurn() {
   if (!dynamic_cast<InteractivePlayer*>(playerX)) { // pause for all except interactive player
     std::this_thread::sleep_for(std::chrono::milliseconds(timePauseMs));
   }
-  std::cout << "X's Move: ";
-  gameStateHandler->moveHandler->print(move);
+  if (!silent) {
+    std::cout << "X's Move: ";
+    gameStateHandler->moveHandler->print(move);
+  }
   state = gameStateHandler->makeMove(state, move);
 
   if (gameStateHandler->containsLine(state, TILE_O)) {
@@ -42,8 +45,10 @@ winner_t GamePlayHandler::playTurn() {
   if (!dynamic_cast<InteractivePlayer*>(playerO)) { // pause for all except interactive player
     std::this_thread::sleep_for(std::chrono::milliseconds(timePauseMs));
   }
-  std::cout << "O's Move: ";
-  gameStateHandler->moveHandler->print(move);
+  if (!silent) {
+    std::cout << "O's Move: ";
+    gameStateHandler->moveHandler->print(move);
+  }
   state = gameStateHandler->makeMove(state, move);
   state = gameStateHandler->swapPlayers(state);
 
@@ -79,9 +84,11 @@ winner_t GamePlayHandler::playTillEnd() {
 }
 
 void GamePlayHandler::displayGameState() {
-  if (!graphicsHandler) {
-    gameStateHandler->print(state);
-  } else {
-    graphicsHandler->drawBoard(state);
+  if (!silent) {
+    if (!graphicsHandler) {
+      gameStateHandler->print(state);
+    } else {
+      graphicsHandler->drawBoard(state);
+    }
   }
 }

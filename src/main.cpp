@@ -7,7 +7,7 @@
 #include <random>
 #include <tclap/CmdLine.h>
 
-Player* getPlayer(std::string playerType, GameStateHandler* gameStateHandler, GraphicsHandler* graphicsHandler) {
+Player* getPlayer(std::string playerType, GameStateHandler* gameStateHandler, GraphicsHandler* graphicsHandler = NULL) {
   if (playerType == "random") {
     return new RandomPlayer(gameStateHandler);
   } else if (playerType == "interact") {
@@ -25,11 +25,11 @@ Player* getPlayer(std::string playerType, GameStateHandler* gameStateHandler, Gr
 int main(int argc, char* argv[]) {
   try {
     TCLAP::CmdLine cmd("Quixo Project");
-    TCLAP::ValueArg<std::string> progArg("p", "program", "Program to run (`play`, `opt-compute`, or `mcts-compute`)", false, "play", "string", cmd);
-    TCLAP::ValueArg<int> lenArg("l", "len", "For `play` or `opt-compute` program: number of tiles per side", false, 5, "integer", cmd);
-    TCLAP::ValueArg<std::string> playerXTypeArg("X", "playerX", "For `play` program: player X type (`random`, `interact`, `opt`, or `mcts`)", false, "random", "string", cmd);
-    TCLAP::ValueArg<std::string> playerOTypeArg("O", "playerO", "For `play` program: player O type (`random`, `interact`, `opt`, or `mcts`)", false, "random", "string", cmd);
-    TCLAP::ValueArg<int> nStepsArg("n", "nsteps", "For `play` program: number of steps to run (<0: till the end)", false, -1, "integer", cmd);
+    TCLAP::ValueArg<std::string> progArg("p", "program", "Program to run (`play`, `test`, `opt-compute`, or `mcts-compute`)", false, "play", "string", cmd);
+    TCLAP::ValueArg<int> lenArg("l", "len", "For `play`, `test` or `opt-compute` program: number of tiles per side", false, 5, "integer", cmd);
+    TCLAP::ValueArg<std::string> playerXTypeArg("X", "playerX", "For `play` or `test` program: player X type (`random`, `interact`, `opt`, or `mcts`)", false, "random", "string", cmd);
+    TCLAP::ValueArg<std::string> playerOTypeArg("O", "playerO", "For `play` or `test` program: player O type (`random`, `interact`, `opt`, or `mcts`)", false, "random", "string", cmd);
+    TCLAP::ValueArg<int> nStepsArg("n", "nsteps", "For `play` or `test` program: number of steps or iterations to run respectively (0: till the end for `play`)", false, 0, "integer", cmd);
     TCLAP::ValueArg<int> timePauseMsArg("t", "timepause", "For `play` program: time (in milliseconds) to pause between steps", false, 0, "integer", cmd);
     TCLAP::ValueArg<int> graphicsResArg("g", "graphicsres", "For `play` program: graphical output screen resolution (0: no graphics)", false, 0, "integer", cmd);
     cmd.parse(argc, argv);
@@ -53,7 +53,7 @@ int main(int argc, char* argv[]) {
       auto playerO = getPlayer(playerOType, gameStateHandler, graphicsHandler);
       auto gamePlayHandler = new GamePlayHandler(playerX, playerO, timePauseMs, gameStateHandler, graphicsHandler);
       gamePlayHandler->startGame();
-      auto winner = nSteps < 0 ? gamePlayHandler->playTillEnd() : gamePlayHandler->playNTurns(nSteps);
+      auto winner = nSteps <= 0 ? gamePlayHandler->playTillEnd() : gamePlayHandler->playNTurns(nSteps);
       if (winner == WINNER_X) {
         std::cout << "X Wins!\n";
       } else if (winner == WINNER_O) {
@@ -62,6 +62,29 @@ int main(int argc, char* argv[]) {
         std::cout << "No Winner Yet.\n";
       }
       delete graphicsHandler;
+      delete playerX;
+      delete playerO;
+      delete gamePlayHandler;
+    } else if (prog == "test") {
+      srand(time(0));
+      auto playerX = getPlayer(playerXType, gameStateHandler);
+      auto playerO = getPlayer(playerOType, gameStateHandler);
+      auto gamePlayHandler = new GamePlayHandler(playerX, playerO, timePauseMs, gameStateHandler, NULL, true);
+      int xWins = 0;
+      int oWins = 0;
+      int draws = 0;
+      for (int i = 0; i < nSteps; i++) {
+        gamePlayHandler->startGame();
+        auto winner = gamePlayHandler->playTillEnd();
+        if (winner == WINNER_X) {
+          xWins += 1;
+        } else if (winner == WINNER_O) {
+          oWins += 1;
+        } else if (winner == WINNER_UNKNOWN) {
+          draws += 1;
+        }
+      }
+      std::cout << "Results (X-O-D): " << xWins << "-" << oWins << "-" << draws << "\n";
       delete playerX;
       delete playerO;
       delete gamePlayHandler;
