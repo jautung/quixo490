@@ -10,6 +10,16 @@
 
 ### Usage
 - `make && ./bin/quixo -h` brings up the possible usages.
+- Some common usages:
+  - `make purge`: clears any cached data.
+  - `./bin/quixo -p opt-compute -l 2`: pre-computes optimal moves for the optimal player for a 2X2 board.
+  - `./bin/quixo -p opt-compute -l 3`: pre-computes optimal moves for the optimal player for a 3X3 board.
+  - `./bin/quixo -p opt-compute -l 4`: pre-computes optimal moves for the optimal player for a 4X4 board.
+  - `./bin/quixo -X interact -g 800`: play interactively as X against a random player O.
+  - `./bin/quixo -X interact -g 800 -l 3`: play interactively as X against a random player O on a 3X3 board.
+  - `./bin/quixo -X opt -O interact -g 800 -l 3`: play interactively as O against an optimal player X on a 3X3 board.
+  - `./bin/quixo -p test -X opt -n 1000 -l 3`: test optimal player X against random player O for 1000 iterations on a 3X3 board.
+  - `./bin/quixo -p test -O opt -n 1000 -l 3`: test optimal player O against random player X for 1000 iterations on a 3X3 board.
 
 ## References
 - [Quixo Is Solved](https://arxiv.org/abs/2007.15895).
