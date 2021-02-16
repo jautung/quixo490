@@ -53,6 +53,8 @@ class GameStateHandler {
     state_t makeMove(state_t state, move_t move);
     state_t swapPlayers(state_t state);
     bool containsLine(state_t state, tile_t tileType);
+    nbit_t getNumX(state_t state);
+    nbit_t getNumO(state_t state);
     void print(state_t state);
   private:
     state_t rowMaskFull;

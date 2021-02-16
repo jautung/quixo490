@@ -2,6 +2,7 @@
 #include "DataHandler.hpp"
 #include <cstdint>
 #include <fstream>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -11,7 +12,7 @@ namespace {
   std::string dataDirPath = "data/optimal/";
 }
 
-void DataHandler::saveData(std::vector<result_t> &results, len_t len, nbit_t numX, nbit_t numO) {
+void DataHandler::saveClass(std::vector<result_t> &results, len_t len, nbit_t numX, nbit_t numO) {
   byte_t byteBuffer[byteBufferSize];
   std::ofstream dataFileStream(dataFileName(len, numX, numO), std::ios::out|std::ios::binary);
 
@@ -33,9 +34,13 @@ void DataHandler::saveData(std::vector<result_t> &results, len_t len, nbit_t num
   dataFileStream.close();
 }
 
-std::vector<result_t> DataHandler::loadData(len_t len, nbit_t numX, nbit_t numO) {
+std::vector<result_t> DataHandler::loadClass(len_t len, nbit_t numX, nbit_t numO) {
   byte_t byteBuffer[byteBufferSize];
   std::ifstream dataFileStream(dataFileName(len, numX, numO), std::ios::in|std::ios::binary);
+  if (dataFileStream.fail()) {
+    std::cerr << "error: " << "data file cannot be opened: " << dataFileName(len, numX, numO) << "\n";
+    exit(1);
+  }
 
   std::vector<result_t> results;
   while (dataFileStream) { // reading bytes in byte blocks of byteBufferSize
@@ -57,6 +62,24 @@ void DataHandler::loadByte(byte_t byte, std::vector<result_t> &results) {
   results.push_back((result_t)((byte >> 2) & resultMask));
   results.push_back((result_t)((byte >> 4) & resultMask));
   results.push_back((result_t)((byte >> 6) & resultMask));
+}
+
+result_t DataHandler::loadState(len_t len, nbit_t numX, nbit_t numO, sindex_t stateIndex) {
+  byte_t byteBuffer[1];
+  std::ifstream dataFileStream(dataFileName(len, numX, numO), std::ios::in|std::ios::binary);
+  if (dataFileStream.fail()) {
+    std::cerr << "error: " << "data file cannot be opened: " << dataFileName(len, numX, numO) << "\n";
+    exit(1);
+  }
+
+  auto byteIndex = stateIndex/4;
+  auto byteOffset = 2 * stateIndex%4;
+  dataFileStream.seekg(byteIndex);
+  dataFileStream.read(byteBuffer, 1);
+  result_t result = (result_t)((byteBuffer[0] >> byteOffset) & resultMask);
+
+  dataFileStream.close();
+  return result;
 }
 
 std::string DataHandler::dataFileName(len_t len, nbit_t numX, nbit_t numO) {

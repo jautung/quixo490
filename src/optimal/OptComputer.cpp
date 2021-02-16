@@ -32,9 +32,9 @@ void OptComputer::computeAll() {
       std::vector<result_t> resultsCacheNormPlus;
       std::vector<result_t> resultsCacheFlipPlus;
       if (numUsed != numTiles) {
-        resultsCacheNormPlus = dataHandler->loadData(gameStateHandler->len, numB, numA+1); // (numA, numB) -- +1 --> (numB, numA+1)
+        resultsCacheNormPlus = dataHandler->loadClass(gameStateHandler->len, numB, numA+1); // (numA, numB) -- +1 --> (numB, numA+1)
         if (numA != numB) {
-          resultsCacheFlipPlus = dataHandler->loadData(gameStateHandler->len, numA, numB+1); // (numB, numA) -- +1 --> (numA, numB+1)
+          resultsCacheFlipPlus = dataHandler->loadClass(gameStateHandler->len, numA, numB+1); // (numB, numA) -- +1 --> (numA, numB+1)
         }
       }
       computeClass(numA, numB, resultsCacheNormPlus, resultsCacheFlipPlus);
@@ -72,9 +72,9 @@ void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result_t> r
     }
   }
 
-  dataHandler->saveData(resultsNorm, gameStateHandler->len, numA, numB);
+  dataHandler->saveClass(resultsNorm, gameStateHandler->len, numA, numB);
   if (numA != numB) {
-    dataHandler->saveData(resultsFlip, gameStateHandler->len, numB, numA);
+    dataHandler->saveClass(resultsFlip, gameStateHandler->len, numB, numA);
   }
 }
 
@@ -141,8 +141,8 @@ sindex_t OptComputer::stateToIndex(state_t state) {
   auto oFilteredState = filterOState(oState, xState);
   auto xOrd = ordCalculator->stateToOrd(xState);
   auto oFilteredOrd = ordCalculator->stateToOrd(oFilteredState);
-  nbit_t numX = __builtin_popcount(xState);
-  nbit_t numO = __builtin_popcount(oFilteredOrd);
+  auto numX = gameStateHandler->getNumX(state);
+  auto numO = gameStateHandler->getNumO(state);
   sindex_t coeff = ncrCalculator->ncr(numTiles-numX, numO);
   return xOrd*coeff + oFilteredOrd;
 }

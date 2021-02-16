@@ -7,6 +7,8 @@
 namespace {
   nbit_t stateNBits = 64;
   nbit_t halfStateNBits = stateNBits/2;
+  state_t xStateMask = 0b1111111111111111111111111111111100000000000000000000000000000000;
+  state_t oStateMask = 0b0000000000000000000000000000000011111111111111111111111111111111;
   move_t moveFieldMask = 0b1111;
   move_t moveMainMask = 0b111111111111;
 }
@@ -202,6 +204,14 @@ bool GameStateHandler::containsLine(state_t state, tile_t tileType) {
     return true;
   }
   return false;
+}
+
+nbit_t GameStateHandler::getNumX(state_t state) {
+  return __builtin_popcount(state & xStateMask);
+}
+
+nbit_t GameStateHandler::getNumO(state_t state) {
+  return __builtin_popcount(state & oStateMask);
 }
 
 void GameStateHandler::print(state_t state) {

@@ -16,8 +16,9 @@ enum result_t : uint8_t {
 
 class DataHandler {
   public:
-    void saveData(std::vector<result_t> &results, len_t len, nbit_t numX, nbit_t numO);
-    std::vector<result_t> loadData(len_t len, nbit_t numX, nbit_t numO);
+    void saveClass(std::vector<result_t> &results, len_t len, nbit_t numX, nbit_t numO);
+    std::vector<result_t> loadClass(len_t len, nbit_t numX, nbit_t numO);
+    result_t loadState(len_t len, nbit_t numX, nbit_t numO, sindex_t stateIndex);
   private:
     void loadByte(char byte, std::vector<result_t> &results);
     std::string dataFileName(len_t len, nbit_t numX, nbit_t numO);

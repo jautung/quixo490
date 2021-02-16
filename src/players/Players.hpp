@@ -1,6 +1,8 @@
 #pragma once
 #include "../game/GameStateHandler.hpp"
 #include "../game/GraphicsHandler.hpp"
+#include "../optimal/DataHandler.hpp"
+#include "../optimal/OptComputer.hpp"
 
 class Player {
   public:
@@ -20,27 +22,28 @@ class Player {
 class RandomPlayer : public Player {
   using Player::Player;
   public:
-    ~RandomPlayer() {}
     move_t selectMove(state_t state, colormode_t colorMode) override;
 };
 
 class InteractivePlayer : public Player {
   using Player::Player;
   public:
-    ~InteractivePlayer() {}
     move_t selectMove(state_t state, colormode_t colorMode) override;
 };
 
 class OptimalPlayer : public Player {
-  using Player::Player;
   public:
-    ~OptimalPlayer() {}
+    OptimalPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler = NULL);
+    ~OptimalPlayer();
     move_t selectMove(state_t state, colormode_t colorMode) override;
+  private:
+    OptComputer* optComputer;
+    DataHandler* dataHandler;
+    result_t evalState(state_t state);
 };
 
 class MCTSPlayer : public Player {
   using Player::Player;
   public:
-    ~MCTSPlayer() {}
     move_t selectMove(state_t state, colormode_t colorMode) override;
 };
