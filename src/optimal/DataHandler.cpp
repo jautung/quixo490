@@ -70,7 +70,7 @@ result_t DataHandler::loadState(len_t len, nbit_t numX, nbit_t numO, sindex_t st
   }
 
   auto byteIndex = stateIndex/4;
-  auto byteOffset = 2 * stateIndex%4;
+  auto byteOffset = 2 * (stateIndex%4);
   dataFileStream.seekg(byteIndex);
   dataFileStream.read(byteBuffer, 1);
   result_t result = (result_t)((byteBuffer[0] >> byteOffset) & resultMask);
