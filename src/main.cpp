@@ -68,7 +68,8 @@ int main(int argc, char* argv[]) {
     } else if (prog == "test") {
       srand(time(0));
       if (playerXType == "interact" || playerOType == "interact") {
-        std::cerr << "warning: " << "using an interactive player for test runs is not a good idea\n";
+        std::cerr << "warning: " << "using an interactive player for test runs is not a good idea; aborting\n";
+        exit(1);
       }
       auto playerX = getPlayer(playerXType, gameStateHandler);
       auto playerO = getPlayer(playerOType, gameStateHandler);
