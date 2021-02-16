@@ -3,6 +3,7 @@
 #include "game/GraphicsHandler.hpp"
 #include "optimal/OptComputer.hpp"
 #include "players/Players.hpp"
+#include <chrono>
 #include <iostream>
 #include <random>
 #include <tclap/CmdLine.h>
@@ -93,8 +94,13 @@ int main(int argc, char* argv[]) {
       delete playerO;
       delete gamePlayHandler;
     } else if (prog == "opt-compute") {
+      auto startTime = std::chrono::high_resolution_clock::now();
       auto optComputer = new OptComputer(len*len, gameStateHandler);
+      auto endTime = std::chrono::high_resolution_clock::now();
+      std::cout << "OptComputer initialization time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime-startTime).count()/1000.0 << "\n";
       optComputer->computeAll();
+      endTime = std::chrono::high_resolution_clock::now();
+      std::cout << "OptComputer total time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime-startTime).count()/1000.0 << "\n";
       delete optComputer;
     } else if (prog == "mcts-compute") {
       // TODO

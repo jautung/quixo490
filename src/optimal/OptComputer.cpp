@@ -3,6 +3,8 @@
 #include "NcrCalculator.hpp"
 #include "OptComputer.hpp"
 #include "OrdCalculator.hpp"
+#include <chrono>
+#include <iostream>
 #include <vector>
 
 namespace {
@@ -22,6 +24,7 @@ OptComputer::OptComputer(nbit_t initNumTiles, GameStateHandler* initGameStateHan
 OptComputer::~OptComputer() {
   delete ncrCalculator;
   delete ordCalculator;
+  std::cout << "Total file I/O time (s): " << dataHandler->ioTime/1000.0 << "\n";
   delete dataHandler;
 }
 
@@ -46,6 +49,8 @@ void OptComputer::computeAll() {
 }
 
 void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result_t> resultsCacheNormPlus, std::vector<result_t> resultsCacheFlipPlus) { // value iteration
+  auto startTime = std::chrono::high_resolution_clock::now();
+
   sindex_t numStates = ncrCalculator->ncr(numTiles, numA) * ncrCalculator->ncr(numTiles-numA, numB);
   std::vector<result_t> resultsNorm;
   std::vector<result_t> resultsFlip;
@@ -71,6 +76,9 @@ void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result_t> r
       break;
     }
   }
+
+  auto endTime = std::chrono::high_resolution_clock::now();
+  std::cout << "Class (" << +numA << ", " << +numB << ") compute time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime-startTime).count()/1000.0 << "\n";
 
   dataHandler->saveClass(resultsNorm, gameStateHandler->len, numA, numB);
   if (numA != numB) {

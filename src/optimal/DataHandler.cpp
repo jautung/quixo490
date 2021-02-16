@@ -1,5 +1,6 @@
 #include "../game/GameStateHandler.hpp"
 #include "DataHandler.hpp"
+#include <chrono>
 #include <cstdint>
 #include <fstream>
 #include <iostream>
@@ -12,7 +13,13 @@ namespace {
   std::string dataDirPath = "data/optimal/";
 }
 
+DataHandler::DataHandler() {
+  ioTime = 0;
+}
+
 void DataHandler::saveClass(std::vector<result_t> &results, len_t len, nbit_t numX, nbit_t numO) {
+  auto startTime = std::chrono::high_resolution_clock::now();
+
   byte_t byteBuffer[byteBufferSize];
   std::ofstream dataFileStream(dataFileName(len, numX, numO), std::ios::out|std::ios::binary);
 
@@ -32,9 +39,14 @@ void DataHandler::saveClass(std::vector<result_t> &results, len_t len, nbit_t nu
   }
 
   dataFileStream.close();
+
+  auto endTime = std::chrono::high_resolution_clock::now();
+  ioTime += std::chrono::duration_cast<std::chrono::milliseconds>(endTime-startTime).count();
 }
 
 std::vector<result_t> DataHandler::loadClass(len_t len, nbit_t numX, nbit_t numO) {
+  auto startTime = std::chrono::high_resolution_clock::now();
+
   byte_t byteBuffer[byteBufferSize];
   std::ifstream dataFileStream(dataFileName(len, numX, numO), std::ios::in|std::ios::binary);
   if (dataFileStream.fail()) {
@@ -51,6 +63,10 @@ std::vector<result_t> DataHandler::loadClass(len_t len, nbit_t numX, nbit_t numO
   }
 
   dataFileStream.close();
+
+  auto endTime = std::chrono::high_resolution_clock::now();
+  ioTime += std::chrono::duration_cast<std::chrono::milliseconds>(endTime-startTime).count();
+
   return results;
 }
 
