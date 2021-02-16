@@ -60,5 +60,5 @@ void DataHandler::loadByte(byte_t byte, std::vector<result_t> &results) {
 }
 
 std::string DataHandler::dataFileName(len_t len, nbit_t numX, nbit_t numO) {
-  return dataDirPath + "len" + std::to_string(len) + "x" + std::to_string(numX) + "o" + std::to_string(numO) + ".dat";
+  return dataDirPath + "len" + std::to_string(len) + "_x" + std::to_string(numX) + "_o" + std::to_string(numO) + ".dat";
 }
