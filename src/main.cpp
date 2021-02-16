@@ -101,6 +101,7 @@ int main(int argc, char* argv[]) {
       optComputer->computeAll();
       endTime = std::chrono::high_resolution_clock::now();
       std::cout << "OptComputer total time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime-startTime).count()/1000.0 << "\n";
+      std::cout << "Total file I/O time (s): " << optComputer->dataHandler->ioTime/1000.0 << "\n";
       delete optComputer;
     } else if (prog == "mcts-compute") {
       // TODO

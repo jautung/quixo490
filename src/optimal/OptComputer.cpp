@@ -24,7 +24,6 @@ OptComputer::OptComputer(nbit_t initNumTiles, GameStateHandler* initGameStateHan
 OptComputer::~OptComputer() {
   delete ncrCalculator;
   delete ordCalculator;
-  std::cout << "Total file I/O time (s): " << dataHandler->ioTime/1000.0 << "\n";
   delete dataHandler;
 }
 
