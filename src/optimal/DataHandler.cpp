@@ -45,12 +45,9 @@ std::vector<result_t> DataHandler::loadClass(len_t len, nbit_t numX, nbit_t numO
   std::vector<result_t> results;
   while (dataFileStream) { // reading bytes in byte blocks of byteBufferSize
     dataFileStream.read(byteBuffer, byteBufferSize);
-    for (auto byte : byteBuffer) {
-      loadByte(byte, results);
+    for (nbyte_t i = 0; i < dataFileStream.gcount(); i++) {
+      loadByte(byteBuffer[i], results);
     }
-  }
-  for (nbyte_t i = 0; i < dataFileStream.gcount(); i++) { // remaining bytes
-    loadByte(byteBuffer[i], results);
   }
 
   dataFileStream.close();
