@@ -1,5 +1,6 @@
 #pragma once
 #include "../game/GameStateHandler.hpp"
+#include <cstdint>
 #include <unordered_map>
 #include <vector>
 

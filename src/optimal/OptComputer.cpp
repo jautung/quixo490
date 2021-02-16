@@ -3,7 +3,6 @@
 #include "NcrCalculator.hpp"
 #include "OptComputer.hpp"
 #include "OrdCalculator.hpp"
-#include <iostream>
 #include <vector>
 
 namespace {
@@ -27,7 +26,7 @@ OptComputer::~OptComputer() {
 }
 
 void OptComputer::computeAll() {
-  for (nbit_t numUsed = numTiles; numUsed >= 0; numUsed--) {
+  for (nbit_t numUsed = numTiles;; numUsed--) {
     for (nbit_t numA = 0; numA <= numUsed/2; numA++) {
       nbit_t numB = numUsed - numA;
       std::vector<result_t> resultsCacheNormPlus;
@@ -40,11 +39,13 @@ void OptComputer::computeAll() {
       }
       computeClass(numA, numB, resultsCacheNormPlus, resultsCacheFlipPlus);
     }
+    if (numUsed == 0) {
+      break;
+    }
   }
 }
 
 void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result_t> resultsCacheNormPlus, std::vector<result_t> resultsCacheFlipPlus) { // value iteration
-  std::cerr << "compute class with numA=" << +numA << " and numB=" << +numB << "\n";
   sindex_t numStates = ncrCalculator->ncr(numTiles, numA) * ncrCalculator->ncr(numTiles-numA, numB);
   std::vector<result_t> resultsNorm;
   std::vector<result_t> resultsFlip;
@@ -53,15 +54,12 @@ void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result_t> r
     resultsFlip.reserve(numStates);
   }
 
-  std::cerr << "pre-computation done; beginning value iteration (numStates=" << numStates << ")\n";
   initialScanClass(numA, numB, resultsNorm, numStates);
   if (numA != numB) {
     initialScanClass(numB, numA, resultsFlip, numStates);
   }
 
-  std::cerr << "initial scan done\n";
   while (true) {
-    std::cerr << "one iteration starts...\n";
     bool updateMade = false;
     if (numA != numB) {
       valueIterateClass(numA, numB, resultsNorm, numStates, resultsFlip, resultsCacheNormPlus, updateMade); // resultsReference of resultsNorm is resultsFlip for MKIND_ZERO and resultsCacheNormPlus for MKIND_PLUS
@@ -69,25 +67,26 @@ void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result_t> r
     } else {
       valueIterateClass(numA, numB, resultsNorm, numStates, resultsNorm, resultsCacheNormPlus, updateMade); // resultsReference of resultsNorm is resultsNorm for MKIND_ZERO and resultsCacheNormPlus for MKIND_PLUS
     }
-    std::cerr << "one iteration ends...\n";
     if (!updateMade) {
       break;
     }
   }
 
   dataHandler->saveData(resultsNorm, gameStateHandler->len, numA, numB);
-  dataHandler->saveData(resultsFlip, gameStateHandler->len, numB, numA);
+  if (numA != numB) {
+    dataHandler->saveData(resultsFlip, gameStateHandler->len, numB, numA);
+  }
 }
 
 void OptComputer::initialScanClass(nbit_t numX, nbit_t numO, std::vector<result_t> &results, sindex_t numStates) {
   for (sindex_t stateIndex = 0; stateIndex < numStates; stateIndex++) {
     auto state = indexToState(stateIndex, numX, numO);
     if (gameStateHandler->containsLine(state, TILE_X)) {
-      results[stateIndex] = RESULT_WIN;
+      results.push_back(RESULT_WIN);
     } else if (gameStateHandler->containsLine(state, TILE_O)) {
-      results[stateIndex] = RESULT_LOSS;
+      results.push_back(RESULT_LOSS);
     } else {
-      results[stateIndex] = RESULT_DRAW;
+      results.push_back(RESULT_DRAW);
     }
   }
 }

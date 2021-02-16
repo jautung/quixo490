@@ -1,5 +1,6 @@
 #pragma once
 #include "GameStateHandler.hpp"
+#include <cstdint>
 #include <GLFW/glfw3.h>
 
 enum colormode_t : uint8_t {

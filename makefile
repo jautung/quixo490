@@ -5,6 +5,7 @@ SRCDIR := src
 BINDIR := bin
 BUILDDIR := build
 BUILDDIRS := build build/game build/optimal build/players
+DATADIRS := data/optimal
 TARGET := bin/quixo
 
 SRCEXT := cpp
@@ -26,3 +27,8 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 clean:
 	@echo "Cleaning..."
 	@echo "$(RM) -r $(BINDIR) $(BUILDDIRS) $(TARGET)"; $(RM) -r $(BINDIR) $(BUILDDIRS) $(TARGET)
+
+purge:
+	@echo "Purging data..."
+	@echo "$(RM) -r $(DATADIRS)"; $(RM) -r $(DATADIRS)
+	@mkdir -p $(DATADIRS)

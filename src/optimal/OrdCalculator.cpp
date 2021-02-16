@@ -8,13 +8,13 @@ OrdCalculator::OrdCalculator(nbit_t initBitLimit) {
   bitLimit = initBitLimit;
 
   std::vector<ord_t> countPerPop;
-  countPerPop.reserve(bitLimit);
+  countPerPop.resize(bitLimit, 0);
   stateToOrdCache.reserve(0b1 << bitLimit);
   for (state_t state = 0; state < 0b1 << bitLimit; state++) {
     nbit_t pop = __builtin_popcount(state);
     ord_t ord = countPerPop[pop];
     ordPopToStateCache[ordPopCreate(ord, pop)] = state;
-    stateToOrdCache[state] = ord;
+    stateToOrdCache.push_back(ord);
     countPerPop[pop] += 1;
   }
 }

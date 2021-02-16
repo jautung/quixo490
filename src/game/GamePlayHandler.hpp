@@ -2,6 +2,7 @@
 #include "../players/Players.hpp"
 #include "GameStateHandler.hpp"
 #include "GraphicsHandler.hpp"
+#include <cstdint>
 
 enum winner_t : uint8_t {
   WINNER_X,

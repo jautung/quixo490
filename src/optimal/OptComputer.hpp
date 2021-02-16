@@ -3,9 +3,8 @@
 #include "DataHandler.hpp"
 #include "NcrCalculator.hpp"
 #include "OrdCalculator.hpp"
+#include <cstdint>
 #include <vector>
-
-typedef uint64_t sindex_t; // index of a state
 
 class OptComputer {
   public:
