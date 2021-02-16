@@ -10,7 +10,7 @@
 Player* getPlayer(std::string playerType, GameStateHandler* gameStateHandler, GraphicsHandler* graphicsHandler) {
   if (playerType == "random") {
     return new RandomPlayer(gameStateHandler);
-  } else if (playerType == "interactive") {
+  } else if (playerType == "interact") {
     return new InteractivePlayer(gameStateHandler, graphicsHandler);
   } else if (playerType == "opt") {
     return new OptimalPlayer(gameStateHandler);
@@ -27,8 +27,8 @@ int main(int argc, char* argv[]) {
     TCLAP::CmdLine cmd("Quixo Project");
     TCLAP::ValueArg<std::string> progArg("p", "program", "Program to run (`play`, `opt-compute`, or `mcts-compute`)", false, "play", "string", cmd);
     TCLAP::ValueArg<int> lenArg("l", "len", "For `play` or `opt-compute` program: number of tiles per side", false, 5, "integer", cmd);
-    TCLAP::ValueArg<std::string> playerXTypeArg("X", "playerX", "For `play` program: player X type (`random`, `opt`, or `mcts`)", false, "random", "string", cmd);
-    TCLAP::ValueArg<std::string> playerOTypeArg("O", "playerO", "For `play` program: player O type (`random`, `opt`, or `mcts`)", false, "random", "string", cmd);
+    TCLAP::ValueArg<std::string> playerXTypeArg("X", "playerX", "For `play` program: player X type (`random`, `interact`, `opt`, or `mcts`)", false, "random", "string", cmd);
+    TCLAP::ValueArg<std::string> playerOTypeArg("O", "playerO", "For `play` program: player O type (`random`, `interact`, `opt`, or `mcts`)", false, "random", "string", cmd);
     TCLAP::ValueArg<int> nStepsArg("n", "nsteps", "For `play` program: number of steps to run (<0: till the end)", false, -1, "integer", cmd);
     TCLAP::ValueArg<int> timePauseMsArg("t", "timepause", "For `play` program: time (in milliseconds) to pause between steps", false, 0, "integer", cmd);
     TCLAP::ValueArg<int> graphicsResArg("g", "graphicsres", "For `play` program: graphical output screen resolution (0: no graphics)", false, 0, "integer", cmd);
