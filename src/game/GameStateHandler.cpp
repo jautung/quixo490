@@ -140,7 +140,7 @@ std::vector<move_t> GameStateHandler::allMoves(state_t state) {
       if (i == 0 || i == len-1 || j == 0 || j == len-1) {
         auto tile = getTile(state, i, j);
         if (tile == TILE_X || tile == TILE_EMPTY) {
-          if (j != len) {
+          if (j != len-1) {
             moves.push_back(moveHandler->create(DIR_LEFT, i, j, tile == TILE_EMPTY ? MKIND_PLUS : MKIND_ZERO));
           }
           if (j != 0) {
@@ -149,7 +149,7 @@ std::vector<move_t> GameStateHandler::allMoves(state_t state) {
           if (i != 0) {
             moves.push_back(moveHandler->create(DIR_DOWN, i, j, tile == TILE_EMPTY ? MKIND_PLUS : MKIND_ZERO));
           }
-          if (i != len) {
+          if (i != len-1) {
             moves.push_back(moveHandler->create(DIR_UP, i, j, tile == TILE_EMPTY ? MKIND_PLUS : MKIND_ZERO));
           }
         }
