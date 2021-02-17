@@ -48,6 +48,11 @@ void OptComputer::computeAll() {
 }
 
 void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result_t> resultsCacheNormPlus, std::vector<result_t> resultsCacheFlipPlus) { // value iteration
+  if (dataHandler->existsClass(gameStateHandler->len, numA, numB) && dataHandler->existsClass(gameStateHandler->len, numB, numA)) {
+    std::cout << "Class (" << +numA << ", " << +numB << ") already computed\n";
+    return;
+  }
+
   auto startTime = std::chrono::high_resolution_clock::now();
 
   sindex_t numStates = ncrCalculator->ncr(numTiles, numA) * ncrCalculator->ncr(numTiles-numA, numB);

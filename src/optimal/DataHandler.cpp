@@ -44,6 +44,13 @@ void DataHandler::saveClass(std::vector<result_t> &results, len_t len, nbit_t nu
   ioTime += std::chrono::duration_cast<std::chrono::milliseconds>(endTime-startTime).count();
 }
 
+bool DataHandler::existsClass(len_t len, nbit_t numX, nbit_t numO) {
+  std::ifstream dataFileStream(dataFileName(len, numX, numO), std::ios::in|std::ios::binary);
+  bool ret = !dataFileStream.fail();
+  dataFileStream.close();
+  return ret;
+}
+
 std::vector<result_t> DataHandler::loadClass(len_t len, nbit_t numX, nbit_t numO) {
   auto startTime = std::chrono::high_resolution_clock::now();
 
