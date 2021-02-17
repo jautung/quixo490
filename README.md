@@ -29,6 +29,7 @@
 ## References
 - [Quixo Is Solved](https://arxiv.org/abs/2007.15895).
 - [Depth in Strategic Games](https://www.semanticscholar.org/paper/Depth-in-Strategic-Games-Lantz-Isaksen/4dedc67aa2191731bf8cf1822d42cea290e73073).
+- [Q-learning and MCTS](https://towardsdatascience.com/deep-reinforcement-learning-and-monte-carlo-tree-search-with-connect-4-ba22a4713e7a).
 
 ## To Do / Next Steps
 1. **Verify and/or visualize the optimal solution as currently computed.** Optimal computation now works for up to 3X3 Quixo. It _seems_ to be correct, but some visualization of the results (i.e. another module) might help to verify this to an extent. For example, the frequency of each type of state (i.e. winning, losing, or draw) in each class (i.e. number of Xs and Os). Or, reading random states and evaluating their types (whilst displaying these to the user).
