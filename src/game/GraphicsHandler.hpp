@@ -1,7 +1,10 @@
 #pragma once
 #include "GameStateHandler.hpp"
 #include <cstdint>
+
+#ifdef __APPLE__
 #include <GLFW/glfw3.h>
+#endif // __APPLE__
 
 enum colormode_t : uint8_t {
   COLOR_NORM,
@@ -10,13 +13,16 @@ enum colormode_t : uint8_t {
 
 class GraphicsHandler {
   public:
-    GraphicsHandler(int initScreenRes, GameStateHandler* initGameStateHandler);
+    GraphicsHandler(GameStateHandler* initGameStateHandler, int initScreenRes);
     ~GraphicsHandler();
     void drawBoard(state_t state, colormode_t colorMode = COLOR_NORM);
     move_t drawBoardGetInput(state_t state, colormode_t colorMode = COLOR_NORM);
   private:
-    int screenRes;
     GameStateHandler* gameStateHandler;
+
+#ifdef __APPLE__
+
+    int screenRes;
     static void glfwErrorCallback(int error, const char* description);
     GLFWwindow* window;
     void drawBoardBase(state_t state, colormode_t colorMode = COLOR_NORM);
@@ -30,4 +36,7 @@ class GraphicsHandler {
     bindex_t insertChoiceX;
     bindex_t insertChoiceY;
     move_t moveChoice;
+
+#endif // __APPLE__
+
 };

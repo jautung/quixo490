@@ -1,8 +1,11 @@
 #include "GameStateHandler.hpp"
 #include "GraphicsHandler.hpp"
+#include <iostream>
+
+#ifdef __APPLE__
+
 #include <chrono>
 #include <GLFW/glfw3.h>
-#include <iostream>
 #include <thread>
 
 namespace {
@@ -14,9 +17,9 @@ namespace {
   int waitCloseMs = 1000;
 }
 
-GraphicsHandler::GraphicsHandler(int initScreenRes, GameStateHandler* initGameStateHandler) {
-  screenRes = initScreenRes;
+GraphicsHandler::GraphicsHandler(GameStateHandler* initGameStateHandler, int initScreenRes) {
   gameStateHandler = initGameStateHandler;
+  screenRes = initScreenRes;
 
   if (!glfwInit()) {
     glfwErrorCallback(1, "initialization failed");
@@ -232,3 +235,23 @@ void GraphicsHandler::onMouseButtonLeftPress(double xRawPos, double yRawPos) {
     }
   }
 }
+
+#else // __APPLE__
+
+GraphicsHandler::GraphicsHandler(GameStateHandler* initGameStateHandler, int initScreenRes) {
+  std::cerr << "warning: " << "trying to set up a graphics handler without glfw\n";
+  gameStateHandler = initGameStateHandler;
+}
+
+GraphicsHandler::~GraphicsHandler() {}
+
+void GraphicsHandler::drawBoard(state_t state, colormode_t colorMode) {
+  std::cerr << "warning: " << "drawing board without a graphics handler is a no-op\n";
+}
+
+move_t GraphicsHandler::drawBoardGetInput(state_t state, colormode_t colorMode) {
+  std::cerr << "warning: " << "drawing board and getting input without a graphics handler returns undefined\n";
+  return gameStateHandler->moveHandler->create(DIR_UNDEFINED, 0, 0);
+}
+
+#endif // __APPLE__

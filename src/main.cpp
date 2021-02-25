@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
     auto gameStateHandler = new GameStateHandler(len);
     if (prog == "play") {
       srand(time(0));
-      auto graphicsHandler = graphicsRes > 0 ? new GraphicsHandler(graphicsRes, gameStateHandler) : NULL;
+      auto graphicsHandler = graphicsRes > 0 ? new GraphicsHandler(gameStateHandler, graphicsRes) : NULL;
       auto playerX = getPlayer(playerXType, gameStateHandler, graphicsHandler);
       auto playerO = getPlayer(playerOType, gameStateHandler, graphicsHandler);
       auto gamePlayHandler = new GamePlayHandler(playerX, playerO, timePauseMs, gameStateHandler, graphicsHandler);
