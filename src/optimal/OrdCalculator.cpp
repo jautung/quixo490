@@ -10,7 +10,7 @@ OrdCalculator::OrdCalculator(nbit_t initBitLimit) {
   std::vector<ord_t> countPerPop;
   countPerPop.resize(bitLimit+1, 0); // bitLimit+1 possible number of pop's
   stateToOrdCache.reserve(0b1 << bitLimit);
-  for (state_t state = 0; state < 0b1 << bitLimit; state++) {
+  for (state_t state = 0; state < (state_t)0b1 << bitLimit; state++) {
     nbit_t pop = __builtin_popcount(state);
     ord_t ord = countPerPop[pop];
     ordPopToStateCache[ordPopCreate(ord, pop)] = state;
@@ -45,7 +45,7 @@ ord_t OrdCalculator::stateToOrd(state_t state) {
     std::cerr << "error: ord: provided state=" << state << " is not non-negative\n";
     return 0;
   }
-  if (state >= 0b1 << bitLimit) {
+  if (state >= (state_t)0b1 << bitLimit) {
     std::cerr << "error: ord: provided state=" << state << " is larger than limit=" << (0b1 << bitLimit) << "\n";
     return 0;
   }

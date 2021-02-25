@@ -1,6 +1,7 @@
 #pragma once
 #include "../game/GameStateHandler.hpp"
 #include <cstdint>
+#include <string>
 #include <vector>
 
 typedef uint64_t sindex_t; // index of a state

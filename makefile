@@ -12,8 +12,11 @@ SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 CFLAGS := -g -Wall -std=c++11
-LDFLAGS := -framework OpenGL -L /usr/local/lib -lglfw
 INC := -I include -I /usr/local/include
+
+ifdef __APPLE__
+LDFLAGS := -framework OpenGL -L /usr/local/lib -lglfw
+endif
 
 $(TARGET): $(OBJECTS)
 	@mkdir -p $(BINDIR)
