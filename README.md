@@ -31,6 +31,9 @@
 - [Depth in Strategic Games](https://www.semanticscholar.org/paper/Depth-in-Strategic-Games-Lantz-Isaksen/4dedc67aa2191731bf8cf1822d42cea290e73073).
 - [Q-learning and MCTS](https://towardsdatascience.com/deep-reinforcement-learning-and-monte-carlo-tree-search-with-connect-4-ba22a4713e7a).
 
+## Notes
+- Feb 25, 2021: tested by writing to dummy files in a for-loop, that the Zoo has >200G of storage (100 files of 2G each).
+
 ## To Do / Next Steps
 0. **Check memory quota on the Zoo.** Either contact mark.wogahn@yale.edu, or just write a dummy program to write large files to a folder for testing purposes (200GB is the target).
 1. **Verify and/or visualize the optimal solution as currently computed.** Optimal computation now works for up to 3X3 Quixo. It _seems_ to be correct, but some visualization of the results (i.e. another module) might help to verify this to an extent. For example, the frequency of each type of state (i.e. winning, losing, or draw) in each class (i.e. number of Xs and Os). Or, reading random states and evaluating their types (whilst displaying these to the user).
