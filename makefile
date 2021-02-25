@@ -14,7 +14,7 @@ OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 CFLAGS := -g -Wall -std=c++11
 INC := -I include -I /usr/local/include
 
-ifdef __APPLE__
+ifneq ($(USER), "jc3395")
 LDFLAGS := -framework OpenGL -L /usr/local/lib -lglfw
 endif
 
