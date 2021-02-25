@@ -35,7 +35,6 @@
 - Feb 25, 2021: tested by writing to dummy files in a for-loop, that the Zoo has >200G of storage (100 files of 2G each).
 
 ## To Do / Next Steps
-0. **Check memory quota on the Zoo.** Either contact mark.wogahn@yale.edu, or just write a dummy program to write large files to a folder for testing purposes (200GB is the target).
 1. **Verify and/or visualize the optimal solution as currently computed.** Optimal computation now works for up to 3X3 Quixo. It _seems_ to be correct, but some visualization of the results (i.e. another module) might help to verify this to an extent. For example, the frequency of each type of state (i.e. winning, losing, or draw) in each class (i.e. number of Xs and Os). Or, reading random states and evaluating their types (whilst displaying these to the user).
 2. **Check RAM memory usage.** In particular, ensure that the _loading_ and _unloading_ of results for each class works as intended. Possibly optimize further by chunking `results` into bytes during runtime (in addition to for storage). Verify whether this time-memory trade-off is even useful (using a smaller cache size).
 3. **Improve the speed of optimal computation.** We need 4X4 (and eventually 5X5) Quixo to be solved in a reasonable time. Use tips from the referenced '[Quixo Is Solved](https://arxiv.org/abs/2007.15895)', including the win-or-draw technique, and parallel computation. Possibly find other optimizations methods.
