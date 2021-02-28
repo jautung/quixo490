@@ -1,7 +1,7 @@
 #pragma once
 #include "../game/GameStateHandler.hpp"
-#include "DataHandler.hpp"
-#include "NcrCalculator.hpp"
+#include "../utils/DataHandler.hpp"
+#include "../utils/NcrCalculator.hpp"
 #include "OrdCalculator.hpp"
 #include <cstdint>
 #include <vector>

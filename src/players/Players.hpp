@@ -1,8 +1,8 @@
 #pragma once
 #include "../game/GameStateHandler.hpp"
 #include "../game/GraphicsHandler.hpp"
-#include "../optimal/DataHandler.hpp"
 #include "../optimal/OptComputer.hpp"
+#include "../utils/DataHandler.hpp"
 
 class Player {
   public:

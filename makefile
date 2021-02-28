@@ -4,7 +4,7 @@ CC := g++
 SRCDIR := src
 BINDIR := bin
 BUILDDIR := build
-BUILDDIRS := build build/game build/optimal build/players
+BUILDDIRS := build build/game build/optimal build/players build/utils
 DATADIRS := data/optimal
 TARGET := bin/quixo
 

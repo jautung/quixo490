@@ -1,7 +1,7 @@
 #include "../game/GameStateHandler.hpp"
 #include "../game/GraphicsHandler.hpp"
-#include "../optimal/DataHandler.hpp"
 #include "../optimal/OptComputer.hpp"
+#include "../utils/DataHandler.hpp"
 #include "Players.hpp"
 #include <random>
 #include <vector>

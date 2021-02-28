@@ -1,6 +1,6 @@
 #include "../game/GameStateHandler.hpp"
-#include "DataHandler.hpp"
-#include "NcrCalculator.hpp"
+#include "../utils/DataHandler.hpp"
+#include "../utils/NcrCalculator.hpp"
 #include "OptComputer.hpp"
 #include "OrdCalculator.hpp"
 #include <chrono>
