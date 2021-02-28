@@ -3,6 +3,7 @@
 #include "game/GraphicsHandler.hpp"
 #include "optimal/OptComputer.hpp"
 #include "players/Players.hpp"
+#include "utils/MemoryChecker.hpp"
 #include <chrono>
 #include <iostream>
 #include <random>
@@ -33,6 +34,7 @@ int main(int argc, char* argv[]) {
     TCLAP::ValueArg<int> nStepsArg("n", "nsteps", "For `play` or `test` program: number of steps or iterations to run respectively (0: till the end for `play`)", false, 0, "integer", cmd);
     TCLAP::ValueArg<int> timePauseMsArg("t", "timepause", "For `play` program: time (in milliseconds) to pause between steps", false, 0, "integer", cmd);
     TCLAP::ValueArg<int> graphicsResArg("g", "graphicsres", "For `play` program: graphical output screen resolution (0: no graphics)", false, 0, "integer", cmd);
+    TCLAP::SwitchArg memoryCheckArg("m", "memorycheck", "For `opt-compute` program: check run-time memory usage", cmd);
     cmd.parse(argc, argv);
     auto prog = progArg.getValue();
     auto len = lenArg.getValue();
@@ -45,6 +47,7 @@ int main(int argc, char* argv[]) {
     auto nSteps = nStepsArg.getValue();
     auto timePauseMs = timePauseMsArg.getValue();
     auto graphicsRes = graphicsResArg.getValue();
+    auto memoryCheck = memoryCheckArg.getValue();
 
     auto gameStateHandler = new GameStateHandler(len);
     if (prog == "play") {
@@ -94,14 +97,16 @@ int main(int argc, char* argv[]) {
       delete playerO;
       delete gamePlayHandler;
     } else if (prog == "opt-compute") {
+      auto memoryChecker = memoryCheck ? new MemoryChecker() : NULL;
       auto startTime = std::chrono::high_resolution_clock::now();
-      auto optComputer = new OptComputer(len*len, gameStateHandler);
+      auto optComputer = new OptComputer(len*len, gameStateHandler, memoryChecker);
       auto endTime = std::chrono::high_resolution_clock::now();
       std::cout << "OptComputer initialization time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime-startTime).count()/1000.0 << "\n";
       optComputer->computeAll();
       endTime = std::chrono::high_resolution_clock::now();
       std::cout << "OptComputer total time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime-startTime).count()/1000.0 << "\n";
       std::cout << "Total file I/O time (s): " << optComputer->dataHandler->ioTime/1000.0 << "\n";
+      delete memoryChecker;
       delete optComputer;
     } else if (prog == "mcts-compute") {
       // TODO

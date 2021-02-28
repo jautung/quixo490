@@ -1,5 +1,6 @@
 #include "../game/GameStateHandler.hpp"
 #include "../utils/DataHandler.hpp"
+#include "../utils/MemoryChecker.hpp"
 #include "../utils/NcrCalculator.hpp"
 #include "OptComputer.hpp"
 #include "OrdCalculator.hpp"
@@ -13,9 +14,10 @@ namespace {
   state_t halfStateMask = 0b11111111111111111111111111111111;
 }
 
-OptComputer::OptComputer(nbit_t initNumTiles, GameStateHandler* initGameStateHandler) {
+OptComputer::OptComputer(nbit_t initNumTiles, GameStateHandler* initGameStateHandler, MemoryChecker* initMemoryChecker) {
   numTiles = initNumTiles;
   gameStateHandler = initGameStateHandler;
+  memoryChecker = initMemoryChecker;
   ncrCalculator = new NcrCalculator(numTiles);
   ordCalculator = new OrdCalculator(numTiles);
   dataHandler = new DataHandler();
@@ -31,6 +33,11 @@ void OptComputer::computeAll() {
   for (nbit_t numUsed = numTiles;; numUsed--) {
     for (nbit_t numA = 0; numA <= numUsed/2; numA++) {
       nbit_t numB = numUsed - numA;
+      if (dataHandler->existsClass(gameStateHandler->len, numA, numB) && dataHandler->existsClass(gameStateHandler->len, numB, numA)) {
+        std::cout << "Class (" << +numA << ", " << +numB << ") already computed\n";
+        continue;
+      }
+
       std::vector<result_t> resultsCacheNormPlus;
       std::vector<result_t> resultsCacheFlipPlus;
       if (numUsed != numTiles) {
@@ -39,6 +46,14 @@ void OptComputer::computeAll() {
           resultsCacheFlipPlus = dataHandler->loadClass(gameStateHandler->len, numA, numB+1); // (numB, numA) -- +1 --> (numA, numB+1)
         }
       }
+
+      if (memoryChecker) {
+        double vmUsage;
+        double residentSetSize;
+        memoryChecker->checkUsage(&vmUsage, &residentSetSize);
+        std::cerr << "Virtual memory: " << vmUsage << "; Resident set size: " << residentSetSize << "\n";
+      }
+
       computeClass(numA, numB, resultsCacheNormPlus, resultsCacheFlipPlus);
     }
     if (numUsed == 0) {
@@ -48,11 +63,6 @@ void OptComputer::computeAll() {
 }
 
 void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result_t> resultsCacheNormPlus, std::vector<result_t> resultsCacheFlipPlus) { // value iteration
-  if (dataHandler->existsClass(gameStateHandler->len, numA, numB) && dataHandler->existsClass(gameStateHandler->len, numB, numA)) {
-    std::cout << "Class (" << +numA << ", " << +numB << ") already computed\n";
-    return;
-  }
-
   auto startTime = std::chrono::high_resolution_clock::now();
 
   sindex_t numStates = ncrCalculator->ncr(numTiles, numA) * ncrCalculator->ncr(numTiles-numA, numB);
