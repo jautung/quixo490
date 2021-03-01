@@ -6,6 +6,7 @@
 #include "OrdCalculator.hpp"
 #include <chrono>
 #include <iostream>
+#include <string>
 #include <vector>
 
 namespace {
@@ -30,6 +31,7 @@ OptComputer::~OptComputer() {
 }
 
 void OptComputer::computeAll() {
+  printMemoryUsage("Initial");
   for (nbit_t numUsed = numTiles;; numUsed--) {
     for (nbit_t numA = 0; numA <= numUsed/2; numA++) {
       nbit_t numB = numUsed - numA;
@@ -40,19 +42,17 @@ void OptComputer::computeAll() {
 
       std::vector<result_t> resultsCacheNormPlus;
       std::vector<result_t> resultsCacheFlipPlus;
+      sindex_t numCacheLoaded = 0;
+      printMemoryUsage("Before loading for class (" + std::to_string(numA) + ", " + std::to_string(numB) + ")");
       if (numUsed != numTiles) {
         resultsCacheNormPlus = dataHandler->loadClass(gameStateHandler->len, numB, numA+1); // (numA, numB) -- +1 --> (numB, numA+1)
+        numCacheLoaded += resultsCacheNormPlus.size();
         if (numA != numB) {
           resultsCacheFlipPlus = dataHandler->loadClass(gameStateHandler->len, numA, numB+1); // (numB, numA) -- +1 --> (numA, numB+1)
+          numCacheLoaded += resultsCacheFlipPlus.size();
         }
       }
-
-      if (memoryChecker) {
-        double vmUsage;
-        double residentSetSize;
-        memoryChecker->checkUsage(&vmUsage, &residentSetSize);
-        std::cerr << "Virtual memory: " << vmUsage << "; Resident set size: " << residentSetSize << "\n";
-      }
+      printMemoryUsage("Loaded " + std::to_string(numCacheLoaded) + " cached states for class (" + std::to_string(numA) + ", " + std::to_string(numB) + ")");
 
       computeClass(numA, numB, resultsCacheNormPlus, resultsCacheFlipPlus);
     }
@@ -197,4 +197,13 @@ state_t OptComputer::filterOState(state_t oState, state_t xState) {
     }
   }
   return oFilteredState;
+}
+
+void OptComputer::printMemoryUsage(std::string prefix) {
+  if (memoryChecker) {
+    double vmUsage;
+    double residentSetSize;
+    memoryChecker->checkUsage(&vmUsage, &residentSetSize);
+    std::cerr << "Memory [" << prefix << "]: VM=" << vmUsage << ", RSS=" << residentSetSize << "\n";
+  }
 }
