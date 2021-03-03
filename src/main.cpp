@@ -112,6 +112,7 @@ int main(int argc, char* argv[]) {
       auto graphicsHandler = graphicsRes > 0 ? new GraphicsHandler(gameStateHandler, graphicsRes) : NULL;
       state_t state;
       if (graphicsHandler) {
+        std::cout << "Remember to hit Enter to confirm your selection\n";
         state = graphicsHandler->drawBaseBoardGetState();
       } else {
         std::cerr << "warning: " << "running optimal checker without a graphics handler is EXTREMELY unadvised; proceed only if you know EXACTLY how states are indexed\n";

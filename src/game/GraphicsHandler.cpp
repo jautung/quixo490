@@ -35,6 +35,7 @@ GraphicsHandler::GraphicsHandler(GameStateHandler* initGameStateHandler, int ini
 
   glfwSetWindowUserPointer(window, this);
   glfwSetMouseButtonCallback(window, glfwMouseButtonCallback);
+  glfwSetKeyCallback(window, glfwKeyCallback);
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1);
 
@@ -75,7 +76,7 @@ void GraphicsHandler::drawBoardBase(state_t state, colormode_t colorMode) {
   for (bindex_t i = 0; i < len; i++) {
     for (bindex_t j = 0; j < len; j++) {
       auto tileType = gameStateHandler->getTile(state, i, j);
-      if (!(i == tileChoiceX && j == tileChoiceY)) {
+      if (!(i == getMoveTileChoiceX && j == getMoveTileChoiceY)) {
         drawTile(i, j, tileType, alphaTile, colorMode);
       }
     }
@@ -83,48 +84,48 @@ void GraphicsHandler::drawBoardBase(state_t state, colormode_t colorMode) {
   glEnd();
 
   glBegin(GL_QUADS); // insertion points and chosen tile
-  if (tileChoiceX != nullChoice && tileChoiceY != nullChoice) {
+  if (getMoveTileChoiceX != nullChoice && getMoveTileChoiceY != nullChoice) {
     bool validChoice = false;
     auto moves = gameStateHandler->allMoves(state);
     for (auto move : moves) {
       auto row = gameStateHandler->moveHandler->getRow(move);
       auto col = gameStateHandler->moveHandler->getCol(move);
-      if (row != tileChoiceX || col != tileChoiceY) {
+      if (row != getMoveTileChoiceX || col != getMoveTileChoiceY) {
         continue;
       }
       validChoice = true;
       auto dir = gameStateHandler->moveHandler->getDir(move);
       if (dir == DIR_LEFT) {
-        drawTile(tileChoiceX, len, TILE_X, alphaInsert, colorMode);
-        if (insertChoiceX == tileChoiceX && insertChoiceY == len) {
-          moveChoice = move;
-          gettingInputQ = false;
+        drawTile(getMoveTileChoiceX, len, TILE_X, alphaInsert, colorMode);
+        if (getMoveInsertChoiceX == getMoveTileChoiceX && getMoveInsertChoiceY == len) {
+          getMoveChoice = move;
+          gettingInputType = INPUT_NONE;
         }
       } else if (dir == DIR_RIGHT) {
-        drawTile(tileChoiceX, -1, TILE_X, alphaInsert, colorMode);
-        if (insertChoiceX == tileChoiceX && insertChoiceY == -1) {
-          moveChoice = move;
-          gettingInputQ = false;
+        drawTile(getMoveTileChoiceX, -1, TILE_X, alphaInsert, colorMode);
+        if (getMoveInsertChoiceX == getMoveTileChoiceX && getMoveInsertChoiceY == -1) {
+          getMoveChoice = move;
+          gettingInputType = INPUT_NONE;
         }
       } else if (dir == DIR_DOWN) {
-        drawTile(-1, tileChoiceY, TILE_X, alphaInsert, colorMode);
-        if (insertChoiceX == -1 && insertChoiceY == tileChoiceY) {
-          moveChoice = move;
-          gettingInputQ = false;
+        drawTile(-1, getMoveTileChoiceY, TILE_X, alphaInsert, colorMode);
+        if (getMoveInsertChoiceX == -1 && getMoveInsertChoiceY == getMoveTileChoiceY) {
+          getMoveChoice = move;
+          gettingInputType = INPUT_NONE;
         }
       } else if (dir == DIR_UP) {
-        drawTile(len, tileChoiceY, TILE_X, alphaInsert, colorMode);
-        if (insertChoiceX == len && insertChoiceY == tileChoiceY) {
-          moveChoice = move;
-          gettingInputQ = false;
+        drawTile(len, getMoveTileChoiceY, TILE_X, alphaInsert, colorMode);
+        if (getMoveInsertChoiceX == len && getMoveInsertChoiceY == getMoveTileChoiceY) {
+          getMoveChoice = move;
+          gettingInputType = INPUT_NONE;
         }
       }
     }
-    auto tileTypeChoice = gameStateHandler->getTile(state, tileChoiceX, tileChoiceY);
+    auto tileTypeChoice = gameStateHandler->getTile(state, getMoveTileChoiceX, getMoveTileChoiceY);
     if (validChoice) {
-      drawTile(tileChoiceX, tileChoiceY, tileTypeChoice, alphaChoice, colorMode);
+      drawTile(getMoveTileChoiceX, getMoveTileChoiceY, tileTypeChoice, alphaChoice, colorMode);
     } else {
-      drawTile(tileChoiceX, tileChoiceY, tileTypeChoice, alphaTile, colorMode);
+      drawTile(getMoveTileChoiceX, getMoveTileChoiceY, tileTypeChoice, alphaTile, colorMode);
     }
   }
   glEnd();
@@ -149,11 +150,11 @@ void GraphicsHandler::drawBoard(state_t state, colormode_t colorMode) {
   if (!window) { // initialization unsuccessful
     return;
   }
-  gettingInputQ = false;
-  tileChoiceX = nullChoice;
-  tileChoiceY = nullChoice;
-  insertChoiceX = nullChoice;
-  insertChoiceY = nullChoice;
+  gettingInputType = INPUT_NONE;
+  getMoveTileChoiceX = nullChoice;
+  getMoveTileChoiceY = nullChoice;
+  getMoveInsertChoiceX = nullChoice;
+  getMoveInsertChoiceY = nullChoice;
   drawBoardBase(state, colorMode);
   glfwPollEvents();
 }
@@ -162,20 +163,26 @@ move_t GraphicsHandler::drawBoardGetMove(state_t state, colormode_t colorMode) {
   if (!window) { // initialization unsuccessful
     return gameStateHandler->moveHandler->create(DIR_UNDEFINED, 0, 0);
   }
-  gettingInputQ = true;
-  tileChoiceX = nullChoice;
-  tileChoiceY = nullChoice;
-  insertChoiceX = nullChoice;
-  insertChoiceY = nullChoice;
-  while (gettingInputQ) {
+  gettingInputType = INPUT_GET_MOVE;
+  getMoveTileChoiceX = nullChoice;
+  getMoveTileChoiceY = nullChoice;
+  getMoveInsertChoiceX = nullChoice;
+  getMoveInsertChoiceY = nullChoice;
+  while (gettingInputType == INPUT_GET_MOVE) {
     drawBoardBase(state, colorMode);
     glfwPollEvents();
   }
-  return moveChoice;
+  return getMoveChoice;
 }
 
 state_t GraphicsHandler::drawBaseBoardGetState(colormode_t colorMode) {
-  return 0b0;
+  getStateState = 0b0;
+  gettingInputType = INPUT_GET_STATE;
+  while (gettingInputType == INPUT_GET_STATE) {
+    drawBoardBase(getStateState, colorMode);
+    glfwPollEvents();
+  }
+  return getStateState;
 }
 
 void GraphicsHandler::drawTile(bindex_t i, bindex_t j, tile_t tileType, float alpha, colormode_t colorMode) {
@@ -212,31 +219,61 @@ void GraphicsHandler::glfwMouseButtonCallback(GLFWwindow* window, int button, in
 }
 
 void GraphicsHandler::onMouseButtonLeftPress(double xRawPos, double yRawPos) {
-  if (!gettingInputQ) {
+  if (gettingInputType == INPUT_NONE) {
     return;
   }
+
   auto xPos = 2*xRawPos/screenRes - 1;
   auto yPos = 1 - 2*yRawPos/screenRes;
 
   auto len = gameStateHandler->len;
-  for (bindex_t i = -1; i < len+1; i++) {
+  for (bindex_t i = -1; i < len+1; i++) { // finding which tile was clicked
     for (bindex_t j = -1; j < len+1; j++) {
       float left, right, top, bottom;
       getTileLimits(i, j, &left, &right, &top, &bottom);
-      if (xPos >= left && xPos <= right && yPos <= top && yPos >= bottom) {
-        if (i >= 0 && i < len && j >= 0 && j < len) { // choose tile
-          tileChoiceX = i;
-          tileChoiceY = j;
-          insertChoiceX = nullChoice;
-          insertChoiceY = nullChoice;
-        } else { // choose insertion point
-          if (tileChoiceX != nullChoice && tileChoiceY != nullChoice) {
-            insertChoiceX = i;
-            insertChoiceY = j;
+      if (xPos >= left && xPos <= right && yPos <= top && yPos >= bottom) { // found clicked tile
+        if (gettingInputType == INPUT_GET_MOVE) {
+          if (i >= 0 && i < len && j >= 0 && j < len) { // choose tile
+            getMoveTileChoiceX = i;
+            getMoveTileChoiceY = j;
+            getMoveInsertChoiceX = nullChoice;
+            getMoveInsertChoiceY = nullChoice;
+          } else { // choose insertion point
+            if (getMoveTileChoiceX != nullChoice && getMoveTileChoiceY != nullChoice) {
+              getMoveInsertChoiceX = i;
+              getMoveInsertChoiceY = j;
+            }
+          }
+        } else if (gettingInputType == INPUT_GET_STATE) {
+          if (i >= 0 && i < len && j >= 0 && j < len) { // choose tile
+            tile_t tile = gameStateHandler->getTile(getStateState, i, j);
+            tile_t newTile;
+            if (tile == TILE_EMPTY) {
+              newTile = TILE_X;
+            } else if (tile == TILE_X) {
+              newTile = TILE_O;
+            } else { // tile == TILE_O
+              newTile = TILE_EMPTY;
+            }
+            getStateState = gameStateHandler->setTile(getStateState, i, j, newTile);
           }
         }
+        return; // found clicked tile, no need to continue
       }
     }
+  }
+}
+
+void GraphicsHandler::glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+  if (action == GLFW_PRESS && key == GLFW_KEY_ENTER) {
+    GraphicsHandler* graphics = static_cast<GraphicsHandler*>(glfwGetWindowUserPointer(window));
+    graphics->onEnterKeyPress();
+  }
+}
+
+void GraphicsHandler::onEnterKeyPress() {
+  if (gettingInputType == INPUT_GET_STATE) {
+    gettingInputType = INPUT_NONE;
   }
 }
 
@@ -254,8 +291,13 @@ void GraphicsHandler::drawBoard(state_t state, colormode_t colorMode) {
 }
 
 move_t GraphicsHandler::drawBoardGetMove(state_t state, colormode_t colorMode) {
-  std::cerr << "warning: " << "drawing board and getting input without a graphics handler returns undefined\n";
+  std::cerr << "warning: " << "drawing board and getting move without a graphics handler returns undefined\n";
   return gameStateHandler->moveHandler->create(DIR_UNDEFINED, 0, 0);
+}
+
+state_t drawBaseBoardGetState(colormode_t colorMode = COLOR_NORM) {
+  std::cerr << "warning: " << "drawing board and getting state without a graphics handler returns undefined\n";
+  return 0b0;
 }
 
 #endif // __APPLE__

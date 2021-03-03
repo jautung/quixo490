@@ -132,6 +132,22 @@ tile_t GameStateHandler::getTile(state_t state, bindex_t row, bindex_t col) {
   return TILE_EMPTY;
 }
 
+state_t GameStateHandler::setTile(state_t state, bindex_t row, bindex_t col, tile_t tile) {
+  state_t oMask = 0b1 << (len*row + col);
+  if (tile == TILE_O) {
+    state |= oMask;
+  } else {
+    state &= ~oMask;
+  }
+  state_t xMask = oMask <<= halfStateNBits;
+  if (tile == TILE_X) {
+    state |= xMask;
+  } else {
+    state &= ~xMask;
+  }
+  return state;
+}
+
 std::vector<move_t> GameStateHandler::allMoves(state_t state) {
   std::vector<move_t> moves;
   moves.reserve(12*len-16); // maximum number of possible moves

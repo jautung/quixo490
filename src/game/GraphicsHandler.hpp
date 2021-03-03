@@ -11,6 +11,12 @@ enum colormode_t : uint8_t {
   COLOR_FLIP
 };
 
+enum inputmode_t : uint8_t {
+  INPUT_NONE,
+  INPUT_GET_MOVE,
+  INPUT_GET_STATE
+};
+
 class GraphicsHandler {
   public:
     GraphicsHandler(GameStateHandler* initGameStateHandler, int initScreenRes);
@@ -31,12 +37,15 @@ class GraphicsHandler {
     void getTileLimits(bindex_t i, bindex_t j, float* left, float* right, float* top, float* bottom);
     static void glfwMouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
     void onMouseButtonLeftPress(double xRawPos, double yRawPos);
-    bool gettingInputQ;
-    bindex_t tileChoiceX;
-    bindex_t tileChoiceY;
-    bindex_t insertChoiceX;
-    bindex_t insertChoiceY;
-    move_t moveChoice;
+    static void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+    void onEnterKeyPress();
+    inputmode_t gettingInputType;
+    bindex_t getMoveTileChoiceX;
+    bindex_t getMoveTileChoiceY;
+    bindex_t getMoveInsertChoiceX;
+    bindex_t getMoveInsertChoiceY;
+    move_t getMoveChoice;
+    state_t getStateState;
 
 #endif // __APPLE__
 

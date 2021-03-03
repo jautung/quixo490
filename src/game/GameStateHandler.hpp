@@ -49,6 +49,7 @@ class GameStateHandler {
     len_t len;
     MoveHandler* moveHandler;
     tile_t getTile(state_t state, bindex_t row, bindex_t col);
+    state_t setTile(state_t state, bindex_t row, bindex_t col, tile_t tile);
     std::vector<move_t> allMoves(state_t state);
     state_t makeMove(state_t state, move_t move);
     state_t swapPlayers(state_t state);
