@@ -6,6 +6,7 @@
 
 // Adapted from https://www.tutorialspoint.com/how-to-get-memory-usage-at-runtime-using-cplusplus
 void MemoryChecker::checkVmRss(std::string prefix) {
+#ifndef __APPLE__
   std::ifstream statStream("/proc/self/stat", std::ios_base::in);
   std::string tmp;
   unsigned long vsize;
@@ -18,6 +19,7 @@ void MemoryChecker::checkVmRss(std::string prefix) {
   double residentSetSize = rss * pageSizeKb;
 
   std::cerr << "Memory [" << prefix << "]: VM=" << vmUsage << ", RSS=" << residentSetSize << "\n";
+#endif // __APPLE__
 }
 
 void MemoryChecker::checkVector(void* beginPointer, void* endPointer, std::string prefix) {
