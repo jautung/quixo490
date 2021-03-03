@@ -1,6 +1,8 @@
 #pragma once
+#include <string>
 
 class MemoryChecker {
   public:
-    void checkUsage(double* vmUsage, double* residentSetSize);
+    void checkVmRss(std::string prefix = "");
+    void checkVector(void* beginPointer, void* endPointer, std::string prefix = "");
 };
