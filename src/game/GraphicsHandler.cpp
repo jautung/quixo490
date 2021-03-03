@@ -295,7 +295,7 @@ move_t GraphicsHandler::drawBoardGetMove(state_t state, colormode_t colorMode) {
   return gameStateHandler->moveHandler->create(DIR_UNDEFINED, 0, 0);
 }
 
-state_t drawBaseBoardGetState(colormode_t colorMode = COLOR_NORM) {
+state_t GraphicsHandler::drawBaseBoardGetState(colormode_t colorMode) {
   std::cerr << "warning: " << "drawing board and getting state without a graphics handler returns undefined\n";
   return 0b0;
 }
