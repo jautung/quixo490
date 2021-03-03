@@ -33,6 +33,6 @@ move_t InteractivePlayer::selectMove(state_t state, colormode_t colorMode) {
     }
     return gameStateHandler->moveHandler->create(DIR_UNDEFINED, 0, 0);
   } else {
-    return graphicsHandler->drawBoardGetInput(state, colorMode);
+    return graphicsHandler->drawBoardGetMove(state, colorMode);
   }
 }

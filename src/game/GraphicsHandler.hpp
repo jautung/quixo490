@@ -16,7 +16,8 @@ class GraphicsHandler {
     GraphicsHandler(GameStateHandler* initGameStateHandler, int initScreenRes);
     ~GraphicsHandler();
     void drawBoard(state_t state, colormode_t colorMode = COLOR_NORM);
-    move_t drawBoardGetInput(state_t state, colormode_t colorMode = COLOR_NORM);
+    move_t drawBoardGetMove(state_t state, colormode_t colorMode = COLOR_NORM);
+    state_t drawBaseBoardGetState(colormode_t colorMode = COLOR_NORM);
   private:
     GameStateHandler* gameStateHandler;
 

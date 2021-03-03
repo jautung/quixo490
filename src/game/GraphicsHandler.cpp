@@ -158,7 +158,7 @@ void GraphicsHandler::drawBoard(state_t state, colormode_t colorMode) {
   glfwPollEvents();
 }
 
-move_t GraphicsHandler::drawBoardGetInput(state_t state, colormode_t colorMode) {
+move_t GraphicsHandler::drawBoardGetMove(state_t state, colormode_t colorMode) {
   if (!window) { // initialization unsuccessful
     return gameStateHandler->moveHandler->create(DIR_UNDEFINED, 0, 0);
   }
@@ -172,6 +172,10 @@ move_t GraphicsHandler::drawBoardGetInput(state_t state, colormode_t colorMode) 
     glfwPollEvents();
   }
   return moveChoice;
+}
+
+state_t GraphicsHandler::drawBaseBoardGetState(colormode_t colorMode) {
+  return 0b0;
 }
 
 void GraphicsHandler::drawTile(bindex_t i, bindex_t j, tile_t tileType, float alpha, colormode_t colorMode) {
@@ -249,7 +253,7 @@ void GraphicsHandler::drawBoard(state_t state, colormode_t colorMode) {
   std::cerr << "warning: " << "drawing board without a graphics handler is a no-op\n";
 }
 
-move_t GraphicsHandler::drawBoardGetInput(state_t state, colormode_t colorMode) {
+move_t GraphicsHandler::drawBoardGetMove(state_t state, colormode_t colorMode) {
   std::cerr << "warning: " << "drawing board and getting input without a graphics handler returns undefined\n";
   return gameStateHandler->moveHandler->create(DIR_UNDEFINED, 0, 0);
 }

@@ -36,10 +36,10 @@ class OptimalPlayer : public Player {
     OptimalPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler = NULL);
     ~OptimalPlayer();
     move_t selectMove(state_t state, colormode_t colorMode) override;
+    result_t evalState(state_t state);
   private:
     OptComputer* optComputer;
     DataHandler* dataHandler;
-    result_t evalState(state_t state);
 };
 
 class MCTSPlayer : public Player {
