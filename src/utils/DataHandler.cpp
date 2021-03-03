@@ -17,17 +17,24 @@ DataHandler::DataHandler() {
   ioTime = 0;
 }
 
-void DataHandler::saveClass(std::vector<result_t> &results, len_t len, nbit_t numX, nbit_t numO) {
+result_t DataHandler::getResult(std::vector<result4_t> &results, sindex_t stateIndex) {
+  return (result_t)((results[stateIndex/4] >> (2 * (stateIndex%4))) & resultMask);
+}
+
+void DataHandler::setResult(std::vector<result4_t> &results, sindex_t stateIndex, result_t result) {
+  results[stateIndex/4] &= ~(resultMask << (2 * (stateIndex%4)));
+  results[stateIndex/4] |= (result << (2 * (stateIndex%4)));
+}
+
+void DataHandler::saveClass(std::vector<result4_t> &results, len_t len, nbit_t numX, nbit_t numO) {
   auto startTime = std::chrono::high_resolution_clock::now();
 
   byte_t byteBuffer[byteBufferSize];
   std::ofstream dataFileStream(dataFileName(len, numX, numO), std::ios::out|std::ios::binary);
 
-  results.resize(results.size() + (4 - results.size()%4) % 4, (result_t)0); // pad results with 0s so that 4 divides results.size()
   nbyte_t byteBufferWriteIndex = 0;
-  for (sindex_t stateIndex = 0; stateIndex < results.size(); stateIndex += 4) { // writing bytes in byte blocks of byteBufferSize
-    byte_t writeByte = results[stateIndex] | results[stateIndex+1] << 2 | results[stateIndex+2] << 4 | results[stateIndex+3] << 6;
-    byteBuffer[byteBufferWriteIndex] = writeByte;
+  for (nbyte_t result4Index = 0; result4Index < results.size(); result4Index++) { // writing bytes in byte blocks of byteBufferSize
+    byteBuffer[byteBufferWriteIndex] = results[result4Index];
     byteBufferWriteIndex += 1;
     if (byteBufferWriteIndex == byteBufferSize) {
       dataFileStream.write(byteBuffer, byteBufferSize);
@@ -51,7 +58,7 @@ bool DataHandler::existsClass(len_t len, nbit_t numX, nbit_t numO) {
   return ret;
 }
 
-std::vector<result_t> DataHandler::loadClass(len_t len, nbit_t numX, nbit_t numO) {
+std::vector<result4_t> DataHandler::loadClass(len_t len, nbit_t numX, nbit_t numO) {
   auto startTime = std::chrono::high_resolution_clock::now();
 
   byte_t byteBuffer[byteBufferSize];
@@ -61,11 +68,11 @@ std::vector<result_t> DataHandler::loadClass(len_t len, nbit_t numX, nbit_t numO
     exit(1);
   }
 
-  std::vector<result_t> results;
+  std::vector<result4_t> results;
   while (dataFileStream) { // reading bytes in byte blocks of byteBufferSize
     dataFileStream.read(byteBuffer, byteBufferSize);
     for (nbyte_t i = 0; i < dataFileStream.gcount(); i++) {
-      loadByte(byteBuffer[i], results);
+      results.push_back((result_t)(byteBuffer[i]));
     }
   }
 
@@ -77,13 +84,6 @@ std::vector<result_t> DataHandler::loadClass(len_t len, nbit_t numX, nbit_t numO
   return results;
 }
 
-void DataHandler::loadByte(byte_t byte, std::vector<result_t> &results) {
-  results.push_back((result_t)(byte & resultMask));
-  results.push_back((result_t)((byte >> 2) & resultMask));
-  results.push_back((result_t)((byte >> 4) & resultMask));
-  results.push_back((result_t)((byte >> 6) & resultMask));
-}
-
 result_t DataHandler::loadState(len_t len, nbit_t numX, nbit_t numO, sindex_t stateIndex) {
   byte_t byteBuffer[1];
   std::ifstream dataFileStream(dataFileName(len, numX, numO), std::ios::in|std::ios::binary);
@@ -92,11 +92,9 @@ result_t DataHandler::loadState(len_t len, nbit_t numX, nbit_t numO, sindex_t st
     exit(1);
   }
 
-  auto byteIndex = stateIndex/4;
-  auto byteOffset = 2 * (stateIndex%4);
-  dataFileStream.seekg(byteIndex);
+  dataFileStream.seekg(stateIndex/4);
   dataFileStream.read(byteBuffer, 1);
-  result_t result = (result_t)((byteBuffer[0] >> byteOffset) & resultMask);
+  result_t result = (result_t)((byteBuffer[0] >> (2 * (stateIndex%4))) & resultMask);
 
   dataFileStream.close();
   return result;

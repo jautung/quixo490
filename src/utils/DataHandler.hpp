@@ -15,15 +15,18 @@ enum result_t : uint8_t {
   RESULT_DRAW
 };
 
+typedef uint8_t result4_t; // block of 4 result_t's
+
 class DataHandler {
   public:
     DataHandler();
     int ioTime;
-    void saveClass(std::vector<result_t> &results, len_t len, nbit_t numX, nbit_t numO);
+    result_t getResult(std::vector<result4_t> &results, sindex_t stateIndex);
+    void setResult(std::vector<result4_t> &results, sindex_t stateIndex, result_t result);
+    void saveClass(std::vector<result4_t> &results, len_t len, nbit_t numX, nbit_t numO);
     bool existsClass(len_t len, nbit_t numX, nbit_t numO);
-    std::vector<result_t> loadClass(len_t len, nbit_t numX, nbit_t numO);
+    std::vector<result4_t> loadClass(len_t len, nbit_t numX, nbit_t numO);
     result_t loadState(len_t len, nbit_t numX, nbit_t numO, sindex_t stateIndex);
   private:
-    void loadByte(char byte, std::vector<result_t> &results);
     std::string dataFileName(len_t len, nbit_t numX, nbit_t numO);
 };

@@ -40,21 +40,23 @@ void OptComputer::computeAll() {
         continue;
       }
 
-      std::vector<result_t> resultsCacheNormPlus;
-      std::vector<result_t> resultsCacheFlipPlus;
-      sindex_t numCacheLoaded = 0;
+      std::vector<result4_t> resultsCacheNormPlus;
+      std::vector<result4_t> resultsCacheFlipPlus;
+      sindex_t numCacheStatesLoadedTotal = 0;
       if (memoryChecker) memoryChecker->checkVmRss("Before loading for class (" + std::to_string(numA) + ", " + std::to_string(numB) + ")");
       if (numUsed != numTiles) {
         resultsCacheNormPlus = dataHandler->loadClass(gameStateHandler->len, numB, numA+1); // (numA, numB) -- +1 --> (numB, numA+1)
-        if (memoryChecker) memoryChecker->checkVector(&(*resultsCacheNormPlus.begin()), &(*resultsCacheNormPlus.end()), "resultsCacheNormPlus (" + std::to_string(resultsCacheNormPlus.size()) + " states)");
-        numCacheLoaded += resultsCacheNormPlus.size();
+        auto numCacheStatesLoaded = numStatesClass(numA+1, numB);
+        if (memoryChecker) memoryChecker->checkVector(&(*resultsCacheNormPlus.begin()), &(*resultsCacheNormPlus.end()), "resultsCacheNormPlus (" + std::to_string(numCacheStatesLoaded) + " states)");
+        numCacheStatesLoadedTotal += numCacheStatesLoaded;
         if (numA != numB) {
           resultsCacheFlipPlus = dataHandler->loadClass(gameStateHandler->len, numA, numB+1); // (numB, numA) -- +1 --> (numA, numB+1)
-          if (memoryChecker) memoryChecker->checkVector(&(*resultsCacheFlipPlus.begin()), &(*resultsCacheFlipPlus.end()), "resultsCacheFlipPlus (" + std::to_string(resultsCacheFlipPlus.size()) + " states)");
-          numCacheLoaded += resultsCacheFlipPlus.size();
+          auto numCacheStatesLoaded = numStatesClass(numA, numB+1);
+          if (memoryChecker) memoryChecker->checkVector(&(*resultsCacheFlipPlus.begin()), &(*resultsCacheFlipPlus.end()), "resultsCacheFlipPlus (" + std::to_string(numCacheStatesLoaded) + " states)");
+          numCacheStatesLoadedTotal += numCacheStatesLoaded;
         }
       }
-      if (memoryChecker) memoryChecker->checkVmRss("Loaded " + std::to_string(numCacheLoaded) + " cached states for class (" + std::to_string(numA) + ", " + std::to_string(numB) + ")");
+      if (memoryChecker) memoryChecker->checkVmRss("Loaded " + std::to_string(numCacheStatesLoadedTotal) + " cached states for class (" + std::to_string(numA) + ", " + std::to_string(numB) + ")");
 
       computeClass(numA, numB, resultsCacheNormPlus, resultsCacheFlipPlus);
     }
@@ -64,15 +66,19 @@ void OptComputer::computeAll() {
   }
 }
 
-void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result_t> resultsCacheNormPlus, std::vector<result_t> resultsCacheFlipPlus) { // value iteration
+sindex_t OptComputer::numStatesClass(nbit_t numA, nbit_t numB) {
+  return ncrCalculator->ncr(numTiles, numA) * ncrCalculator->ncr(numTiles-numA, numB);
+}
+
+void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result4_t> resultsCacheNormPlus, std::vector<result4_t> resultsCacheFlipPlus) { // value iteration
   auto startTime = std::chrono::high_resolution_clock::now();
 
-  sindex_t numStates = ncrCalculator->ncr(numTiles, numA) * ncrCalculator->ncr(numTiles-numA, numB);
-  std::vector<result_t> resultsNorm;
-  std::vector<result_t> resultsFlip;
-  resultsNorm.reserve(numStates);
+  sindex_t numStates = numStatesClass(numA, numB);
+  std::vector<result4_t> resultsNorm;
+  std::vector<result4_t> resultsFlip;
+  resultsNorm.reserve(numStates/4);
   if (numA != numB) {
-    resultsFlip.reserve(numStates);
+    resultsFlip.reserve(numStates/4);
   }
 
   initialScanClass(numA, numB, resultsNorm, numStates);
@@ -102,22 +108,28 @@ void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result_t> r
   }
 }
 
-void OptComputer::initialScanClass(nbit_t numX, nbit_t numO, std::vector<result_t> &results, sindex_t numStates) {
+void OptComputer::initialScanClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results, sindex_t numStates) {
   for (sindex_t stateIndex = 0; stateIndex < numStates; stateIndex++) {
     auto state = indexToState(stateIndex, numX, numO);
+    result_t result;
     if (gameStateHandler->containsLine(state, TILE_X)) {
-      results.push_back(RESULT_WIN);
+      result = RESULT_WIN;
     } else if (gameStateHandler->containsLine(state, TILE_O)) {
-      results.push_back(RESULT_LOSS);
+      result = RESULT_LOSS;
     } else {
-      results.push_back(RESULT_DRAW);
+      result = RESULT_DRAW;
+    }
+    if (stateIndex % 4 == 0) { // logic for packing 4 result_t's into a result4_t
+      results.push_back(result);
+    } else {
+      results.back() |= (result << (2 * (stateIndex%4)));
     }
   }
 }
 
-void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result_t> &results, sindex_t numStates, std::vector<result_t> &resultsOther, std::vector<result_t> &resultsCachePlus, bool &updateMade) {
+void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results, sindex_t numStates, std::vector<result4_t> &resultsOther, std::vector<result4_t> &resultsCachePlus, bool &updateMade) {
   for (sindex_t stateIndex = 0; stateIndex < numStates; stateIndex++) {
-    if (results[stateIndex] != RESULT_DRAW) {
+    if (dataHandler->getResult(results, stateIndex) != RESULT_DRAW) {
       continue;
     }
     auto state = indexToState(stateIndex, numX, numO);
@@ -127,23 +139,24 @@ void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result
       auto moveKind = gameStateHandler->moveHandler->getKind(move);
       auto childState = gameStateHandler->swapPlayers(gameStateHandler->makeMove(state, move));
       auto childStateIndex = stateToIndex(childState);
-      std::vector<result_t> resultsReference;
+      std::vector<result4_t> resultsReference;
       if (moveKind == MKIND_ZERO) {
         resultsReference = resultsOther;
       } else if (moveKind == MKIND_PLUS) {
         resultsReference = resultsCachePlus;
       }
-      if (resultsReference[childStateIndex] == RESULT_LOSS) {
-        results[stateIndex] = RESULT_WIN;
+      auto childResult = dataHandler->getResult(resultsReference, childStateIndex);
+      if (childResult == RESULT_LOSS) {
+        dataHandler->setResult(results, stateIndex, RESULT_WIN);
         updateMade = true;
         allChildrenWin = false;
         break;
-      } else if (resultsReference[childStateIndex] == RESULT_DRAW) {
+      } else if (childResult == RESULT_DRAW) {
         allChildrenWin = false;
       }
     }
     if (allChildrenWin) {
-      results[stateIndex] = RESULT_LOSS;
+      dataHandler->setResult(results, stateIndex, RESULT_LOSS);
       updateMade = true;
     }
   }
