@@ -46,11 +46,11 @@ void OptComputer::computeAll() {
       if (memoryChecker) memoryChecker->checkVmRss("Before loading for class (" + std::to_string(numA) + ", " + std::to_string(numB) + ")");
       if (numUsed != numTiles) {
         resultsCacheNormPlus = dataHandler->loadClass(gameStateHandler->len, numB, numA+1); // (numA, numB) -- +1 --> (numB, numA+1)
-        if (memoryChecker) memoryChecker->checkVector(&(*resultsCacheNormPlus.begin()), &(*resultsCacheNormPlus.end()), "resultsCacheNormPlus");
+        if (memoryChecker) memoryChecker->checkVector(&(*resultsCacheNormPlus.begin()), &(*resultsCacheNormPlus.end()), "resultsCacheNormPlus (" + std::to_string(resultsCacheNormPlus.size()) + " states)");
         numCacheLoaded += resultsCacheNormPlus.size();
         if (numA != numB) {
           resultsCacheFlipPlus = dataHandler->loadClass(gameStateHandler->len, numA, numB+1); // (numB, numA) -- +1 --> (numA, numB+1)
-          if (memoryChecker) memoryChecker->checkVector(&(*resultsCacheFlipPlus.begin()), &(*resultsCacheFlipPlus.end()), "resultsCacheFlipPlus");
+          if (memoryChecker) memoryChecker->checkVector(&(*resultsCacheFlipPlus.begin()), &(*resultsCacheFlipPlus.end()), "resultsCacheFlipPlus (" + std::to_string(resultsCacheFlipPlus.size()) + " states)");
           numCacheLoaded += resultsCacheFlipPlus.size();
         }
       }
