@@ -81,18 +81,18 @@ void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result4_t> 
     resultsFlip.reserve(numStates/4);
   }
 
-  initialScanClass(numA, numB, resultsNorm, numStates);
+  initialScanClass(numA, numB, resultsNorm);
   if (numA != numB) {
-    initialScanClass(numB, numA, resultsFlip, numStates);
+    initialScanClass(numB, numA, resultsFlip);
   }
 
   while (true) {
     bool updateMade = false;
     if (numA != numB) {
-      valueIterateClass(numA, numB, resultsNorm, numStates, resultsFlip, resultsCacheNormPlus, updateMade); // resultsReference of resultsNorm is resultsFlip for MKIND_ZERO and resultsCacheNormPlus for MKIND_PLUS
-      valueIterateClass(numB, numA, resultsFlip, numStates, resultsNorm, resultsCacheFlipPlus, updateMade); // resultsReference of resultsFlip is resultsNorm for MKIND_ZERO and resultsCacheFlipPlus for MKIND_PLUS
+      valueIterateClass(numA, numB, resultsNorm, resultsFlip, resultsCacheNormPlus, updateMade); // resultsReference of resultsNorm is resultsFlip for MKIND_ZERO and resultsCacheNormPlus for MKIND_PLUS
+      valueIterateClass(numB, numA, resultsFlip, resultsNorm, resultsCacheFlipPlus, updateMade); // resultsReference of resultsFlip is resultsNorm for MKIND_ZERO and resultsCacheFlipPlus for MKIND_PLUS
     } else {
-      valueIterateClass(numA, numB, resultsNorm, numStates, resultsNorm, resultsCacheNormPlus, updateMade); // resultsReference of resultsNorm is resultsNorm for MKIND_ZERO and resultsCacheNormPlus for MKIND_PLUS
+      valueIterateClass(numA, numB, resultsNorm, resultsNorm, resultsCacheNormPlus, updateMade); // resultsReference of resultsNorm is resultsNorm for MKIND_ZERO and resultsCacheNormPlus for MKIND_PLUS
     }
     if (!updateMade) {
       break;
@@ -108,7 +108,8 @@ void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result4_t> 
   }
 }
 
-void OptComputer::initialScanClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results, sindex_t numStates) {
+void OptComputer::initialScanClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results) {
+  sindex_t numStates = numStatesClass(numX, numO);
   for (sindex_t stateIndex = 0; stateIndex < numStates; stateIndex++) {
     auto state = indexToState(stateIndex, numX, numO);
     result_t result;
@@ -127,7 +128,8 @@ void OptComputer::initialScanClass(nbit_t numX, nbit_t numO, std::vector<result4
   }
 }
 
-void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results, sindex_t numStates, std::vector<result4_t> &resultsOther, std::vector<result4_t> &resultsCachePlus, bool &updateMade) {
+void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results, std::vector<result4_t> &resultsOther, std::vector<result4_t> &resultsCachePlus, bool &updateMade) {
+  sindex_t numStates = numStatesClass(numX, numO);
   for (sindex_t stateIndex = 0; stateIndex < numStates; stateIndex++) {
     if (dataHandler->getResult(results, stateIndex) != RESULT_DRAW) {
       continue;
@@ -139,13 +141,12 @@ void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result
       auto moveKind = gameStateHandler->moveHandler->getKind(move);
       auto childState = gameStateHandler->swapPlayers(gameStateHandler->makeMove(state, move));
       auto childStateIndex = stateToIndex(childState);
-      std::vector<result4_t> resultsReference;
+      result_t childResult = RESULT_DRAW; // dummy
       if (moveKind == MKIND_ZERO) {
-        resultsReference = resultsOther;
+        childResult = dataHandler->getResult(resultsOther, childStateIndex);
       } else if (moveKind == MKIND_PLUS) {
-        resultsReference = resultsCachePlus;
+        childResult = dataHandler->getResult(resultsCachePlus, childStateIndex);
       }
-      auto childResult = dataHandler->getResult(resultsReference, childStateIndex);
       if (childResult == RESULT_LOSS) {
         dataHandler->setResult(results, stateIndex, RESULT_WIN);
         updateMade = true;
