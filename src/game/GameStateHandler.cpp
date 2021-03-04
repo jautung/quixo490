@@ -2,22 +2,26 @@
 #include <iostream>
 #include <tuple>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 namespace {
   nbit_t stateNBits = 64;
   nbit_t halfStateNBits = stateNBits/2;
   state_t halfStateMask = 0b11111111111111111111111111111111;
+  move_t dirFieldMask = 0b1111;
   move_t moveFieldMask = 0b1111;
+  move_t moveKindFieldMask = 0b111;
+  move_t dirrevFieldMask = 0b1;
   move_t moveMainMask = 0b111111111111;
 }
 
-move_t MoveHandler::create(dir_t dir, bindex_t rowIndex, bindex_t colIndex, mkind_t moveKind) {
-  return dir | rowIndex << 4 | colIndex << 8 | moveKind << 12;
+move_t MoveHandler::create(dir_t dir, bindex_t rowIndex, bindex_t colIndex, mkind_t moveKind, dirrev_t dirrev) {
+  return dir | rowIndex << 4 | colIndex << 8 | moveKind << 12 | dirrev << 15;
 }
 
 dir_t MoveHandler::getDir(move_t move) {
-  return (dir_t)(move & moveFieldMask);
+  return (dir_t)(move & dirFieldMask);
 }
 
 bindex_t MoveHandler::getRow(move_t move) {
@@ -29,21 +33,26 @@ bindex_t MoveHandler::getCol(move_t move) {
 }
 
 mkind_t MoveHandler::getKind(move_t move) {
-  return (mkind_t)((move >> 12) & moveFieldMask);
+  return (mkind_t)((move >> 12) & moveKindFieldMask);
+}
+
+dirrev_t MoveHandler::getDirRev(move_t move) {
+  return (dirrev_t)((move >> 15) & dirrevFieldMask);
 }
 
 void MoveHandler::print(move_t move) {
   auto dir = getDir(move);
   auto row = getRow(move);
   auto col = getCol(move);
+  auto dirrev = getDirRev(move);
   if (dir == DIR_LEFT) {
-    std::cout << "LEFT on row " << +row << " (taking tile from column " << +col << ")\n";
+    std::cout << "LEFT " << (dirrev == DIR_REV ? "REVERSED " : "") << "on row " << +row << " (taking tile from column " << +col << ")\n";
   } else if (dir == DIR_RIGHT) {
-    std::cout << "RIGHT on row " << +row << " (taking tile from column " << +col << ")\n";
+    std::cout << "RIGHT " << (dirrev == DIR_REV ? "REVERSED " : "") << "on row " << +row << " (taking tile from column " << +col << ")\n";
   } else if (dir == DIR_DOWN) {
-    std::cout << "DOWN on column " << +col << " (taking tile from row " << +row << ")\n";
+    std::cout << "DOWN " << (dirrev == DIR_REV ? "REVERSED " : "") << "on column " << +col << " (taking tile from row " << +row << ")\n";
   } else if (dir == DIR_UP) {
-    std::cout << "UP on column " << +col << " (taking tile from row " << +row << ")\n";
+    std::cout << "UP " << (dirrev == DIR_REV ? "REVERSED " : "") << "on column " << +col << " (taking tile from row " << +row << ")\n";
   } else if (dir == DIR_UNDEFINED) {
     std::cout << "UNDEFINED\n";
   }
@@ -104,6 +113,9 @@ GameStateHandler::GameStateHandler(len_t initLen) {
     }
     newTile <<= halfStateNBits; // the new tile is inserted as an X
 
+    state_t oldTile = (0b1 << (len*row + col)); // position of the old tile picked up
+    oldTile <<= halfStateNBits;
+
     state_t mask = 0b0; // creating the mask
     if (dir == DIR_LEFT || dir == DIR_RIGHT) {
       mask = (rowMaskFull >> (len-maskNumBits)) << maskStartBit;
@@ -112,7 +124,7 @@ GameStateHandler::GameStateHandler(len_t initLen) {
     }
     mask = (mask << halfStateNBits) | mask; // mask both X's and O's
 
-    makeMoveCache[move & moveMainMask] = std::make_tuple(mask, newTile);
+    makeMoveCache[move & moveMainMask] = std::make_tuple(mask, newTile, oldTile);
   }
 }
 
@@ -150,7 +162,6 @@ state_t GameStateHandler::setTile(state_t state, bindex_t row, bindex_t col, til
 
 std::vector<move_t> GameStateHandler::allMoves(state_t state) {
   std::vector<move_t> moves;
-  moves.reserve(12*len-16); // maximum number of possible moves
   for (bindex_t i = 0; i < len; i++) {
     for (bindex_t j = 0; j < len; j++) {
       if (i == 0 || i == len-1 || j == 0 || j == len-1) {
@@ -175,19 +186,82 @@ std::vector<move_t> GameStateHandler::allMoves(state_t state) {
   return moves;
 }
 
+std::vector<state_t> GameStateHandler::allPlusParents(state_t state) {
+  return allParentsAux(state, MKIND_PLUS);
+}
+
+std::vector<state_t> GameStateHandler::allZeroParents(state_t state) {
+  return allParentsAux(state, MKIND_ZERO);
+}
+
+std::vector<state_t> GameStateHandler::allParentsAux(state_t state, mkind_t kind) {
+  state = swapPlayers(state);
+  std::unordered_set<state_t> parentsSet;
+  std::vector<state_t> parents;
+  for (bindex_t i = 0; i < len; i++) {
+    for (bindex_t j = 0; j < len; j++) {
+      if (i == 0 || i == len-1 || j == 0 || j == len-1) {
+        auto tile = getTile(state, i, j);
+        if (tile == TILE_X) {
+          if (j == 0 || j == len-1) {
+            auto parent = makeMove(state, moveHandler->create(j == 0 ? DIR_RIGHT : DIR_LEFT, i, j == 0 ? len-1 : 0, kind, DIR_REV));
+            if (parentsSet.find(parent) == parentsSet.end()) {parentsSet.insert(parent); parents.push_back(parent);}
+            if (i == 0 || i == len-1) {
+              for (bindex_t jFrom = 1; jFrom < len-1; jFrom++) {
+                auto parent = makeMove(state, moveHandler->create(j == 0 ? DIR_RIGHT : DIR_LEFT, i, jFrom, kind, DIR_REV));
+                if (parentsSet.find(parent) == parentsSet.end()) {parentsSet.insert(parent); parents.push_back(parent);}
+              }
+            }
+          }
+          if (i == 0 || i == len-1) {
+            auto parent = makeMove(state, moveHandler->create(i == 0 ? DIR_DOWN : DIR_UP, i == 0 ? len-1 : 0, j, kind, DIR_REV));
+            if (parentsSet.find(parent) == parentsSet.end()) {parentsSet.insert(parent); parents.push_back(parent);}
+            if (j == 0 || j == len-1) {
+              for (bindex_t iFrom = 1; iFrom < len-1; iFrom++) {
+                auto parent = makeMove(state, moveHandler->create(i == 0 ? DIR_DOWN : DIR_UP, iFrom, j, kind, DIR_REV));
+                if (parentsSet.find(parent) == parentsSet.end()) {parentsSet.insert(parent); parents.push_back(parent);}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return parents;
+}
+
 state_t GameStateHandler::makeMove(state_t state, move_t move) {
   auto cached = makeMoveCache[move & moveMainMask];
   state_t mask = std::get<0>(cached);
   state_t newTile = std::get<1>(cached);
+  state_t oldTile = std::get<2>(cached);
   auto dir = moveHandler->getDir(move);
+  auto dirrev = moveHandler->getDirRev(move);
+  auto kind = moveHandler->getKind(move);
   if (dir == DIR_LEFT) {
-    return (((state & mask) >> 1) & mask) | newTile | (state & ~mask);
+    if (dirrev == DIR_NOREV) {
+      return (((state & mask) >> 1) & mask) | (state & ~mask) | newTile;
+    } else if (dirrev == DIR_REV) {
+      return (((state & mask) << 1) & mask) | (state & ~mask) | (kind == MKIND_ZERO ? oldTile : 0b0);
+    }
   } else if (dir == DIR_RIGHT) {
-    return (((state & mask) << 1) & mask) | newTile | (state & ~mask);
+    if (dirrev == DIR_NOREV) {
+      return (((state & mask) << 1) & mask) | (state & ~mask) | newTile;
+    } else if (dirrev == DIR_REV) {
+      return (((state & mask) >> 1) & mask) | (state & ~mask) | (kind == MKIND_ZERO ? oldTile : 0b0);
+    }
   } else if (dir == DIR_DOWN) {
-    return (((state & mask) << len) & mask) | newTile | (state & ~mask);
+    if (dirrev == DIR_NOREV) {
+      return (((state & mask) << len) & mask) | (state & ~mask) | newTile;
+    } else if (dirrev == DIR_REV) {
+      return (((state & mask) >> len) & mask) | (state & ~mask) | (kind == MKIND_ZERO ? oldTile : 0b0);
+    }
   } else if (dir == DIR_UP) {
-    return (((state & mask) >> len) & mask) | newTile | (state & ~mask);
+    if (dirrev == DIR_NOREV) {
+      return (((state & mask) >> len) & mask) | (state & ~mask) | newTile;
+    } else if (dirrev == DIR_REV) {
+      return (((state & mask) << len) & mask) | (state & ~mask) | (kind == MKIND_ZERO ? oldTile : 0b0);
+    }
   }
   return state; // dummy
 }

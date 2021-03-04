@@ -86,6 +86,11 @@ void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result4_t> 
     initialScanClass(numB, numA, resultsFlip);
   }
 
+  parentLinkClass(numA, numB, resultsNorm, resultsCacheNormPlus); // parent link optimization
+  if (numA != numB) {
+    parentLinkClass(numB, numA, resultsFlip, resultsCacheFlipPlus);
+  }
+
   while (true) {
     bool updateMade = false;
     if (numA != numB) {
@@ -128,6 +133,19 @@ void OptComputer::initialScanClass(nbit_t numX, nbit_t numO, std::vector<result4
   }
 }
 
+void OptComputer::parentLinkClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results, std::vector<result4_t> &resultsCachePlus) {
+  sindex_t numChildStates = numStatesClass(numO, numX+1);
+  for (sindex_t childStateIndex = 0; childStateIndex < numChildStates; childStateIndex++) {
+    if (dataHandler->getResult(resultsCachePlus, childStateIndex) == RESULT_LOSS) {
+      auto childState = indexToState(childStateIndex, numO, numX+1);
+      for (auto state : gameStateHandler->allPlusParents(childState)) {
+        auto stateIndex = stateToIndex(state);
+        dataHandler->setResult(results, stateIndex, RESULT_WIN);
+      }
+    }
+  }
+}
+
 void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results, std::vector<result4_t> &resultsOther, std::vector<result4_t> &resultsCachePlus, bool &updateMade) {
   sindex_t numStates = numStatesClass(numX, numO);
   for (sindex_t stateIndex = 0; stateIndex < numStates; stateIndex++) {
@@ -159,6 +177,10 @@ void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result
     if (allChildrenWin) {
       dataHandler->setResult(results, stateIndex, RESULT_LOSS);
       updateMade = true;
+      for (auto parentState : gameStateHandler->allZeroParents(state)) { // parent link optimization
+        auto parentStateIndex = stateToIndex(parentState);
+        dataHandler->setResult(resultsOther, parentStateIndex, RESULT_WIN);
+      }
     }
   }
 }
