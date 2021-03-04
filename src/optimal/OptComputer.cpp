@@ -85,39 +85,50 @@ void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result4_t> 
     resultsFlip.reserve(numStates/4);
   }
 
-  initClass(numA, numB, resultsNorm);
-  if (numA != numB) {
-    initClass(numB, numA, resultsFlip);
-  }
+  #pragma omp parallel
+  {
+    #pragma omp single
+    {
+      initClass(numA, numB, resultsNorm);
+      if (numA != numB) {
+        initClass(numB, numA, resultsFlip);
+      }
+      #pragma omp taskwait
 
-  if (numA != numB) {
-    initialScanClass(numA, numB, resultsNorm, resultsFlip);
-    initialScanClass(numB, numA, resultsFlip, resultsNorm);
-  } else {
-    initialScanClass(numB, numA, resultsNorm, resultsNorm);
-  }
+      if (numA != numB) {
+        checkTerminalsClass(numA, numB, resultsNorm, resultsFlip);
+        checkTerminalsClass(numB, numA, resultsFlip, resultsNorm);
+      } else {
+        checkTerminalsClass(numA, numB, resultsNorm, resultsNorm);
+      }
+      #pragma omp taskwait
 
-  parentLinkClass(numA, numB, resultsNorm, resultsCacheNormPlus); // parent link optimization
-  if (numA != numB) {
-    parentLinkClass(numB, numA, resultsFlip, resultsCacheFlipPlus);
-  }
+      parentLinkCacheClass(numA, numB, resultsNorm, resultsCacheNormPlus); // parent link optimization
+      if (numA != numB) {
+        parentLinkCacheClass(numB, numA, resultsFlip, resultsCacheFlipPlus);
+      }
+      #pragma omp taskwait
 
-  while (true) {
-    bool updateMade = false;
-    if (numA != numB) {
-      valueIterateClass(numA, numB, resultsNorm, resultsFlip, resultsCacheNormPlus, updateMade); // resultsReference of resultsNorm is resultsFlip for MKIND_ZERO and resultsCacheNormPlus for MKIND_PLUS
-      valueIterateClass(numB, numA, resultsFlip, resultsNorm, resultsCacheFlipPlus, updateMade); // resultsReference of resultsFlip is resultsNorm for MKIND_ZERO and resultsCacheFlipPlus for MKIND_PLUS
-    } else {
-      valueIterateClass(numA, numB, resultsNorm, resultsNorm, resultsCacheNormPlus, updateMade); // resultsReference of resultsNorm is resultsNorm for MKIND_ZERO and resultsCacheNormPlus for MKIND_PLUS
+      while (true) {
+        bool updateMade = false;
+        if (numA != numB) {
+          valueIterateClass(numA, numB, resultsNorm, resultsFlip, resultsCacheNormPlus, updateMade); // resultsReference of resultsNorm is resultsFlip for MKIND_ZERO and resultsCacheNormPlus for MKIND_PLUS
+          valueIterateClass(numB, numA, resultsFlip, resultsNorm, resultsCacheFlipPlus, updateMade); // resultsReference of resultsFlip is resultsNorm for MKIND_ZERO and resultsCacheFlipPlus for MKIND_PLUS
+        } else {
+          valueIterateClass(numA, numB, resultsNorm, resultsNorm, resultsCacheNormPlus, updateMade); // resultsReference of resultsNorm is resultsNorm for MKIND_ZERO and resultsCacheNormPlus for MKIND_PLUS
+        }
+        #pragma omp taskwait
+        if (!updateMade) {
+          break;
+        }
+      }
+
+      elimWinOrDrawClass(numA, numB, resultsNorm);
+      if (numA != numB) {
+        elimWinOrDrawClass(numB, numA, resultsFlip);
+      }
+      #pragma omp taskwait
     }
-    if (!updateMade) {
-      break;
-    }
-  }
-
-  elimWinOrDrawClass(numA, numB, resultsNorm);
-  if (numA != numB) {
-    elimWinOrDrawClass(numB, numA, resultsFlip);
   }
 
   auto endTime = std::chrono::high_resolution_clock::now();
@@ -132,36 +143,45 @@ void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result4_t> 
 
 void OptComputer::initClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results) {
   sindex_t numStates = numStatesClass(numX, numO);
-  for (sindex_t stateIndex = 0; stateIndex < numStates/4; stateIndex++) {
-    results.push_back(RESULT_DRAW | RESULT_DRAW << 2 | RESULT_DRAW << 4 | RESULT_DRAW << 6);
-  }
-  if (numStates%4 != 0) {
-    results.push_back(0b0);
-    for (sindex_t stateIndex = 0; stateIndex < numStates%4; stateIndex++) {
-      results.back() |= (RESULT_DRAW << (2 * (stateIndex)));
+  #pragma omp task shared(results)
+  {
+    for (sindex_t stateIndex = 0; stateIndex < numStates/4; stateIndex++) {
+      results.push_back(RESULT_DRAW | RESULT_DRAW << 2 | RESULT_DRAW << 4 | RESULT_DRAW << 6);
+    }
+    if (numStates%4 != 0) {
+      results.push_back(0b0);
+      for (sindex_t stateIndex = 0; stateIndex < numStates%4; stateIndex++) {
+        results.back() |= (RESULT_DRAW << (2 * (stateIndex)));
+      }
     }
   }
 }
 
-void OptComputer::initialScanClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results, std::vector<result4_t> &resultsOther) {
+void OptComputer::checkTerminalsClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results, std::vector<result4_t> &resultsOther) {
   sindex_t numStates = numStatesClass(numX, numO);
   for (sindex_t stateIndex = 0; stateIndex < numStates; stateIndex++) {
-    auto state = indexToState(stateIndex, numX, numO);
-    if (gameStateHandler->containsLine(state, TILE_X)) {
-      dataHandler->setResult(results, stateIndex, RESULT_WIN);
-    } else if (gameStateHandler->containsLine(state, TILE_O)) {
-      dataHandler->setResult(results, stateIndex, RESULT_LOSS);
-      for (auto parentState : gameStateHandler->allZeroParents(state)) { // parent link optimization
-        auto parentStateIndex = stateToIndex(parentState);
-        if (dataHandler->getResult(resultsOther, parentStateIndex) == RESULT_DRAW) {
-          dataHandler->setResult(resultsOther, parentStateIndex, RESULT_WIN);
+    #pragma omp task shared(results, resultsOther)
+    {
+      auto state = indexToState(stateIndex, numX, numO);
+      if (gameStateHandler->containsLine(state, TILE_X)) {
+        #pragma omp critical(results)
+        { dataHandler->setResult(results, stateIndex, RESULT_WIN); }
+      } else if (gameStateHandler->containsLine(state, TILE_O)) {
+        #pragma omp critical(results)
+        { dataHandler->setResult(results, stateIndex, RESULT_LOSS); }
+        for (auto parentState : gameStateHandler->allZeroParents(state)) { // parent link optimization
+          auto parentStateIndex = stateToIndex(parentState);
+          if (dataHandler->getResult(resultsOther, parentStateIndex) == RESULT_DRAW) {
+            #pragma omp critical(results)
+            { dataHandler->setResult(resultsOther, parentStateIndex, RESULT_WIN); }
+          }
         }
       }
     }
   }
 }
 
-void OptComputer::parentLinkClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results, std::vector<result4_t> &resultsCachePlus) {
+void OptComputer::parentLinkCacheClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results, std::vector<result4_t> &resultsCachePlus) {
   sindex_t numChildStates = numStatesClass(numO, numX+1);
   for (sindex_t childStateIndex = 0; childStateIndex < numChildStates; childStateIndex++) {
     auto childResult = dataHandler->getResult(resultsCachePlus, childStateIndex);

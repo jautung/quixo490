@@ -6,6 +6,7 @@
 #include "utils/MemoryChecker.hpp"
 #include <chrono>
 #include <iostream>
+#include <omp.h>
 #include <random>
 #include <tclap/CmdLine.h>
 
@@ -35,6 +36,7 @@ int main(int argc, char* argv[]) {
     TCLAP::ValueArg<int> timePauseMsArg("t", "timepause", "For `play` program: time (in milliseconds) to pause between steps", false, 0, "integer", cmd);
     TCLAP::ValueArg<int> graphicsResArg("g", "graphicsres", "For `play` or `opt-check` program: graphical output screen resolution (0: no graphics)", false, 0, "integer", cmd);
     TCLAP::SwitchArg memoryCheckArg("m", "memorycheck", "For `opt-compute` program: check run-time memory usage", cmd);
+    TCLAP::ValueArg<int> numThreadsArg("T", "Threads", "For `opt-compute` program: number of Threads to use", false, 1, "integer", cmd);
     cmd.parse(argc, argv);
     auto prog = progArg.getValue();
     auto len = lenArg.getValue();
@@ -48,6 +50,7 @@ int main(int argc, char* argv[]) {
     auto timePauseMs = timePauseMsArg.getValue();
     auto graphicsRes = graphicsResArg.getValue();
     auto memoryCheck = memoryCheckArg.getValue();
+    auto numThreads = numThreadsArg.getValue();
 
     auto gameStateHandler = new GameStateHandler(len);
     if (prog == "play") {
@@ -98,6 +101,13 @@ int main(int argc, char* argv[]) {
       delete gamePlayHandler;
     } else if (prog == "opt-compute") {
       auto memoryChecker = memoryCheck ? new MemoryChecker() : NULL;
+      if (numThreads <= 0) {
+        std::cerr << "warning: " << "number of threads requested (" << numThreads << ") is not positive; automatically reverting to default of 1 thread\n";
+        numThreads = 1;
+      } else if (numThreads > omp_get_num_procs()) {
+        std::cerr << "warning: " << "number of threads requested (" << numThreads << ") is larger than the number of processors available (" << omp_get_num_procs() << "); proceed with caution\n";
+      }
+      omp_set_num_threads(numThreads);
       auto startTime = std::chrono::high_resolution_clock::now();
       auto optComputer = new OptComputer(len*len, gameStateHandler, memoryChecker);
       auto endTime = std::chrono::high_resolution_clock::now();

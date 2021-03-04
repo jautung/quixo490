@@ -24,8 +24,8 @@ class OptComputer {
     sindex_t numStatesClass(nbit_t numA, nbit_t numB);
     void computeClass(nbit_t numA, nbit_t numB, std::vector<result4_t> resultsCacheNormPlus, std::vector<result4_t> resultsCacheFlipPlus);
     void initClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results);
-    void initialScanClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results, std::vector<result4_t> &resultsOther);
-    void parentLinkClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results, std::vector<result4_t> &resultsCachePlus);
+    void checkTerminalsClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results, std::vector<result4_t> &resultsOther);
+    void parentLinkCacheClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results, std::vector<result4_t> &resultsCachePlus);
     void valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results, std::vector<result4_t> &resultsOther, std::vector<result4_t> &resultsCachePlus, bool &updateMade);
     void elimWinOrDrawClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results);
     state_t indexToState(sindex_t stateIndex, nbit_t numX, nbit_t numO);
