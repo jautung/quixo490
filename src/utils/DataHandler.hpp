@@ -12,7 +12,8 @@ typedef uint16_t nbyte_t; // number of bytes
 enum result_t : uint8_t {
   RESULT_WIN,
   RESULT_LOSS,
-  RESULT_DRAW
+  RESULT_DRAW,
+  RESULT_WIN_OR_DRAW
 };
 
 typedef uint8_t result4_t; // block of 4 result_t's

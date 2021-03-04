@@ -85,9 +85,14 @@ void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result4_t> 
     resultsFlip.reserve(numStates/4);
   }
 
-  initialScanClass(numA, numB, resultsNorm);
+  initClass(numA, numB, resultsNorm);
   if (numA != numB) {
-    initialScanClass(numB, numA, resultsFlip);
+    initClass(numB, numA, resultsFlip);
+  }
+
+  initialScanClass(numA, numB, resultsNorm, resultsFlip);
+  if (numA != numB) {
+    initialScanClass(numB, numA, resultsFlip, resultsNorm);
   }
 
   parentLinkClass(numA, numB, resultsNorm, resultsCacheNormPlus); // parent link optimization
@@ -108,6 +113,11 @@ void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result4_t> 
     }
   }
 
+  elimWinOrDrawClass(numA, numB, resultsNorm);
+  if (numA != numB) {
+    elimWinOrDrawClass(numB, numA, resultsFlip);
+  }
+
   auto endTime = std::chrono::high_resolution_clock::now();
   std::cout << "Class (" << +numA << ", " << +numB << ") compute time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime-startTime).count()/1000.0 << "\n";
 
@@ -117,22 +127,31 @@ void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result4_t> 
   }
 }
 
-void OptComputer::initialScanClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results) {
+void OptComputer::initClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results) {
+  sindex_t numStates = numStatesClass(numX, numO);
+  for (sindex_t stateIndex = 0; stateIndex < numStates; stateIndex++) {
+    if (stateIndex % 4 == 0) { // logic for packing 4 result_t's into a result4_t
+      results.push_back(RESULT_DRAW);
+    } else {
+      results.back() |= (RESULT_DRAW << (2 * (stateIndex%4)));
+    }
+  }
+}
+
+void OptComputer::initialScanClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results, std::vector<result4_t> &resultsOther) {
   sindex_t numStates = numStatesClass(numX, numO);
   for (sindex_t stateIndex = 0; stateIndex < numStates; stateIndex++) {
     auto state = indexToState(stateIndex, numX, numO);
-    result_t result;
     if (gameStateHandler->containsLine(state, TILE_X)) {
-      result = RESULT_WIN;
+      dataHandler->setResult(results, stateIndex, RESULT_WIN);
     } else if (gameStateHandler->containsLine(state, TILE_O)) {
-      result = RESULT_LOSS;
-    } else {
-      result = RESULT_DRAW;
-    }
-    if (stateIndex % 4 == 0) { // logic for packing 4 result_t's into a result4_t
-      results.push_back(result);
-    } else {
-      results.back() |= (result << (2 * (stateIndex%4)));
+      dataHandler->setResult(results, stateIndex, RESULT_LOSS);
+      // for (auto parentState : gameStateHandler->allZeroParents(state)) { // parent link optimization
+      //   auto parentStateIndex = stateToIndex(parentState);
+      //   if (dataHandler->getResult(resultsOther, parentStateIndex) == RESULT_DRAW) {
+      //     dataHandler->setResult(resultsOther, parentStateIndex, RESULT_WIN);
+      //   }
+      // }
     }
   }
 }
@@ -140,12 +159,21 @@ void OptComputer::initialScanClass(nbit_t numX, nbit_t numO, std::vector<result4
 void OptComputer::parentLinkClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results, std::vector<result4_t> &resultsCachePlus) {
   sindex_t numChildStates = numStatesClass(numO, numX+1);
   for (sindex_t childStateIndex = 0; childStateIndex < numChildStates; childStateIndex++) {
-    if (dataHandler->getResult(resultsCachePlus, childStateIndex) == RESULT_LOSS) {
+    auto childResult = dataHandler->getResult(resultsCachePlus, childStateIndex);
+    if (childResult == RESULT_LOSS) {
       auto childState = indexToState(childStateIndex, numO, numX+1);
       for (auto state : gameStateHandler->allPlusParents(childState)) {
         auto stateIndex = stateToIndex(state);
         if (dataHandler->getResult(results, stateIndex) == RESULT_DRAW) {
           dataHandler->setResult(results, stateIndex, RESULT_WIN);
+        }
+      }
+    } else if (childResult == RESULT_DRAW) {
+      auto childState = indexToState(childStateIndex, numO, numX+1);
+      for (auto state : gameStateHandler->allPlusParents(childState)) {
+        auto stateIndex = stateToIndex(state);
+        if (dataHandler->getResult(results, stateIndex) == RESULT_DRAW) {
+          dataHandler->setResult(results, stateIndex, RESULT_WIN_OR_DRAW);
         }
       }
     }
@@ -171,7 +199,8 @@ void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result
       } else if (moveKind == MKIND_PLUS) {
         childResult = dataHandler->getResult(resultsCachePlus, childStateIndex);
       }
-      if (childResult == RESULT_LOSS) {
+      if (childResult == RESULT_LOSS) { // should theoretically never trigger
+        // assert(false);
         dataHandler->setResult(results, stateIndex, RESULT_WIN);
         updateMade = true;
         allChildrenWin = false;
@@ -189,6 +218,15 @@ void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result
           dataHandler->setResult(resultsOther, parentStateIndex, RESULT_WIN);
         }
       }
+    }
+  }
+}
+
+void OptComputer::elimWinOrDrawClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results) {
+  sindex_t numStates = numStatesClass(numX, numO);
+  for (sindex_t stateIndex = 0; stateIndex < numStates; stateIndex++) {
+    if (dataHandler->getResult(results, stateIndex) == RESULT_WIN_OR_DRAW) {
+      dataHandler->setResult(results, stateIndex, RESULT_DRAW);
     }
   }
 }
