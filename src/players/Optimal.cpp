@@ -25,7 +25,7 @@ move_t OptimalPlayer::selectMove(state_t state, colormode_t colorMode) {
     return *std::next(std::begin(moves), rand() % moves.size());
   }
 
-  result_t filterChildStateResult;
+  result_t filterChildStateResult = RESULT_LOSS; // dummy
   if (result == RESULT_WIN) {
     filterChildStateResult = RESULT_LOSS; // all children state with loss are good
   } else if (result == RESULT_DRAW) {
