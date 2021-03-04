@@ -203,7 +203,7 @@ void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result
       } else if (moveKind == MKIND_PLUS) {
         childResult = dataHandler->getResult(resultsCachePlus, childStateIndex);
       }
-      if (childResult == RESULT_DRAW) {
+      if (childResult == RESULT_DRAW) { // childResult will never be RESULT_LOSS because of parent link optimization
         allChildrenWin = false;
         break;
       }
