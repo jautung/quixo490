@@ -140,7 +140,9 @@ void OptComputer::parentLinkClass(nbit_t numX, nbit_t numO, std::vector<result4_
       auto childState = indexToState(childStateIndex, numO, numX+1);
       for (auto state : gameStateHandler->allPlusParents(childState)) {
         auto stateIndex = stateToIndex(state);
-        dataHandler->setResult(results, stateIndex, RESULT_WIN);
+        if (dataHandler->getResult(results, stateIndex) == RESULT_DRAW) {
+          dataHandler->setResult(results, stateIndex, RESULT_WIN);
+        }
       }
     }
   }
@@ -179,7 +181,9 @@ void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result
       updateMade = true;
       for (auto parentState : gameStateHandler->allZeroParents(state)) { // parent link optimization
         auto parentStateIndex = stateToIndex(parentState);
-        dataHandler->setResult(resultsOther, parentStateIndex, RESULT_WIN);
+        if (dataHandler->getResult(resultsOther, parentStateIndex) == RESULT_DRAW) {
+          dataHandler->setResult(resultsOther, parentStateIndex, RESULT_WIN);
+        }
       }
     }
   }
