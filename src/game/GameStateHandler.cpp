@@ -84,8 +84,33 @@ GameStateHandler::GameStateHandler(len_t initLen) {
   }
   diag2MaskFull <<= len-1;
 
-  auto moves = allMoves(0b0); // empty board has all possible moves
-  for (auto move : moves) {
+  for (bindex_t i = 0; i < len; i++) {
+    for (bindex_t j = 0; j < len; j++) {
+      if (i == 0 || i == len-1 || j == 0 || j == len-1) {
+        if (j != len-1) {
+          allPotentialMovesCache.push_back(moveHandler->create(DIR_LEFT, i, j, MKIND_PLUS));
+          allPotentialMovesCache.push_back(moveHandler->create(DIR_LEFT, i, j, MKIND_ZERO));
+        }
+        if (j != 0) {
+          allPotentialMovesCache.push_back(moveHandler->create(DIR_RIGHT, i, j, MKIND_PLUS));
+          allPotentialMovesCache.push_back(moveHandler->create(DIR_RIGHT, i, j, MKIND_ZERO));
+        }
+        if (i != 0) {
+          allPotentialMovesCache.push_back(moveHandler->create(DIR_DOWN, i, j, MKIND_PLUS));
+          allPotentialMovesCache.push_back(moveHandler->create(DIR_DOWN, i, j, MKIND_ZERO));
+        }
+        if (i != len-1) {
+          allPotentialMovesCache.push_back(moveHandler->create(DIR_UP, i, j, MKIND_PLUS));
+          allPotentialMovesCache.push_back(moveHandler->create(DIR_UP, i, j, MKIND_ZERO));
+        }
+      }
+    }
+  }
+
+  for (auto move : allPotentialMovesCache) {
+    auto kind = moveHandler->getKind(move);
+    if (kind == MKIND_ZERO) {continue;}
+
     auto dir = moveHandler->getDir(move);
     auto row = moveHandler->getRow(move);
     auto col = moveHandler->getCol(move);
@@ -162,25 +187,13 @@ state_t GameStateHandler::setTile(state_t state, bindex_t row, bindex_t col, til
 
 std::vector<move_t> GameStateHandler::allMoves(state_t state) {
   std::vector<move_t> moves;
-  for (bindex_t i = 0; i < len; i++) {
-    for (bindex_t j = 0; j < len; j++) {
-      if (i == 0 || i == len-1 || j == 0 || j == len-1) {
-        auto tile = getTile(state, i, j);
-        if (tile == TILE_X || tile == TILE_EMPTY) {
-          if (j != len-1) {
-            moves.push_back(moveHandler->create(DIR_LEFT, i, j, tile == TILE_EMPTY ? MKIND_PLUS : MKIND_ZERO));
-          }
-          if (j != 0) {
-            moves.push_back(moveHandler->create(DIR_RIGHT, i, j, tile == TILE_EMPTY ? MKIND_PLUS : MKIND_ZERO));
-          }
-          if (i != 0) {
-            moves.push_back(moveHandler->create(DIR_DOWN, i, j, tile == TILE_EMPTY ? MKIND_PLUS : MKIND_ZERO));
-          }
-          if (i != len-1) {
-            moves.push_back(moveHandler->create(DIR_UP, i, j, tile == TILE_EMPTY ? MKIND_PLUS : MKIND_ZERO));
-          }
-        }
-      }
+  for (auto move : allPotentialMovesCache) {
+    auto i = moveHandler->getRow(move);
+    auto j = moveHandler->getCol(move);
+    auto tile = getTile(state, i, j);
+    auto kind = moveHandler->getKind(move);
+    if ((tile == TILE_EMPTY && kind == MKIND_PLUS) || (tile == TILE_X && kind == MKIND_ZERO)) {
+      moves.push_back(move);
     }
   }
   return moves;
