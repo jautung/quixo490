@@ -9,6 +9,8 @@
   - For MacOS, this can be downloaded from [SourceForge](https://sourceforge.net/projects/tclap/files/), and the `*/include/tclap` folder can be copied to `./include` (which is `.gitignore`-ed).
 - [GLFW 3](https://www.glfw.org/) for graphical interface.
   - For MacOS, this can be done simply with `brew install glfw3`.
+- [OpenMP](https://www.openmp.org/) for parallelization.
+  - For MacOS, this can be done simply with `brew install llvm libomp`.
 
 ### Usage
 - `make && ./bin/quixo -h` brings up the possible usages.
