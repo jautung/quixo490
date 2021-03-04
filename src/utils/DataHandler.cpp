@@ -8,7 +8,7 @@
 #include <vector>
 
 namespace {
-  nbyte_t byteBufferSize = 1024;
+  nbyte_t byteBufferSize = 16384;
   byte_t resultMask = 0b11;
   std::string dataDirPath = "data/optimal/";
 }
@@ -33,8 +33,8 @@ void DataHandler::saveClass(std::vector<result4_t> &results, len_t len, nbit_t n
   std::ofstream dataFileStream(dataFileName(len, numX, numO), std::ios::out|std::ios::binary);
 
   nbyte_t byteBufferWriteIndex = 0;
-  for (nbyte_t result4Index = 0; result4Index < results.size(); result4Index++) { // writing bytes in byte blocks of byteBufferSize
-    byteBuffer[byteBufferWriteIndex] = results[result4Index];
+  for (auto result : results) {
+    byteBuffer[byteBufferWriteIndex] = result;
     byteBufferWriteIndex += 1;
     if (byteBufferWriteIndex == byteBufferSize) {
       dataFileStream.write(byteBuffer, byteBufferSize);
