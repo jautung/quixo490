@@ -129,11 +129,13 @@ void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result4_t> 
 
 void OptComputer::initClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results) {
   sindex_t numStates = numStatesClass(numX, numO);
-  for (sindex_t stateIndex = 0; stateIndex < numStates; stateIndex++) {
-    if (stateIndex % 4 == 0) { // logic for packing 4 result_t's into a result4_t
-      results.push_back(RESULT_DRAW);
-    } else {
-      results.back() |= (RESULT_DRAW << (2 * (stateIndex%4)));
+  for (sindex_t stateIndex = 0; stateIndex < numStates/4; stateIndex++) {
+    results.push_back(RESULT_DRAW | RESULT_DRAW << 2 | RESULT_DRAW << 4 | RESULT_DRAW << 6);
+  }
+  if (numStates%4 != 0) {
+    results.push_back(0b0);
+    for (sindex_t stateIndex = 0; stateIndex < numStates%4; stateIndex++) {
+      results.back() |= (RESULT_DRAW << (2 * (stateIndex)));
     }
   }
 }
