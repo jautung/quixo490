@@ -90,9 +90,11 @@ void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result4_t> 
     initClass(numB, numA, resultsFlip);
   }
 
-  initialScanClass(numA, numB, resultsNorm, resultsFlip);
   if (numA != numB) {
+    initialScanClass(numA, numB, resultsNorm, resultsFlip);
     initialScanClass(numB, numA, resultsFlip, resultsNorm);
+  } else {
+    initialScanClass(numB, numA, resultsNorm, resultsNorm);
   }
 
   parentLinkClass(numA, numB, resultsNorm, resultsCacheNormPlus); // parent link optimization
@@ -148,12 +150,12 @@ void OptComputer::initialScanClass(nbit_t numX, nbit_t numO, std::vector<result4
       dataHandler->setResult(results, stateIndex, RESULT_WIN);
     } else if (gameStateHandler->containsLine(state, TILE_O)) {
       dataHandler->setResult(results, stateIndex, RESULT_LOSS);
-      // for (auto parentState : gameStateHandler->allZeroParents(state)) { // parent link optimization
-      //   auto parentStateIndex = stateToIndex(parentState);
-      //   if (dataHandler->getResult(resultsOther, parentStateIndex) == RESULT_DRAW) {
-      //     dataHandler->setResult(resultsOther, parentStateIndex, RESULT_WIN);
-      //   }
-      // }
+      for (auto parentState : gameStateHandler->allZeroParents(state)) { // parent link optimization
+        auto parentStateIndex = stateToIndex(parentState);
+        if (dataHandler->getResult(resultsOther, parentStateIndex) == RESULT_DRAW) {
+          dataHandler->setResult(resultsOther, parentStateIndex, RESULT_WIN);
+        }
+      }
     }
   }
 }
@@ -201,14 +203,9 @@ void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result
       } else if (moveKind == MKIND_PLUS) {
         childResult = dataHandler->getResult(resultsCachePlus, childStateIndex);
       }
-      if (childResult == RESULT_LOSS) { // should theoretically never trigger
-        // assert(false);
-        dataHandler->setResult(results, stateIndex, RESULT_WIN);
-        updateMade = true;
+      if (childResult == RESULT_DRAW) {
         allChildrenWin = false;
         break;
-      } else if (childResult == RESULT_DRAW) {
-        allChildrenWin = false;
       }
     }
     if (allChildrenWin) {
