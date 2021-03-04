@@ -62,6 +62,7 @@ GameStateHandler::GameStateHandler(len_t initLen) {
   len = initLen;
   moveHandler = new MoveHandler();
 
+  // default masks
   rowMaskFull = 0b0;
   for (nbit_t i = 0; i < len; i++) {
     rowMaskFull <<= 1;
@@ -84,6 +85,7 @@ GameStateHandler::GameStateHandler(len_t initLen) {
   }
   diag2MaskFull <<= len-1;
 
+  // populating all potential moves cache
   for (bindex_t i = 0; i < len; i++) {
     for (bindex_t j = 0; j < len; j++) {
       if (i == 0 || i == len-1 || j == 0 || j == len-1) {
@@ -107,6 +109,7 @@ GameStateHandler::GameStateHandler(len_t initLen) {
     }
   }
 
+  // populating make move cache
   for (auto move : allPotentialMovesCache) {
     auto kind = moveHandler->getKind(move);
     if (kind == MKIND_ZERO) {continue;}

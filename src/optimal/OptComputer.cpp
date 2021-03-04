@@ -46,14 +46,18 @@ void OptComputer::computeAll() {
       if (memoryChecker) memoryChecker->checkVmRss("Before loading for class (" + std::to_string(numA) + ", " + std::to_string(numB) + ")");
       if (numUsed != numTiles) {
         resultsCacheNormPlus = dataHandler->loadClass(gameStateHandler->len, numB, numA+1); // (numA, numB) -- +1 --> (numB, numA+1)
-        auto numCacheStatesLoaded = numStatesClass(numA+1, numB);
-        if (memoryChecker) memoryChecker->checkVector(&(*resultsCacheNormPlus.begin()), &(*resultsCacheNormPlus.end()), "resultsCacheNormPlus (" + std::to_string(numCacheStatesLoaded) + " states)");
-        numCacheStatesLoadedTotal += numCacheStatesLoaded;
+        if (memoryChecker) {
+          auto numCacheStatesLoaded = numStatesClass(numA+1, numB);
+          memoryChecker->checkVector(&(*resultsCacheNormPlus.begin()), &(*resultsCacheNormPlus.end()), "resultsCacheNormPlus (" + std::to_string(numCacheStatesLoaded) + " states)");
+          numCacheStatesLoadedTotal += numCacheStatesLoaded;
+        }
         if (numA != numB) {
           resultsCacheFlipPlus = dataHandler->loadClass(gameStateHandler->len, numA, numB+1); // (numB, numA) -- +1 --> (numA, numB+1)
-          auto numCacheStatesLoaded = numStatesClass(numA, numB+1);
-          if (memoryChecker) memoryChecker->checkVector(&(*resultsCacheFlipPlus.begin()), &(*resultsCacheFlipPlus.end()), "resultsCacheFlipPlus (" + std::to_string(numCacheStatesLoaded) + " states)");
-          numCacheStatesLoadedTotal += numCacheStatesLoaded;
+          if (memoryChecker) {
+            auto numCacheStatesLoaded = numStatesClass(numA, numB+1);
+            memoryChecker->checkVector(&(*resultsCacheFlipPlus.begin()), &(*resultsCacheFlipPlus.end()), "resultsCacheFlipPlus (" + std::to_string(numCacheStatesLoaded) + " states)");
+            numCacheStatesLoadedTotal += numCacheStatesLoaded;
+          }
         }
       }
       if (memoryChecker) memoryChecker->checkVmRss("Loaded " + std::to_string(numCacheStatesLoadedTotal) + " cached states for class (" + std::to_string(numA) + ", " + std::to_string(numB) + ")");
