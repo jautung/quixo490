@@ -6,9 +6,15 @@
 #include "utils/MemoryChecker.hpp"
 #include <chrono>
 #include <iostream>
-#include <omp.h>
 #include <random>
 #include <tclap/CmdLine.h>
+
+#ifdef __APPLE__
+int omp_get_num_procs() {return 1;}
+void omp_set_num_threads(int num_threads) {}
+#else // __APPLE__
+#include <omp.h>
+#endif // __APPLE__
 
 Player* getPlayer(std::string playerType, GameStateHandler* gameStateHandler, GraphicsHandler* graphicsHandler = NULL) {
   if (playerType == "random") {
