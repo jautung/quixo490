@@ -20,6 +20,13 @@ namespace {
 GraphicsHandler::GraphicsHandler(GameStateHandler* initGameStateHandler, int initScreenRes) {
   gameStateHandler = initGameStateHandler;
   screenRes = initScreenRes;
+  gettingInputType = INPUT_NONE;
+  getMoveTileChoiceX = nullChoice;
+  getMoveTileChoiceY = nullChoice;
+  getMoveInsertChoiceX = nullChoice;
+  getMoveInsertChoiceY = nullChoice;
+  getMoveChoice = gameStateHandler->moveHandler->create(DIR_UNDEFINED, 0, 0);
+  getStateState = 0b0;
 
   if (!glfwInit()) {
     glfwErrorCallback(1, "initialization failed");
