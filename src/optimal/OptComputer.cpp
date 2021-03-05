@@ -164,16 +164,13 @@ void OptComputer::checkTerminalsClass(nbit_t numX, nbit_t numO, std::vector<resu
     {
       auto state = indexToState(stateIndex, numX, numO);
       if (gameStateHandler->containsLine(state, TILE_X)) {
-        #pragma omp critical(results)
-        { dataHandler->setResult(results, stateIndex, RESULT_WIN); }
+        dataHandler->setResult(results, stateIndex, RESULT_WIN);
       } else if (gameStateHandler->containsLine(state, TILE_O)) {
-        #pragma omp critical(results)
-        { dataHandler->setResult(results, stateIndex, RESULT_LOSS); }
+        dataHandler->setResult(results, stateIndex, RESULT_LOSS);
         for (auto parentState : gameStateHandler->allZeroParents(state)) { // parent link optimization
           auto parentStateIndex = stateToIndex(parentState);
           if (dataHandler->getResult(resultsOther, parentStateIndex) == RESULT_DRAW) {
-            #pragma omp critical(results)
-            { dataHandler->setResult(resultsOther, parentStateIndex, RESULT_WIN); }
+            dataHandler->setResult(resultsOther, parentStateIndex, RESULT_WIN);
           }
         }
       }
@@ -186,19 +183,25 @@ void OptComputer::parentLinkCacheClass(nbit_t numX, nbit_t numO, std::vector<res
   for (sindex_t childStateIndex = 0; childStateIndex < numChildStates; childStateIndex++) {
     auto childResult = dataHandler->getResult(resultsCachePlus, childStateIndex);
     if (childResult == RESULT_LOSS) {
-      auto childState = indexToState(childStateIndex, numO, numX+1);
-      for (auto state : gameStateHandler->allPlusParents(childState)) {
-        auto stateIndex = stateToIndex(state);
-        if (dataHandler->getResult(results, stateIndex) == RESULT_DRAW) {
-          dataHandler->setResult(results, stateIndex, RESULT_WIN);
+      #pragma omp task shared(results, resultsCachePlus)
+      {
+        auto childState = indexToState(childStateIndex, numO, numX+1);
+        for (auto state : gameStateHandler->allPlusParents(childState)) {
+          auto stateIndex = stateToIndex(state);
+          if (dataHandler->getResult(results, stateIndex) == RESULT_DRAW) {
+            dataHandler->setResult(results, stateIndex, RESULT_WIN);
+          }
         }
       }
     } else if (childResult == RESULT_DRAW) {
-      auto childState = indexToState(childStateIndex, numO, numX+1);
-      for (auto state : gameStateHandler->allPlusParents(childState)) {
-        auto stateIndex = stateToIndex(state);
-        if (dataHandler->getResult(results, stateIndex) == RESULT_DRAW) {
-          dataHandler->setResult(results, stateIndex, RESULT_WIN_OR_DRAW);
+      #pragma omp task shared(results, resultsCachePlus)
+      {
+        auto childState = indexToState(childStateIndex, numO, numX+1);
+        for (auto state : gameStateHandler->allPlusParents(childState)) {
+          auto stateIndex = stateToIndex(state);
+          if (dataHandler->getResult(results, stateIndex) == RESULT_DRAW) {
+            dataHandler->setResult(results, stateIndex, RESULT_WIN_OR_DRAW);
+          }
         }
       }
     }
@@ -211,31 +214,34 @@ void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result
     if (dataHandler->getResult(results, stateIndex) != RESULT_DRAW) {
       continue;
     }
-    auto state = indexToState(stateIndex, numX, numO);
-    auto moves = gameStateHandler->allMoves(state);
-    bool allChildrenWin = true;
-    for (auto move : moves) {
-      auto moveKind = gameStateHandler->moveHandler->getKind(move);
-      auto childState = gameStateHandler->swapPlayers(gameStateHandler->makeMove(state, move));
-      auto childStateIndex = stateToIndex(childState);
-      result_t childResult = RESULT_DRAW; // dummy
-      if (moveKind == MKIND_ZERO) {
-        childResult = dataHandler->getResult(resultsOther, childStateIndex);
-      } else if (moveKind == MKIND_PLUS) {
-        childResult = dataHandler->getResult(resultsCachePlus, childStateIndex);
+    #pragma omp task shared(results, resultsOther, resultsCachePlus, updateMade)
+    {
+      auto state = indexToState(stateIndex, numX, numO);
+      auto moves = gameStateHandler->allMoves(state);
+      bool allChildrenWin = true;
+      for (auto move : moves) {
+        auto moveKind = gameStateHandler->moveHandler->getKind(move);
+        auto childState = gameStateHandler->swapPlayers(gameStateHandler->makeMove(state, move));
+        auto childStateIndex = stateToIndex(childState);
+        result_t childResult = RESULT_DRAW; // dummy
+        if (moveKind == MKIND_ZERO) {
+          childResult = dataHandler->getResult(resultsOther, childStateIndex);
+        } else if (moveKind == MKIND_PLUS) {
+          childResult = dataHandler->getResult(resultsCachePlus, childStateIndex);
+        }
+        if (childResult == RESULT_DRAW) { // childResult will never be RESULT_LOSS because of parent link optimization
+          allChildrenWin = false;
+          break;
+        }
       }
-      if (childResult == RESULT_DRAW) { // childResult will never be RESULT_LOSS because of parent link optimization
-        allChildrenWin = false;
-        break;
-      }
-    }
-    if (allChildrenWin) {
-      dataHandler->setResult(results, stateIndex, RESULT_LOSS);
-      updateMade = true;
-      for (auto parentState : gameStateHandler->allZeroParents(state)) { // parent link optimization
-        auto parentStateIndex = stateToIndex(parentState);
-        if (dataHandler->getResult(resultsOther, parentStateIndex) == RESULT_DRAW) {
-          dataHandler->setResult(resultsOther, parentStateIndex, RESULT_WIN);
+      if (allChildrenWin) {
+        dataHandler->setResult(results, stateIndex, RESULT_LOSS);
+        updateMade = true;
+        for (auto parentState : gameStateHandler->allZeroParents(state)) { // parent link optimization
+          auto parentStateIndex = stateToIndex(parentState);
+          if (dataHandler->getResult(resultsOther, parentStateIndex) == RESULT_DRAW) {
+            dataHandler->setResult(resultsOther, parentStateIndex, RESULT_WIN);
+          }
         }
       }
     }

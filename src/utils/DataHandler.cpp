@@ -22,8 +22,11 @@ result_t DataHandler::getResult(std::vector<result4_t> &results, sindex_t stateI
 }
 
 void DataHandler::setResult(std::vector<result4_t> &results, sindex_t stateIndex, result_t result) {
-  results[stateIndex/4] &= ~(resultMask << (2 * (stateIndex%4)));
-  results[stateIndex/4] |= (result << (2 * (stateIndex%4)));
+  #pragma omp critical(results)
+  {
+    results[stateIndex/4] &= ~(resultMask << (2 * (stateIndex%4)));
+    results[stateIndex/4] |= (result << (2 * (stateIndex%4)));
+  }
 }
 
 void DataHandler::saveClass(std::vector<result4_t> &results, len_t len, nbit_t numX, nbit_t numO) {
