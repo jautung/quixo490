@@ -27,6 +27,8 @@
     - `./bin/quixo -X interact -g 800`: play interactively as X against a random player O.
     - `./bin/quixo -X interact -g 800 -l 3`: play interactively as X against a random player O on a 3X3 board.
     - `./bin/quixo -X opt -O interact -g 800 -l 3`: play interactively as O against an optimal player X on a 3X3 board.
+    - `./bin/quixo -X opt -i -g 800 -l 4`: play an optimal player X against a random player O on a 4X4 board, with an initial board setting.
+    - `./bin/quixo -X opt -O opt -i -g 800 -l 4`: play optimal players against each other on a 4X4 board, with an initial board setting.
   - Benchmarks:
     - `./bin/quixo -p test -X opt -n 1000 -l 3`: test optimal player X against random player O for 1000 iterations on a 3X3 board.
     - `./bin/quixo -p test -O opt -n 1000 -l 3`: test optimal player O against random player X for 1000 iterations on a 3X3 board.
