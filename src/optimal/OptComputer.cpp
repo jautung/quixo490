@@ -142,9 +142,9 @@ void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result4_t> 
 }
 
 void OptComputer::initClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results) {
-  sindex_t numStates = numStatesClass(numX, numO);
-  #pragma omp task shared(results)
+  #pragma omp task shared(results) firstprivate(numX, numO)
   {
+    sindex_t numStates = numStatesClass(numX, numO);
     for (sindex_t stateIndex = 0; stateIndex < numStates/4; stateIndex++) {
       results.push_back(RESULT_DRAW | RESULT_DRAW << 2 | RESULT_DRAW << 4 | RESULT_DRAW << 6);
     }
@@ -160,7 +160,7 @@ void OptComputer::initClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &re
 void OptComputer::checkTerminalsClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results, std::vector<result4_t> &resultsOther) {
   sindex_t numStates = numStatesClass(numX, numO);
   for (sindex_t stateIndex = 0; stateIndex < numStates; stateIndex++) {
-    #pragma omp task shared(results, resultsOther)
+    #pragma omp task shared(results, resultsOther) firstprivate(numX, numO, stateIndex)
     {
       auto state = indexToState(stateIndex, numX, numO);
       if (gameStateHandler->containsLine(state, TILE_X)) {
@@ -186,9 +186,11 @@ void OptComputer::checkTerminalsClass(nbit_t numX, nbit_t numO, std::vector<resu
 void OptComputer::parentLinkCacheClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results, std::vector<result4_t> &resultsCachePlus) {
   sindex_t numChildStates = numStatesClass(numO, numX+1);
   for (sindex_t childStateIndex = 0; childStateIndex < numChildStates; childStateIndex++) {
-    auto childResult = dataHandler->getResult(resultsCachePlus, childStateIndex);
+    result_t childResult = RESULT_WIN; // dummy
+    #pragma omp critical(results)
+    { childResult = dataHandler->getResult(resultsCachePlus, childStateIndex); }
     if (childResult == RESULT_LOSS) {
-      #pragma omp task shared(results, resultsCachePlus)
+      #pragma omp task shared(results, resultsCachePlus) firstprivate(numX, numO, childStateIndex)
       {
         auto childState = indexToState(childStateIndex, numO, numX+1);
         for (auto state : gameStateHandler->allPlusParents(childState)) {
@@ -202,7 +204,7 @@ void OptComputer::parentLinkCacheClass(nbit_t numX, nbit_t numO, std::vector<res
         }
       }
     } else if (childResult == RESULT_DRAW) {
-      #pragma omp task shared(results, resultsCachePlus)
+      #pragma omp task shared(results, resultsCachePlus) firstprivate(numX, numO, childStateIndex)
       {
         auto childState = indexToState(childStateIndex, numO, numX+1);
         for (auto state : gameStateHandler->allPlusParents(childState)) {
@@ -222,11 +224,14 @@ void OptComputer::parentLinkCacheClass(nbit_t numX, nbit_t numO, std::vector<res
 void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results, std::vector<result4_t> &resultsOther, std::vector<result4_t> &resultsCachePlus, bool &updateMade) {
   sindex_t numStates = numStatesClass(numX, numO);
   for (sindex_t stateIndex = 0; stateIndex < numStates; stateIndex++) {
-    if (dataHandler->getResult(results, stateIndex) != RESULT_DRAW) {
+    result_t result = RESULT_WIN; // dummy
+    #pragma omp critical(results)
+    { result = dataHandler->getResult(results, stateIndex); }
+    if (result != RESULT_DRAW) {
       continue;
     }
-    // #pragma omp task shared(results, resultsOther, resultsCachePlus, updateMade)
-    // {
+    #pragma omp task shared(results, resultsOther, resultsCachePlus, updateMade) firstprivate(numX, numO, stateIndex)
+    {
       auto state = indexToState(stateIndex, numX, numO);
       auto moves = gameStateHandler->allMoves(state);
       bool allChildrenWin = true;
@@ -236,9 +241,11 @@ void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result
         auto childStateIndex = stateToIndex(childState);
         result_t childResult = RESULT_DRAW; // dummy
         if (moveKind == MKIND_ZERO) {
-          childResult = dataHandler->getResult(resultsOther, childStateIndex);
+          #pragma omp critical(results)
+          { childResult = dataHandler->getResult(resultsOther, childStateIndex); }
         } else if (moveKind == MKIND_PLUS) {
-          childResult = dataHandler->getResult(resultsCachePlus, childStateIndex);
+          #pragma omp critical(results)
+          { childResult = dataHandler->getResult(resultsCachePlus, childStateIndex); }
         }
         if (childResult == RESULT_DRAW) { // childResult will never be RESULT_LOSS because of parent link optimization
           allChildrenWin = false;
@@ -267,15 +274,21 @@ void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result
           }
         }
       }
-    // }
+    }
   }
 }
 
 void OptComputer::elimWinOrDrawClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results) {
-  sindex_t numStates = numStatesClass(numX, numO);
-  for (sindex_t stateIndex = 0; stateIndex < numStates; stateIndex++) {
-    if (dataHandler->getResult(results, stateIndex) == RESULT_WIN_OR_DRAW) {
-      dataHandler->setResult(results, stateIndex, RESULT_DRAW);
+  #pragma omp task shared(results) firstprivate(numX, numO)
+  {
+    sindex_t numStates = numStatesClass(numX, numO);
+    for (sindex_t stateIndex = 0; stateIndex < numStates; stateIndex++) {
+      #pragma omp critical(results)
+      {
+        if (dataHandler->getResult(results, stateIndex) == RESULT_WIN_OR_DRAW) {
+          dataHandler->setResult(results, stateIndex, RESULT_DRAW);
+        }
+      }
     }
   }
 }
