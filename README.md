@@ -39,11 +39,14 @@
 ## Notes
 - Feb 25, 2021: tested by writing to dummy files in a for-loop, that the Zoo has >200G of storage (100 files of 2G each).
 - Running on the Zoo using screen. Use `screen -r` to resume, and `Ctrl-A` then `Ctrl-D` to detach.
+- Comparing optimized versions to original versions:
+  - `make clean && make purge && make`
+  - `./bin/quixo -p opt-compute -l 3 -T 16 && mkdir tmp && cp data/optimal/len3* tmp/`
+  - `diff -rq ../data_frozen/3/ tmp/ ; rm -rf tmp`
 
 ## To Do / Next Steps
-1. **Improve the speed of optimal computation.** Add parallel computation. Possibly find other optimizations methods.
-2. **Run the optimal solution finder for 5X5 Quixo.** Run the full computation for 5X5 Quixo. Find a reasonable compromise between time and space, noting that storing the results of all 3<sup>25</sup> states requires at least 3<sup>25</sup>/4 bytes, which is about 200GB.
-3. **Develop other playing agents.** Some ideas include MCTS, Q-learning, some simple human-based heuristic, or a neural network trained on either optimal and/or MCTS.
-4. **Evaluate the playing agents.** Against optimal player primarily, but against each other might be interesting as well.
-5. **Evaluate depth in Quixo.** Referencing '[Depth in Strategic Games](https://www.semanticscholar.org/paper/Depth-in-Strategic-Games-Lantz-Isaksen/4dedc67aa2191731bf8cf1822d42cea290e73073)', compare the learning rates of non-optimal playing agents between 3X3, 4X4, and 5X5 Quixo. Graph where x-axis is training time or number of training iterations, and y-axis is number of steps to lose OR how much randomization needs to be injected to optimal to make it lose OR percentage of correct moves.
-6. _(Stretch)_ **Extensions of Quixo.** As mentioned in '[Quixo Is Solved](https://arxiv.org/abs/2007.15895)', there are extensions of Quixo (such as winning length being different from board length). These can be investigated if time permits.
+1. **Run the optimal solution finder for 5X5 Quixo.** Run the full computation for 5X5 Quixo. Find a reasonable compromise between time and space, noting that storing the results of all 3<sup>25</sup> states requires at least 3<sup>25</sup>/4 bytes, which is about 200GB.
+2. **Develop other playing agents.** Some ideas include MCTS, Q-learning, some simple human-based heuristic, or a neural network trained on either optimal and/or MCTS.
+3. **Evaluate the playing agents.** Against optimal player primarily, but against each other might be interesting as well.
+4. **Evaluate depth in Quixo.** Referencing '[Depth in Strategic Games](https://www.semanticscholar.org/paper/Depth-in-Strategic-Games-Lantz-Isaksen/4dedc67aa2191731bf8cf1822d42cea290e73073)', compare the learning rates of non-optimal playing agents between 3X3, 4X4, and 5X5 Quixo. Graph where x-axis is training time or number of training iterations, and y-axis is number of steps to lose OR how much randomization needs to be injected to optimal to make it lose OR percentage of correct moves.
+5. _(Stretch)_ **Extensions of Quixo.** As mentioned in '[Quixo Is Solved](https://arxiv.org/abs/2007.15895)', there are extensions of Quixo (such as winning length being different from board length). These can be investigated if time permits.
