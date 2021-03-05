@@ -197,7 +197,8 @@ void OptComputer::parentLinkCacheClass(nbit_t numX, nbit_t numO, std::vector<res
           auto stateIndex = stateToIndex(state);
           #pragma omp critical(results)
           {
-            if (dataHandler->getResult(results, stateIndex) == RESULT_DRAW) {
+            auto result = dataHandler->getResult(results, stateIndex);
+            if (result == RESULT_DRAW || result == RESULT_WIN_OR_DRAW) {
               dataHandler->setResult(results, stateIndex, RESULT_WIN);
             }
           }
