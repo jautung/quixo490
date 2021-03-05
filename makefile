@@ -11,14 +11,13 @@ TARGET := bin/quixo
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-INC := -I include -I /usr/local/include
+CFLAGS := -g -Wall -std=c++11 -O3 -march=native -Xpreprocessor -fopenmp
+INC := -I include -I /usr/local/include -I /usr/local/opt/libomp/include
 
 ifeq ($(USER), jc3395)
-CFLAGS := -g -Wall -std=c++11 -O3 -march=native -fopenmp
-LDFLAGS := -Xpreprocessor -fopenmp -march=native -g -O3 -xHost
+LDFLAGS := -Xpreprocessor -fopenmp -lomp -march=native -g -O3 -xHost
 else
-CFLAGS := -g -Wall -std=c++11 -O3 -march=native
-LDFLAGS := -Xpreprocessor -fopenmp -march=native -g -O3 -framework OpenGL -L /usr/local/lib -lglfw
+LDFLAGS := -Xpreprocessor -fopenmp -lomp -march=native -g -O3 -framework OpenGL -L /usr/local/lib -lglfw
 endif
 
 $(TARGET): $(OBJECTS)
