@@ -14,11 +14,11 @@ OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 INC := -I include -I /usr/local/include
 
 ifeq ($(USER), jc3395)
-CFLAGS := -g -Wall -std=c++11 -O3 -fopenmp -march=native
-LDFLAGS := -fopenmp -march=native -xHost -g -O3
+CFLAGS := -g -Wall -std=c++11 -O3 -march=native -fopenmp
+LDFLAGS := -Xpreprocessor -fopenmp -march=native -g -O3 -xHost
 else
 CFLAGS := -g -Wall -std=c++11 -O3 -march=native
-LDFLAGS := -march=native -g -O3 -framework OpenGL -L /usr/local/lib -lglfw
+LDFLAGS := -Xpreprocessor -fopenmp -march=native -g -O3 -framework OpenGL -L /usr/local/lib -lglfw
 endif
 
 $(TARGET): $(OBJECTS)
