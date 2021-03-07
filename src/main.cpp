@@ -46,10 +46,11 @@ int main(int argc, char* argv[]) {
     TCLAP::ValueArg<int> lenArg("l", "len", "For `play`, `test`, `opt-compute` or `opt-check` program: number of tiles per side", false, 5, "integer", cmd);
     TCLAP::ValueArg<std::string> playerXTypeArg("X", "playerX", "For `play` or `test` program: player X type (`random`, `interact`, `opt`, or `mcts`)", false, "random", "string", cmd);
     TCLAP::ValueArg<std::string> playerOTypeArg("O", "playerO", "For `play` or `test` program: player O type (`random`, `interact`, `opt`, or `mcts`)", false, "random", "string", cmd);
+    TCLAP::ValueArg<int> numStepsArg("n", "numsteps", "For `play` or `test` program: number of steps to run per game (<=0: till the end)", false, 0, "integer", cmd);
     TCLAP::SwitchArg initStateArg("i", "initstate", "For `play` program: whether to set an initial state of the game board", cmd);
-    TCLAP::ValueArg<int> nStepsArg("n", "n", "For `play` or `test` program: number of steps or iterations to run respectively (0: till the end for `play`)", false, 0, "integer", cmd);
     TCLAP::ValueArg<int> timePauseMsArg("t", "timepause", "For `play` program: time (in milliseconds) to pause between steps", false, 0, "integer", cmd);
-    TCLAP::ValueArg<int> graphicsResArg("g", "graphicsres", "For `play` or `opt-check` program: graphical output screen resolution (0: no graphics)", false, 0, "integer", cmd);
+    TCLAP::ValueArg<int> graphicsResArg("g", "graphicsres", "For `play` or `opt-check` program: graphical output screen resolution (<0: no graphics)", false, 0, "integer", cmd);
+    TCLAP::ValueArg<int> numGamesArg("N", "Ngames", "For `test` program: number of game iterations to run", false, 1, "integer", cmd);
     TCLAP::SwitchArg memoryCheckArg("m", "memorycheck", "For `opt-compute` program: check run-time memory usage", cmd);
     TCLAP::ValueArg<int> numThreadsArg("T", "Threads", "For `opt-compute` program: number of Threads to use", false, 1, "integer", cmd);
     cmd.parse(argc, argv);
@@ -61,10 +62,11 @@ int main(int argc, char* argv[]) {
     }
     auto playerXType = playerXTypeArg.getValue();
     auto playerOType = playerOTypeArg.getValue();
+    auto numSteps = numStepsArg.getValue();
     auto initState = initStateArg.getValue();
-    auto nSteps = nStepsArg.getValue();
     auto timePauseMs = timePauseMsArg.getValue();
     auto graphicsRes = graphicsResArg.getValue();
+    auto numGames = numGamesArg.getValue();
     auto memoryCheck = memoryCheckArg.getValue();
     auto numThreads = numThreadsArg.getValue();
 
@@ -76,7 +78,7 @@ int main(int argc, char* argv[]) {
       auto playerO = getPlayer(playerOType, gameStateHandler, graphicsHandler);
       auto gamePlayHandler = new GamePlayHandler(playerX, playerO, timePauseMs, gameStateHandler, graphicsHandler);
       gamePlayHandler->startGame(initState ? getStateInteractive(graphicsHandler) : 0b0);
-      auto winner = nSteps <= 0 ? gamePlayHandler->playTillEnd() : gamePlayHandler->playNTurns(nSteps);
+      auto winner = numSteps <= 0 ? gamePlayHandler->playTillEnd() : gamePlayHandler->playNTurns(numSteps);
       if (winner == WINNER_X) {
         std::cout << "X Wins!\n";
       } else if (winner == WINNER_O) {
@@ -100,9 +102,9 @@ int main(int argc, char* argv[]) {
       int xWins = 0;
       int oWins = 0;
       int draws = 0;
-      for (int i = 0; i < nSteps; i++) {
+      for (int i = 0; i < numGames; i++) {
         gamePlayHandler->startGame();
-        auto winner = gamePlayHandler->playTillEnd();
+        auto winner = numSteps <= 0 ? gamePlayHandler->playTillEnd() : gamePlayHandler->playNTurns(numSteps);
         if (winner == WINNER_X) {
           xWins += 1;
         } else if (winner == WINNER_O) {

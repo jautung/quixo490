@@ -30,8 +30,9 @@
     - `./bin/quixo -X opt -i -g 800 -l 4`: play an optimal player X against a random player O on a 4X4 board, with an initial board setting.
     - `./bin/quixo -X opt -O opt -i -g 800 -l 4`: play optimal players against each other on a 4X4 board, with an initial board setting.
   - Benchmarks:
-    - `./bin/quixo -p test -X opt -n 1000 -l 3`: test optimal player X against random player O for 1000 iterations on a 3X3 board.
-    - `./bin/quixo -p test -O opt -n 1000 -l 3`: test optimal player O against random player X for 1000 iterations on a 3X3 board.
+    - `./bin/quixo -p test -X opt -N 1000 -l 3`: test optimal player X against random player O for 1000 iterations on a 3X3 board.
+    - `./bin/quixo -p test -O opt -N 1000 -l 3`: test optimal player O against random player X for 1000 iterations on a 3X3 board.
+    - `./bin/quixo -p test -X opt -N 1000 -n 1000 -l 4`: test optimal player X against random player O for 1000 iterations on a 4X4 board, for up to 1000 steps per game.
 
 ## References
 - [Quixo Is Solved](https://arxiv.org/abs/2007.15895).
