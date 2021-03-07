@@ -72,7 +72,7 @@ void OptComputer::computeAll() {
 }
 
 sindex_t OptComputer::numStatesClass(nbit_t numA, nbit_t numB) {
-  return ncrCalculator->ncr(numTiles, numA) * ncrCalculator->ncr(numTiles-numA, numB);
+  return (sindex_t)ncrCalculator->ncr(numTiles, numA) * (sindex_t)ncrCalculator->ncr(numTiles-numA, numB);
 }
 
 void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result4_t> &resultsCacheNormPlus, std::vector<result4_t> &resultsCacheFlipPlus) { // value iteration
