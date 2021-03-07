@@ -42,6 +42,12 @@ class OptimalPlayer : public Player {
     DataHandler* dataHandler;
 };
 
+class HeuristicSimplePlayer : public Player {
+  using Player::Player;
+  public:
+    move_t selectMove(state_t state, colormode_t colorMode) override;
+};
+
 class MCTSPlayer : public Player {
   using Player::Player;
   public:

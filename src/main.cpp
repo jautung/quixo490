@@ -17,6 +17,8 @@ Player* getPlayer(std::string playerType, GameStateHandler* gameStateHandler, Gr
     return new InteractivePlayer(gameStateHandler, graphicsHandler);
   } else if (playerType == "opt") {
     return new OptimalPlayer(gameStateHandler);
+  } else if (playerType == "heuris-simple") {
+    return new HeuristicSimplePlayer(gameStateHandler);
   } else if (playerType == "mcts") {
     return new MCTSPlayer(gameStateHandler);
   } else {
@@ -44,8 +46,8 @@ int main(int argc, char* argv[]) {
     TCLAP::CmdLine cmd("Quixo Project");
     TCLAP::ValueArg<std::string> progArg("p", "program", "Program to run (`play`, `test`, `opt-compute`, `opt-check`, or `mcts-compute`)", false, "play", "string", cmd);
     TCLAP::ValueArg<int> lenArg("l", "len", "For `play`, `test`, `opt-compute` or `opt-check` program: number of tiles per side", false, 5, "integer", cmd);
-    TCLAP::ValueArg<std::string> playerXTypeArg("X", "playerX", "For `play` or `test` program: player X type (`random`, `interact`, `opt`, or `mcts`)", false, "random", "string", cmd);
-    TCLAP::ValueArg<std::string> playerOTypeArg("O", "playerO", "For `play` or `test` program: player O type (`random`, `interact`, `opt`, or `mcts`)", false, "random", "string", cmd);
+    TCLAP::ValueArg<std::string> playerXTypeArg("X", "playerX", "For `play` or `test` program: player X type (`random`, `interact`, `opt`, `heuris-simple`, or `mcts`)", false, "random", "string", cmd);
+    TCLAP::ValueArg<std::string> playerOTypeArg("O", "playerO", "For `play` or `test` program: player O type (`random`, `interact`, `opt`, `heuris-simple`, or `mcts`)", false, "random", "string", cmd);
     TCLAP::ValueArg<int> numStepsArg("n", "numsteps", "For `play` or `test` program: number of steps to run per game (<=0: till the end)", false, 0, "integer", cmd);
     TCLAP::SwitchArg initStateArg("i", "initstate", "For `play` program: whether to set an initial state of the game board", cmd);
     TCLAP::ValueArg<int> timePauseMsArg("t", "timepause", "For `play` program: time (in milliseconds) to pause between steps", false, 0, "integer", cmd);
