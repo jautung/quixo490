@@ -1,10 +1,15 @@
 #include "../game/GameStateHandler.hpp"
 #include "../game/GraphicsHandler.hpp"
 #include "Players.hpp"
+#include <cmath>
 #include <random>
 #include <tuple>
 #include <unordered_map>
 #include <vector>
+
+namespace {
+  int maxDepth = 1000;
+}
 
 MCTSPlayer::MCTSPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler, int initIters) : Player(initGameStateHandler, initGraphicsHandler) {
   iters = initIters;
@@ -20,7 +25,101 @@ move_t MCTSPlayer::selectMove(state_t state, colormode_t colorMode) {
 }
 
 void MCTSPlayer::runIter(state_t state) {
+  std::vector<state_t> traversedStates;
+  while (true) {
+    traversedStates.push_back(state);
+    if (gameStateHandler->containsLine(state, TILE_X)) { // terminal winning
+      backPropagate(RESULT_WIN, traversedStates);
+      break;
+    } else if (gameStateHandler->containsLine(state, TILE_O)) { // terminal losing
+      backPropagate(RESULT_LOSS, traversedStates);
+      break;
+    } else if (traversedStates.size() == maxDepth) {
+      backPropagate(RESULT_DRAW, traversedStates);
+      break;
+    }
+    auto childrenStates = getChildrenStates(state);
+    auto exploredChildrenStates = std::get<0>(childrenStates);
+    auto unexploredChildrenStates = std::get<1>(childrenStates);
+    if (unexploredChildrenStates.size() > 0) { // at least one child has not been explored
+      auto playoutState = *std::next(std::begin(unexploredChildrenStates), rand() % unexploredChildrenStates.size());
+      playout(playoutState, traversedStates);
+      break;
+    } else { // all children have been explored at least once
+      auto ucbState = selectBestUcbState(state, exploredChildrenStates);
+      state = ucbState;
+    }
+  }
+}
 
+void MCTSPlayer::backPropagate(result_t result, std::vector<state_t> &traversedStates) {
+  for (auto rIter = traversedStates.rbegin(); rIter != traversedStates.rend(); rIter++) {
+    auto traversedState = *rIter;
+    if (result == RESULT_WIN) {
+      cache[traversedState] = addTuples(cache[traversedState], std::make_tuple(2, 2));
+      result = RESULT_LOSS;
+    } else if (result == RESULT_LOSS) {
+      cache[traversedState] = addTuples(cache[traversedState], std::make_tuple(2, 0));
+      result = RESULT_WIN;
+    } else if (result == RESULT_DRAW) {
+      cache[traversedState] = addTuples(cache[traversedState], std::make_tuple(2, 1));
+    }
+  }
+}
+
+std::tuple<std::vector<state_t>, std::vector<state_t>> MCTSPlayer::getChildrenStates(state_t state) {
+  std::vector<state_t> exploredChildrenStates;
+  std::vector<state_t> unexploredChildrenStates;
+  auto moves = gameStateHandler->allMoves(state);
+  for (auto move : moves) {
+    auto childState = gameStateHandler->swapPlayers(gameStateHandler->makeMove(state, move));
+    if (cache.find(childState) != cache.end()) {
+      exploredChildrenStates.push_back(childState);
+    } else {
+      unexploredChildrenStates.push_back(childState);
+    }
+  }
+  return std::make_tuple(exploredChildrenStates, unexploredChildrenStates);
+}
+
+void MCTSPlayer::playout(state_t state, std::vector<state_t> &traversedStates) {
+  while (true) {
+    traversedStates.push_back(state);
+    if (gameStateHandler->containsLine(state, TILE_X)) { // terminal winning
+      backPropagate(RESULT_WIN, traversedStates);
+      break;
+    } else if (gameStateHandler->containsLine(state, TILE_O)) { // terminal losing
+      backPropagate(RESULT_LOSS, traversedStates);
+      break;
+    } else if (traversedStates.size() == maxDepth) {
+      backPropagate(RESULT_DRAW, traversedStates);
+      break;
+    }
+    auto moves = gameStateHandler->allMoves(state);
+    auto randomMove = *std::next(std::begin(moves), rand() % moves.size());
+    state = gameStateHandler->swapPlayers(gameStateHandler->makeMove(state, randomMove));
+  }
+}
+
+state_t MCTSPlayer::selectBestUcbState(state_t state, std::vector<state_t> &exploredChildrenStates) {
+  auto numVisits = std::get<0>(cache[state]);
+  std::vector<state_t> bestUcbStates;
+  double bestUcbValue = 0.0;
+  for (auto childState : exploredChildrenStates) {
+    auto childInfo = cache[childState];
+    auto childNumVisits = std::get<0>(childInfo);
+    auto childNumWins = std::get<1>(childInfo);
+    double childReward = 1.0 - (double)childNumWins / (double)childNumVisits;
+    double childUcbValue = childReward + sqrt(2.0 * log((double)numVisits) / (double)childNumVisits);
+    if (childUcbValue > bestUcbValue) {
+      bestUcbStates.clear();
+      bestUcbStates.push_back(childState);
+      bestUcbValue = childUcbValue;
+    } else if (childUcbValue == bestUcbValue) {
+      bestUcbStates.push_back(childState);
+    }
+  }
+  return *std::next(std::begin(bestUcbStates), rand() % bestUcbStates.size());
 }
 
 move_t MCTSPlayer::selectBestMove(state_t state) {
@@ -31,10 +130,10 @@ move_t MCTSPlayer::selectBestMove(state_t state) {
     auto childState = gameStateHandler->swapPlayers(gameStateHandler->makeMove(state, move));
     auto childCachedInfo = cache.find(childState);
     std::tuple<int, int> childInfo;
-    if (childCachedInfo == cache.end()) { // child has not been searched before, assume baseline 50% win rate
-      childInfo = std::make_tuple(2, 1);
-    } else {
+    if (childCachedInfo != cache.end()) {
       childInfo = childCachedInfo->second;
+    } else { // child has not been searched before, assume baseline 50% win rate
+      childInfo = std::make_tuple(2, 1);
     }
     if (worseInfo(childInfo, bestChildInfo)) {
       bestMoves.clear();
@@ -47,7 +146,11 @@ move_t MCTSPlayer::selectBestMove(state_t state) {
   return *std::next(std::begin(bestMoves), rand() % bestMoves.size());
 }
 
-bool MCTSPlayer::equalInfo(std::tuple<int, int> infoA, std::tuple<int, int> infoB) {
+std::tuple<int, int> MCTSPlayer::addTuples(const std::tuple<int, int> &tupleA, const std::tuple<int, int> &tupleB) {
+  return std::make_tuple(std::get<0>(tupleA) + std::get<0>(tupleB), std::get<1>(tupleA) + std::get<1>(tupleB));
+}
+
+bool MCTSPlayer::equalInfo(const std::tuple<int, int> &infoA, const std::tuple<int, int> &infoB) {
   auto numVisitsA = std::get<0>(infoA);
   auto numWinsA = std::get<1>(infoA);
   auto numVisitsB = std::get<0>(infoB);
@@ -55,7 +158,7 @@ bool MCTSPlayer::equalInfo(std::tuple<int, int> infoA, std::tuple<int, int> info
   return numWinsA * numVisitsB == numWinsB * numVisitsA; // numWinsA / numVisitsA == numWinsB / numVisitsB
 }
 
-bool MCTSPlayer::worseInfo(std::tuple<int, int> infoA, std::tuple<int, int> infoB) {
+bool MCTSPlayer::worseInfo(const std::tuple<int, int> &infoA, const std::tuple<int, int> &infoB) {
   auto numVisitsA = std::get<0>(infoA);
   auto numWinsA = std::get<1>(infoA);
   auto numVisitsB = std::get<0>(infoB);

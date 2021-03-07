@@ -59,7 +59,12 @@ class MCTSPlayer : public Player {
     int iters;
     std::unordered_map<state_t, std::tuple<int, int>> cache; // map from state to (2 * number of visits, 2 * number of X wins + 1 * number of draws)
     void runIter(state_t state);
+    void backPropagate(result_t result, std::vector<state_t> &traversedStates);
+    std::tuple<std::vector<state_t>, std::vector<state_t>> getChildrenStates(state_t state); // returns (exploredChildrenStates, unexploredChildrenStates)
+    void playout(state_t state, std::vector<state_t> &traversedStates);
+    state_t selectBestUcbState(state_t state, std::vector<state_t> &exploredChildrenStates);
     move_t selectBestMove(state_t state);
-    bool equalInfo(std::tuple<int, int> infoA, std::tuple<int, int> infoB);
-    bool worseInfo(std::tuple<int, int> infoA, std::tuple<int, int> infoB);
+    std::tuple<int, int> addTuples(const std::tuple<int, int> &tupleA, const std::tuple<int, int> &tupleB);
+    bool equalInfo(const std::tuple<int, int> &infoA, const std::tuple<int, int> &infoB);
+    bool worseInfo(const std::tuple<int, int> &infoA, const std::tuple<int, int> &infoB);
 };
