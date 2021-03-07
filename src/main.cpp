@@ -107,10 +107,13 @@ int main(int argc, char* argv[]) {
         auto winner = numSteps <= 0 ? gamePlayHandler->playTillEnd() : gamePlayHandler->playNTurns(numSteps);
         if (winner == WINNER_X) {
           xWins += 1;
+          std::cout << i << ": X Wins!\n";
         } else if (winner == WINNER_O) {
           oWins += 1;
+          std::cout << i << ": O Wins!\n";
         } else if (winner == WINNER_UNKNOWN) {
           draws += 1;
+          std::cout << i << ": Draw!\n";
         }
       }
       std::cout << "Results (X-O-D): " << xWins << "-" << oWins << "-" << draws << "\n";
