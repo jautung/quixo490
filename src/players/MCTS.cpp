@@ -24,6 +24,10 @@ move_t MCTSPlayer::selectMove(state_t state, colormode_t colorMode) {
   return selectBestMove(state);
 }
 
+void MCTSPlayer::clearCache() {
+  cache.clear();
+}
+
 void MCTSPlayer::runIter(state_t state) {
   std::vector<state_t> traversedStates;
   while (true) {

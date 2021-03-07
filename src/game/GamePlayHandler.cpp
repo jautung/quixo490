@@ -15,6 +15,8 @@ GamePlayHandler::GamePlayHandler(Player* initPlayerX, Player* initPlayerO, int i
 
 void GamePlayHandler::startGame(state_t initState) {
   state = initState;
+  playerX->clearCache();
+  playerO->clearCache();
 }
 
 winner_t GamePlayHandler::playTurn() {

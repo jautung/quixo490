@@ -16,6 +16,7 @@ class Player {
     virtual move_t selectMove(state_t state, colormode_t colorMode = COLOR_NORM) {
       return gameStateHandler->moveHandler->create(DIR_UNDEFINED, 0, 0);
     }
+    virtual void clearCache() {}
   protected:
     GameStateHandler* gameStateHandler;
     GraphicsHandler* graphicsHandler;
@@ -55,6 +56,7 @@ class MCTSPlayer : public Player {
     MCTSPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler = NULL, int initIters = 0);
     ~MCTSPlayer();
     move_t selectMove(state_t state, colormode_t colorMode) override;
+    void clearCache() override;
   private:
     int iters;
     std::unordered_map<state_t, std::tuple<int, int>> cache; // map from state to (2 * number of visits, 2 * number of X wins + 1 * number of draws)
