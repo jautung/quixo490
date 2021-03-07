@@ -11,7 +11,7 @@ TARGET := bin/quixo
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -g -Wall -std=c++11 -O3 -march=native -Xpreprocessor -fopenmp
+CFLAGS := -g3 -Wall -std=c++11 -O3 -march=native -Xpreprocessor -fopenmp
 INC := -I include -I /usr/local/include -I /usr/local/opt/libomp/include
 
 ifeq ($(USER), jc3395)
