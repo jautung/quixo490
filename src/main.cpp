@@ -19,8 +19,24 @@ Player* getPlayer(std::string playerType, GameStateHandler* gameStateHandler, Gr
     return new OptimalPlayer(gameStateHandler);
   } else if (playerType == "heuris-simple") {
     return new HeuristicSimplePlayer(gameStateHandler);
-  } else if (playerType == "mcts") {
-    return new MCTSPlayer(gameStateHandler);
+  } else if (playerType.rfind("mcts", 0) == 0) { // string starts with mcts prefix
+    auto itersStr = playerType.substr(4);
+    try {
+      size_t stoiIndex;
+      auto iters = std::stoi(itersStr, &stoiIndex);
+      if (stoiIndex != itersStr.length()) {
+        std::cerr << "error: " << "non-integer mcts iters: " << itersStr << "\n";
+        exit(1);
+      }
+      if (iters < 0) {
+        std::cerr << "error: " << "negative mcts iters: " << itersStr << "\n";
+        exit(1);
+      }
+      return new MCTSPlayer(gameStateHandler, graphicsHandler, iters);
+    } catch (std::exception const &e) {
+      std::cerr << "error: " << "non-integer mcts iters: " << itersStr << "\n";
+      exit(1);
+    }
   } else {
     std::cerr << "error: " << "unknown player type: " << playerType << "\n";
     exit(1);
@@ -44,7 +60,7 @@ state_t getStateInteractive(GraphicsHandler* graphicsHandler) {
 int main(int argc, char* argv[]) {
   try {
     TCLAP::CmdLine cmd("Quixo Project");
-    TCLAP::ValueArg<std::string> progArg("p", "program", "Program to run (`play`, `test`, `opt-compute`, `opt-check`, or `mcts-compute`)", false, "play", "string", cmd);
+    TCLAP::ValueArg<std::string> progArg("p", "program", "Program to run (`play`, `test`, `opt-compute`, `opt-check`)", false, "play", "string", cmd);
     TCLAP::ValueArg<int> lenArg("l", "len", "For `play`, `test`, `opt-compute` or `opt-check` program: number of tiles per side", false, 5, "integer", cmd);
     TCLAP::ValueArg<std::string> playerXTypeArg("X", "playerX", "For `play` or `test` program: player X type (`random`, `interact`, `opt`, `heuris-simple`, or `mcts`)", false, "random", "string", cmd);
     TCLAP::ValueArg<std::string> playerOTypeArg("O", "playerO", "For `play` or `test` program: player O type (`random`, `interact`, `opt`, `heuris-simple`, or `mcts`)", false, "random", "string", cmd);
@@ -155,8 +171,6 @@ int main(int argc, char* argv[]) {
       }
       delete graphicsHandler;
       delete optimalPlayer;
-    } else if (prog == "mcts-compute") {
-      // TODO
     } else {
       std::cerr << "error: " << "unknown program: " << prog << "\n";
       exit(1);

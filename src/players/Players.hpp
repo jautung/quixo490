@@ -49,7 +49,9 @@ class HeuristicSimplePlayer : public Player {
 };
 
 class MCTSPlayer : public Player {
-  using Player::Player;
   public:
+    MCTSPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler = NULL, int initIters = 0);
     move_t selectMove(state_t state, colormode_t colorMode) override;
+  private:
+    int iters;
 };
