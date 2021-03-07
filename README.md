@@ -78,7 +78,7 @@
     Player O (mcts300) compute time (s): 13.2078 (0.132078 average per game)
     Results (X-O-D): 100-0-0
     ```
-    - 5X5 Quixo
+    - 3X3 Quixo
     ```
     Player X (random) compute time (s): 0.008348 (8.348e-06 average per game)
     Player O (opt) compute time (s): 0.883411 (0.000883411 average per game)
