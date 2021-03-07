@@ -10,7 +10,7 @@
 #include <vector>
 
 namespace {
-  int maxDepth = 1000;
+  long unsigned int maxDepth = 1000;
 }
 
 MCTSPlayer::MCTSPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler, int initIters) : Player(initGameStateHandler, initGraphicsHandler) {
