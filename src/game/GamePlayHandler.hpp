@@ -17,6 +17,8 @@ class GamePlayHandler {
     winner_t playTurn();
     winner_t playNTurns(int nTurns);
     winner_t playTillEnd();
+    long long timeX;
+    long long timeO;
   private:
     Player* playerX;
     Player* playerO;

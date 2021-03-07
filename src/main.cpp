@@ -134,6 +134,8 @@ int main(int argc, char* argv[]) {
           std::cout << i << ": Draw!\n";
         }
       }
+      std::cout << "Player X (" << playerXType << ") compute time (s): " << gamePlayHandler->timeX/1000000.0 << " (" << gamePlayHandler->timeX/1000000.0/numGames << " average per game)\n";
+      std::cout << "Player O (" << playerOType << ") compute time (s): " << gamePlayHandler->timeO/1000000.0 << " (" << gamePlayHandler->timeO/1000000.0/numGames << " average per game)\n";
       std::cout << "Results (X-O-D): " << xWins << "-" << oWins << "-" << draws << "\n";
       delete playerX;
       delete playerO;
