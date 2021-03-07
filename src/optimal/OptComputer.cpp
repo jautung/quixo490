@@ -75,7 +75,7 @@ sindex_t OptComputer::numStatesClass(nbit_t numA, nbit_t numB) {
   return ncrCalculator->ncr(numTiles, numA) * ncrCalculator->ncr(numTiles-numA, numB);
 }
 
-void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result4_t> resultsCacheNormPlus, std::vector<result4_t> resultsCacheFlipPlus) { // value iteration
+void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result4_t> &resultsCacheNormPlus, std::vector<result4_t> &resultsCacheFlipPlus) { // value iteration
   auto startTime = std::chrono::high_resolution_clock::now();
 
   sindex_t numStates = numStatesClass(numA, numB);
