@@ -1,10 +1,12 @@
 #include "../game/GameStateHandler.hpp"
 #include "../game/GraphicsHandler.hpp"
+#include "../utils/DataHandler.hpp"
 #include "Players.hpp"
 #include <cmath>
 #include <random>
 #include <tuple>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 namespace {
@@ -71,16 +73,16 @@ void MCTSPlayer::backPropagate(result_t result, std::vector<state_t> &traversedS
   }
 }
 
-std::tuple<std::vector<state_t>, std::vector<state_t>> MCTSPlayer::getChildrenStates(state_t state) {
-  std::vector<state_t> exploredChildrenStates;
-  std::vector<state_t> unexploredChildrenStates;
+std::tuple<std::unordered_set<state_t>, std::unordered_set<state_t>> MCTSPlayer::getChildrenStates(state_t state) {
+  std::unordered_set<state_t> exploredChildrenStates;
+  std::unordered_set<state_t> unexploredChildrenStates;
   auto moves = gameStateHandler->allMoves(state);
   for (auto move : moves) {
     auto childState = gameStateHandler->swapPlayers(gameStateHandler->makeMove(state, move));
     if (cache.find(childState) != cache.end()) {
-      exploredChildrenStates.push_back(childState);
+      exploredChildrenStates.insert(childState);
     } else {
-      unexploredChildrenStates.push_back(childState);
+      unexploredChildrenStates.insert(childState);
     }
   }
   return std::make_tuple(exploredChildrenStates, unexploredChildrenStates);
@@ -105,7 +107,7 @@ void MCTSPlayer::playout(state_t state, std::vector<state_t> &traversedStates) {
   }
 }
 
-state_t MCTSPlayer::selectBestUcbState(state_t state, std::vector<state_t> &exploredChildrenStates) {
+state_t MCTSPlayer::selectBestUcbState(state_t state, std::unordered_set<state_t> &exploredChildrenStates) {
   auto numVisits = std::get<0>(cache[state]);
   std::vector<state_t> bestUcbStates;
   double bestUcbValue = 0.0;
