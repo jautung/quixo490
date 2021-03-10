@@ -136,6 +136,9 @@ void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result4_t> 
     }
   }
 
+  omp_destroy_lock(&resultsNormLock);
+  omp_destroy_lock(&resultsFlipLock);
+
   auto endTime = std::chrono::high_resolution_clock::now();
   std::cout << "Class (" << +numA << ", " << +numB << ") compute time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime-startTime).count()/1000.0 << "\n";
 
