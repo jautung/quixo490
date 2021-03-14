@@ -11,6 +11,8 @@ GamePlayHandler::GamePlayHandler(Player* initPlayerX, Player* initPlayerO, int i
   gameStateHandler = initGameStateHandler;
   graphicsHandler = initGraphicsHandler;
   silent = initSilent;
+  initTimeX = 0;
+  initTimeO = 0;
   runTimeX = 0;
   runTimeO = 0;
 }
@@ -23,12 +25,12 @@ void GamePlayHandler::startGame(state_t initState) {
   auto startTimeX = std::chrono::high_resolution_clock::now();
   playerX->initLearn();
   auto endTimeX = std::chrono::high_resolution_clock::now();
-  initTimeX += std::chrono::duration_cast<std::chrono::microseconds>(endTimeX-startTimeX).count();
+  initTimeX += std::chrono::duration_cast<std::chrono::milliseconds>(endTimeX-startTimeX).count();
 
   auto startTimeO = std::chrono::high_resolution_clock::now();
   playerO->initLearn();
   auto endTimeO = std::chrono::high_resolution_clock::now();
-  initTimeO += std::chrono::duration_cast<std::chrono::microseconds>(endTimeO-startTimeO).count();
+  initTimeO += std::chrono::duration_cast<std::chrono::milliseconds>(endTimeO-startTimeO).count();
 }
 
 winner_t GamePlayHandler::playTurn() {
@@ -37,7 +39,7 @@ winner_t GamePlayHandler::playTurn() {
   auto startTimeX = std::chrono::high_resolution_clock::now();
   auto move = playerX->selectMove(state);
   auto endTimeX = std::chrono::high_resolution_clock::now();
-  runTimeX += std::chrono::duration_cast<std::chrono::microseconds>(endTimeX-startTimeX).count();
+  runTimeX += std::chrono::duration_cast<std::chrono::milliseconds>(endTimeX-startTimeX).count();
   if (!dynamic_cast<InteractivePlayer*>(playerX)) { // pause for all except interactive player
     std::this_thread::sleep_for(std::chrono::milliseconds(timePauseMs));
   }

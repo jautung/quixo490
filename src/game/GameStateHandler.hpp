@@ -56,7 +56,9 @@ class GameStateHandler {
     MoveHandler* moveHandler;
     tile_t getTile(state_t state, bindex_t row, bindex_t col);
     state_t setTile(state_t state, bindex_t row, bindex_t col, tile_t tile);
+    std::vector<move_t> allPotentialMovesCache;
     std::vector<move_t> allMoves(state_t state);
+    std::vector<int> allMovesIndices(state_t state);
     std::vector<state_t> allPlusParents(state_t state); // reverse (numA, numB) -- -1 --> (numB-1, numA)
     std::vector<state_t> allZeroParents(state_t state); // reverse (numA, numB) --  0 --> (numB, numA)
     state_t makeMove(state_t state, move_t move);
@@ -74,7 +76,7 @@ class GameStateHandler {
     state_t colMaskFull;
     state_t diag1MaskFull;
     state_t diag2MaskFull;
-    std::vector<move_t> allPotentialMovesCache;
     std::unordered_map<move_t, std::tuple<state_t, state_t, state_t>> makeMoveCache; // map from move to (mask, newTile, oldTile)
+    void allMovesAux(state_t state, std::vector<move_t> &moves, std::vector<int> &movesIndices);
     std::vector<state_t> allParentsAux(state_t state, mkind_t kind);
 };

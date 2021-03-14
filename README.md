@@ -11,7 +11,7 @@
   - For MacOS, this can be done simply with `brew install glfw3`.
 - [OpenMP](https://www.openmp.org/) for parallelization.
   - For MacOS, this can be done simply with `brew install llvm libomp`.
-- [Eigen](http://eigen.tuxfamily.org/) for matrix operations.
+- [Eigen 3.4+](http://eigen.tuxfamily.org/) for matrix operations.
   - For MacOS, this can be downloaded from the above link, and the `*/Eigen` folder can be copied to `./include` (which is `.gitignore`-ed).
 
 ### Usage
@@ -32,12 +32,12 @@
     - `./bin/quixo -X opt -i -g 800 -l 4`: play an optimal player X against a random player O on a 4X4 board, with an initial board setting.
     - `./bin/quixo -X opt -O opt -i -g 800 -l 4`: play optimal players against each other on a 4X4 board, with an initial board setting.
   - Benchmarks:
-    - `./bin/quixo -p test -X opt -N 1000 -l 3`: test optimal player X against random player O for 1000 iterations on a 3X3 board.
-    - `./bin/quixo -p test -O opt -N 1000 -l 3`: test optimal player O against random player X for 1000 iterations on a 3X3 board.
-    - `./bin/quixo -p test -X opt -N 1000 -n 1000 -l 4`: test optimal player X against random player O for 1000 iterations on a 4X4 board, for up to 1000 steps per game.
-    - `./bin/quixo -p test -X heuris-simple -O opt -N 100 -n 1000 -l 4`: test simple heuristic player X against optimal player O for 1000 iterations on a 4X4 board, for up to 1000 steps per game.
-    - `./bin/quixo -p test -X mcts0,200 -O opt -N 100 -n 1000 -l 4`: test MCTS player X with 200 iterations per move against optimal player O for 1000 iterations on a 4X4 board, for up to 1000 steps per game.
-    - `./bin/quixo -p test -X q-learn0,200 -O opt -N 100 -n 1000 -l 4`: test Q-learning player X with 200 iterations per move against optimal player O for 1000 iterations on a 4X4 board, for up to 1000 steps per game.
+    - `./bin/quixo -p test -X opt -N 1000 -l 3`: test optimal player X against random player O for 1000 games on a 3X3 board.
+    - `./bin/quixo -p test -O opt -N 1000 -l 3`: test optimal player O against random player X for 1000 games on a 3X3 board.
+    - `./bin/quixo -p test -X opt -N 1000 -n 1000 -l 4`: test optimal player X against random player O for 1000 games on a 4X4 board, for up to 1000 steps per game.
+    - `./bin/quixo -p test -X heuris-simple -O opt -N 100 -n 1000 -l 4`: test simple heuristic player X against optimal player O for 1000 games on a 4X4 board, for up to 1000 steps per game.
+    - `./bin/quixo -p test -X mcts0,200 -O opt -N 100 -n 1000 -l 4`: test MCTS player X with 0 initial training iterations and 200 training iterations per move against optimal player O for 100 games on a 4X4 board, for up to 1000 steps per game.
+    - `./bin/quixo -p test -X q-learn200,0 -O opt -N 100 -n 1000 -l 4`: test Q-learning player X with 200 initial training iterations and 0 training iterations per move against optimal player O for 100 games on a 4X4 board, for up to 1000 steps per game.
 
 ## References
 - [Quixo Is Solved](https://arxiv.org/abs/2007.15895).

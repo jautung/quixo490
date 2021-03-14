@@ -141,10 +141,10 @@ int main(int argc, char* argv[]) {
       }
       std::cout << "\nResult summary for Player X (" << playerXType << ") vs. Player O (" << playerOType << ") on " << len << "X" << len << " Quixo\n";
       std::cout << "--------------------------------------------------------------------------------\n";
-      std::cout << "Player X init compute time (s): " << gamePlayHandler->initTimeX/1000000.0 << " (" << gamePlayHandler->initTimeX/1000000.0/numGames << " average per game)\n";
-      std::cout << "Player O init compute time (s): " << gamePlayHandler->initTimeO/1000000.0 << " (" << gamePlayHandler->initTimeO/1000000.0/numGames << " average per game)\n";
-      std::cout << "Player X running compute time (s): " << gamePlayHandler->runTimeX/1000000.0 << " (" << gamePlayHandler->runTimeX/1000000.0/numGames << " average per game)\n";
-      std::cout << "Player O running compute time (s): " << gamePlayHandler->runTimeO/1000000.0 << " (" << gamePlayHandler->runTimeO/1000000.0/numGames << " average per game)\n";
+      std::cout << "Player X init compute time (s): " << gamePlayHandler->initTimeX/1000.0 << " (" << gamePlayHandler->initTimeX/1000.0/numGames << " average per game)\n";
+      std::cout << "Player O init compute time (s): " << gamePlayHandler->initTimeO/1000.0 << " (" << gamePlayHandler->initTimeO/1000.0/numGames << " average per game)\n";
+      std::cout << "Player X running compute time (s): " << gamePlayHandler->runTimeX/1000.0 << " (" << gamePlayHandler->runTimeX/1000.0/numGames << " average per game)\n";
+      std::cout << "Player O running compute time (s): " << gamePlayHandler->runTimeO/1000.0 << " (" << gamePlayHandler->runTimeO/1000.0/numGames << " average per game)\n";
       std::cout << "Winners (X-O-D): " << xWins << "-" << oWins << "-" << draws << "\n";
       delete cliHandler;
       delete playerX;

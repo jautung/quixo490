@@ -88,9 +88,10 @@ class QLearningPlayer : public Player {
     int initIters;
     int perMoveIters;
     Eigen::MatrixXd weights;
+    double learningRate;
     void runIter(state_t state);
-    void updateWeights(std::vector<std::tuple<state_t, move_t>> &stateMoveStack, state_t finalState);
-    move_t selectQMove(state_t state);
-    move_t selectBestMove(state_t state);
+    void updateWeights(std::vector<std::tuple<state_t, int>> &stateMoveStack, state_t finalState);
+    int selectQMoveIndex(state_t state);
+    int selectBestMoveIndex(state_t state);
     Eigen::VectorXd getFeatures(state_t state);
 };

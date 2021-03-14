@@ -3,16 +3,19 @@
 #include "../utils/DataHandler.hpp"
 #include "Players.hpp"
 #include <Eigen/Core>
-#include <iostream>
 #include <random>
 #include <tuple>
 #include <vector>
 
 namespace {
   state_t initState = 0b0;
-  long unsigned int maxDepth = 1000;
-  double initWeight = 0.0;
-  double epsilon = 0.001;
+  long unsigned int maxDepth = 10000;   // prevents infinite loops when playing out each iteration
+  double initWeight = 0.0;              // initial weights in the weight matrix ...
+  double initWeightNoise = 0.001;       // ... perturbed by a uniform distribution of [-initWeightNoise, initWeightNoise]
+  double learningRateInit = 0.3;        // initial learning rate
+  double learningRateDecRatio = 0.9999; // factor for learning rate to decrease per iteration
+  double discountRate = 0.9999;         // temporal discount factor
+  double epsilon = 0.001;               // epsilon in epsilon-greedy play out of each iteration
 }
 
 QLearningPlayer::QLearningPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler, int initInitIters, int initPerMoveIters) : Player(initGameStateHandler, initGraphicsHandler) {
@@ -25,82 +28,95 @@ QLearningPlayer::~QLearningPlayer() {}
 move_t QLearningPlayer::selectMove(state_t state, colormode_t colorMode) {
   for (int i = 0; i < perMoveIters; i++) {
     runIter(state);
+    learningRate *= learningRateDecRatio;
   }
-  return selectBestMove(state);
+  return gameStateHandler->allPotentialMovesCache[selectBestMoveIndex(state)];
 }
 
 void QLearningPlayer::clearCache() {
-  auto len = gameStateHandler->len;
   auto testFeatures = getFeatures(initState);
-  weights = Eigen::MatrixXd::Constant(12*len-16, testFeatures.size(), initWeight);
+  weights = Eigen::MatrixXd::Constant(gameStateHandler->allPotentialMovesCache.size(), testFeatures.size(), initWeight);
+  weights += initWeightNoise * Eigen::MatrixXd::Random(gameStateHandler->allPotentialMovesCache.size(), testFeatures.size());
 }
 
 void QLearningPlayer::initLearn() {
+  learningRate = learningRateInit;
   for (int i = 0; i < initIters; i++) {
     runIter(initState);
+    learningRate *= learningRateDecRatio;
   }
 }
 
 void QLearningPlayer::runIter(state_t state) {
-  std::vector<std::tuple<state_t, move_t>> stateMoveStack;
+  std::vector<std::tuple<state_t, int>> stateMoveStack;
   while (true) {
     if (gameStateHandler->containsLine(state, TILE_X) || gameStateHandler->containsLine(state, TILE_O) || stateMoveStack.size() == maxDepth) {
       updateWeights(stateMoveStack, state);
       break;
     }
-    auto move = selectQMove(state);
-    stateMoveStack.push_back(std::make_tuple(state, move));
+    auto moveIndex = selectQMoveIndex(state);
+    stateMoveStack.push_back(std::make_tuple(state, moveIndex));
+    auto move = gameStateHandler->allPotentialMovesCache[moveIndex];
     state = gameStateHandler->swapPlayers(gameStateHandler->makeMove(state, move));
   }
 }
 
-void QLearningPlayer::updateWeights(std::vector<std::tuple<state_t, move_t>> &stateMoveStack, state_t finalState) {
-  // use alpha
-  // state_t nextState = finalState;
-  // for (auto rIter = stateMoveStack.rbegin(); rIter != stateMoveStack.rend(); rIter++) {
-  //   auto stateMoveStack = *rIter;
-  //   if (result == RESULT_WIN) {
-  //     cache[stateMoveStack] = addTuples(cache[stateMoveStack], std::make_tuple(2, 2));
-  //     result = RESULT_LOSS;
-  //   } else if (result == RESULT_LOSS) {
-  //     cache[stateMoveStack] = addTuples(cache[stateMoveStack], std::make_tuple(2, 0));
-  //     result = RESULT_WIN;
-  //   } else if (result == RESULT_DRAW) {
-  //     cache[stateMoveStack] = addTuples(cache[stateMoveStack], std::make_tuple(2, 1));
-  //   }
-  // }
-  //   if (gameStateHandler->containsLine(state, TILE_X)) { // terminal winning
-  //     updateWeights(RESULT_WIN, stateMoveStack, state);
-  //     break;
-  //   } else if (gameStateHandler->containsLine(state, TILE_O)) { // terminal losing
-  //     updateWeights(RESULT_LOSS, stateMoveStack, state);
-  //     break;
-  //   } else if (stateMoveStack.size() == maxDepth) {
-  //     updateWeights(RESULT_DRAW, stateMoveStack, state);
-  //     break;
-  //   }
-}
-
-move_t QLearningPlayer::selectQMove(state_t state) {
-  if ((double)rand()/(double)RAND_MAX < epsilon) { // epsilon ...
-    auto moves = gameStateHandler->allMoves(state);
-    return *std::next(std::begin(moves), rand() % moves.size());
-  } else { // ... greedy
-    return selectBestMove(state);
+void QLearningPlayer::updateWeights(std::vector<std::tuple<state_t, int>> &stateMoveStack, state_t finalState) {
+  state_t nextState = finalState;
+  for (auto rIter = stateMoveStack.rbegin(); rIter != stateMoveStack.rend(); rIter++) {
+    auto currState = std::get<0>(*rIter);
+    auto moveIndex = std::get<1>(*rIter);
+    double optFutureVal;
+    if (gameStateHandler->containsLine(nextState, TILE_X)) { // next state is terminal winning (i.e. losing for current player)
+      optFutureVal = -1;
+    } else if (gameStateHandler->containsLine(nextState, TILE_O)) { // next state is terminal losing (i.e. winning for current player)
+      optFutureVal = 1;
+    } else {
+      Eigen::VectorXd nextQs = weights * getFeatures(nextState);
+      optFutureVal = -nextQs.minCoeff();
+    }
+    Eigen::VectorXd currFeatures = getFeatures(currState);
+    auto currQs = weights * currFeatures;
+    auto currVal = currQs(moveIndex);
+    Eigen::VectorXd weightsForMove = weights(moveIndex, Eigen::all); // one row of the weights matrix
+    weightsForMove = weightsForMove + learningRate * discountRate * (optFutureVal - currVal) * currFeatures;
+    weights.row(moveIndex) = weightsForMove.transpose(); // replacing row of the weights matrix
+    nextState = currState;
   }
 }
 
-move_t QLearningPlayer::selectBestMove(state_t state) {
-  return gameStateHandler->moveHandler->create(DIR_UNDEFINED, 0, 0);
-  // weights * getFeatures(state);
-  // return index of max of these
-  // need to filter by allMoves also
+int QLearningPlayer::selectQMoveIndex(state_t state) {
+  if ((double)rand()/(double)RAND_MAX < epsilon) { // epsilon ...
+    auto movesIndices = gameStateHandler->allMovesIndices(state);
+    return *std::next(std::begin(movesIndices), rand() % movesIndices.size());
+  } else { // ... greedy
+    return selectBestMoveIndex(state);
+  }
+}
+
+int QLearningPlayer::selectBestMoveIndex(state_t state) {
+  Eigen::VectorXd qs = weights * getFeatures(state);
+  auto movesIndices = gameStateHandler->allMovesIndices(state); // legal moves
+  int j = 0;
+  for (int i = 0; i < qs.size(); i++) { // overwrite qs(i) by -INFINITY for each i not in movesIndices (i.e. illegal moves)
+    if (movesIndices[j] == i) {
+      j++;
+    } else {
+      qs(i) = -INFINITY;
+    }
+  }
+  int moveIndexBest; // find index of best move among legal moves
+  qs.maxCoeff(&moveIndexBest);
+  return moveIndexBest;
 }
 
 Eigen::VectorXd QLearningPlayer::getFeatures(state_t state) {
   auto len = gameStateHandler->len;
-  Eigen::VectorXd features(2 + 4*len + 4);
+  Eigen::VectorXd features(1 + 2 + 4*len + 4);
   int featureIndex = 0;
+
+  // constant bias term
+  features[featureIndex++] = 1;
 
   // number of Xs and Os
   features[featureIndex++] = (double)(gameStateHandler->getNumX(state)) / ((double)len * (double)len);

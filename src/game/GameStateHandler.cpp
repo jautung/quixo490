@@ -190,16 +190,30 @@ state_t GameStateHandler::setTile(state_t state, bindex_t row, bindex_t col, til
 
 std::vector<move_t> GameStateHandler::allMoves(state_t state) {
   std::vector<move_t> moves;
-  for (auto move : allPotentialMovesCache) {
+  std::vector<int> movesIndices;
+  allMovesAux(state, moves, movesIndices);
+  return moves;
+}
+
+std::vector<int> GameStateHandler::allMovesIndices(state_t state) {
+  std::vector<move_t> moves;
+  std::vector<int> movesIndices;
+  allMovesAux(state, moves, movesIndices);
+  return movesIndices;
+}
+
+void GameStateHandler::allMovesAux(state_t state, std::vector<move_t> &moves, std::vector<int> &movesIndices) {
+  for (int moveIndex = 0; moveIndex < allPotentialMovesCache.size(); moveIndex++) {
+    auto move = allPotentialMovesCache[moveIndex];
     auto i = moveHandler->getRow(move);
     auto j = moveHandler->getCol(move);
     auto tile = getTile(state, i, j);
     auto kind = moveHandler->getKind(move);
     if ((tile == TILE_EMPTY && kind == MKIND_PLUS) || (tile == TILE_X && kind == MKIND_ZERO)) {
       moves.push_back(move);
+      movesIndices.push_back(moveIndex);
     }
   }
-  return moves;
 }
 
 std::vector<state_t> GameStateHandler::allPlusParents(state_t state) {
