@@ -64,6 +64,10 @@ class GameStateHandler {
     bool containsLine(state_t state, tile_t tileType);
     nbit_t getNumX(state_t state);
     nbit_t getNumO(state_t state);
+    bindex_t numInRow(state_t state, tile_t tileType, bindex_t rowIndex);
+    bindex_t numInCol(state_t state, tile_t tileType, bindex_t colIndex);
+    bindex_t numInDiag1(state_t state, tile_t tileType);
+    bindex_t numInDiag2(state_t state, tile_t tileType);
     void print(state_t state);
   private:
     state_t rowMaskFull;

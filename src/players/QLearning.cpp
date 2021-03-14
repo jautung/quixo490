@@ -98,7 +98,27 @@ move_t QLearningPlayer::selectBestMove(state_t state) {
 }
 
 Eigen::VectorXd QLearningPlayer::getFeatures(state_t state) {
-  Eigen::VectorXd features;
-  features << 1, 2, 3; // number per row and column or something, total of each color
+  auto len = gameStateHandler->len;
+  Eigen::VectorXd features(2 + 4*len + 4);
+  int featureIndex = 0;
+
+  // number of Xs and Os
+  features[featureIndex++] = (double)(gameStateHandler->getNumX(state)) / ((double)len * (double)len);
+  features[featureIndex++] = (double)(gameStateHandler->getNumO(state)) / ((double)len * (double)len);
+
+  // number in each row, column, and diagonal
+  for (bindex_t rowIndex = 0; rowIndex < len; rowIndex++) {
+    features[featureIndex++] = (double)(gameStateHandler->numInRow(state, TILE_X, rowIndex)) / (double)len;
+    features[featureIndex++] = (double)(gameStateHandler->numInRow(state, TILE_O, rowIndex)) / (double)len;
+  }
+  for (bindex_t colIndex = 0; colIndex < len; colIndex++) {
+    features[featureIndex++] = (double)(gameStateHandler->numInCol(state, TILE_X, colIndex)) / (double)len;
+    features[featureIndex++] = (double)(gameStateHandler->numInCol(state, TILE_O, colIndex)) / (double)len;
+  }
+  features[featureIndex++] = (double)(gameStateHandler->numInDiag1(state, TILE_X)) / (double)len;
+  features[featureIndex++] = (double)(gameStateHandler->numInDiag1(state, TILE_O)) / (double)len;
+  features[featureIndex++] = (double)(gameStateHandler->numInDiag2(state, TILE_X)) / (double)len;
+  features[featureIndex++] = (double)(gameStateHandler->numInDiag2(state, TILE_O)) / (double)len;
+
   return features;
 }

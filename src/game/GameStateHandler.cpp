@@ -319,6 +319,38 @@ nbit_t GameStateHandler::getNumO(state_t state) {
   return __builtin_popcount(state & halfStateMask);
 }
 
+bindex_t GameStateHandler::numInRow(state_t state, tile_t tileType, bindex_t rowIndex) {
+  nbit_t stateShift = tileType == TILE_X ? halfStateNBits : 0;
+  state >>= stateShift;
+  state &= halfStateMask;
+  state_t mask = rowMaskFull << (rowIndex * len);
+  return __builtin_popcount(state & mask);
+}
+
+bindex_t GameStateHandler::numInCol(state_t state, tile_t tileType, bindex_t colIndex) {
+  nbit_t stateShift = tileType == TILE_X ? halfStateNBits : 0;
+  state >>= stateShift;
+  state &= halfStateMask;
+  state_t mask = colMaskFull << colIndex;
+  return __builtin_popcount(state & mask);
+}
+
+bindex_t GameStateHandler::numInDiag1(state_t state, tile_t tileType) {
+  nbit_t stateShift = tileType == TILE_X ? halfStateNBits : 0;
+  state >>= stateShift;
+  state &= halfStateMask;
+  state_t mask = diag1MaskFull;
+  return __builtin_popcount(state & mask);
+}
+
+bindex_t GameStateHandler::numInDiag2(state_t state, tile_t tileType) {
+  nbit_t stateShift = tileType == TILE_X ? halfStateNBits : 0;
+  state >>= stateShift;
+  state &= halfStateMask;
+  state_t mask = diag2MaskFull;
+  return __builtin_popcount(state & mask);
+}
+
 void GameStateHandler::print(state_t state) {
   for (bindex_t i = 0; i < len; i++) {
     for (bindex_t j = 0; j < len; j++) {
