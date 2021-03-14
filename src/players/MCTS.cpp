@@ -10,17 +10,19 @@
 #include <vector>
 
 namespace {
+  state_t initState = 0b0;
   long unsigned int maxDepth = 1000;
 }
 
-MCTSPlayer::MCTSPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler, int initIters) : Player(initGameStateHandler, initGraphicsHandler) {
-  iters = initIters;
+MCTSPlayer::MCTSPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler, int initInitIters, int initPerMoveIters) : Player(initGameStateHandler, initGraphicsHandler) {
+  initIters = initInitIters;
+  perMoveIters = initPerMoveIters;
 }
 
 MCTSPlayer::~MCTSPlayer() {}
 
 move_t MCTSPlayer::selectMove(state_t state, colormode_t colorMode) {
-  for (int i = 0; i < iters; i++) {
+  for (int i = 0; i < perMoveIters; i++) {
     runIter(state);
   }
   return selectBestMove(state);
@@ -28,6 +30,12 @@ move_t MCTSPlayer::selectMove(state_t state, colormode_t colorMode) {
 
 void MCTSPlayer::clearCache() {
   cache.clear();
+}
+
+void MCTSPlayer::initLearn() {
+  for (int i = 0; i < initIters; i++) {
+    runIter(initState);
+  }
 }
 
 void MCTSPlayer::runIter(state_t state) {

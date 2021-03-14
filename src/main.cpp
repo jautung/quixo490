@@ -3,14 +3,16 @@
 #include "game/GraphicsHandler.hpp"
 #include "optimal/OptComputer.hpp"
 #include "players/Players.hpp"
+#include "utils/CliHandler.hpp"
 #include "utils/MemoryChecker.hpp"
 #include <chrono>
 #include <iostream>
 #include <omp.h>
 #include <random>
+#include <string>
 #include <tclap/CmdLine.h>
 
-Player* getPlayer(std::string playerType, GameStateHandler* gameStateHandler, GraphicsHandler* graphicsHandler = NULL) {
+Player* getPlayer(std::string playerType, GameStateHandler* gameStateHandler, CliHandler* cliHandler, GraphicsHandler* graphicsHandler = NULL) {
   if (playerType == "random") {
     return new RandomPlayer(gameStateHandler);
   } else if (playerType == "interact") {
@@ -19,26 +21,24 @@ Player* getPlayer(std::string playerType, GameStateHandler* gameStateHandler, Gr
     return new OptimalPlayer(gameStateHandler);
   } else if (playerType == "heuris-simple") {
     return new HeuristicSimplePlayer(gameStateHandler);
-  } else if (playerType.rfind("mcts", 0) == 0) { // string starts with mcts prefix
-    auto itersStr = playerType.substr(4);
-    try {
-      size_t stoiIndex;
-      auto iters = std::stoi(itersStr, &stoiIndex);
-      if (stoiIndex != itersStr.length()) {
-        std::cerr << "error: " << "non-integer mcts iters: " << itersStr << "\n";
-        exit(1);
-      }
-      if (iters < 0) {
-        std::cerr << "error: " << "negative mcts iters: " << itersStr << "\n";
-        exit(1);
-      }
-      return new MCTSPlayer(gameStateHandler, graphicsHandler, iters);
-    } catch (std::exception const &e) {
-      std::cerr << "error: " << "non-integer mcts iters: " << itersStr << "\n";
+  } else if (playerType.find("mcts", 0) == 0) { // string starts with mcts prefix
+    auto cliParams = cliHandler->readCliParams(playerType.substr(std::string("mcts").length()));
+    if (cliParams.size() != 2) {
+      std::cerr << "error: " << "incorrect number of params for mcts player type (expected 2; got " << cliParams.size() << ")\n";
       exit(1);
     }
+    auto initIters = cliHandler->readNonNegIntCliParam(cliParams[0], "mcts player init iters");
+    auto perMoveIters = cliHandler->readNonNegIntCliParam(cliParams[1], "mcts player per move iters");
+    return new MCTSPlayer(gameStateHandler, graphicsHandler, initIters, perMoveIters);
   } else if (playerType == "q-learn") {
-    return new QLearningPlayer(gameStateHandler);
+    auto cliParams = cliHandler->readCliParams(playerType.substr(std::string("q-learn").length()));
+    if (cliParams.size() != 2) {
+      std::cerr << "error: " << "incorrect number of params for q-learning player type (expected 2; got " << cliParams.size() << ")\n";
+      exit(1);
+    }
+    auto initIters = cliHandler->readNonNegIntCliParam(cliParams[0], "q-learning player init iters");
+    auto perMoveIters = cliHandler->readNonNegIntCliParam(cliParams[1], "q-learning player per move iters");
+    return new QLearningPlayer(gameStateHandler, graphicsHandler, initIters, perMoveIters);
   } else {
     std::cerr << "error: " << "unknown player type: " << playerType << "\n";
     exit(1);
@@ -64,8 +64,8 @@ int main(int argc, char* argv[]) {
     TCLAP::CmdLine cmd("Quixo Project");
     TCLAP::ValueArg<std::string> progArg("p", "program", "Program to run (`play`, `test`, `opt-compute`, `opt-check`)", false, "play", "string", cmd);
     TCLAP::ValueArg<int> lenArg("l", "len", "For `play`, `test`, `opt-compute` or `opt-check` program: number of tiles per side", false, 5, "integer", cmd);
-    TCLAP::ValueArg<std::string> playerXTypeArg("X", "playerX", "For `play` or `test` program: player X type (`random`, `interact`, `opt`, `heuris-simple`, `mcts*`, or `q-learn*`)", false, "random", "string", cmd);
-    TCLAP::ValueArg<std::string> playerOTypeArg("O", "playerO", "For `play` or `test` program: player O type (`random`, `interact`, `opt`, `heuris-simple`, `mcts*`, or `q-learn*`)", false, "random", "string", cmd);
+    TCLAP::ValueArg<std::string> playerXTypeArg("X", "playerX", "For `play` or `test` program: player X type (`random`, `interact`, `opt`, `heuris-simple`, `mcts*,*`, or `q-learn*,*`)", false, "random", "string", cmd);
+    TCLAP::ValueArg<std::string> playerOTypeArg("O", "playerO", "For `play` or `test` program: player O type (`random`, `interact`, `opt`, `heuris-simple`, `mcts*,*`, or `q-learn*,*`)", false, "random", "string", cmd);
     TCLAP::ValueArg<int> numStepsArg("n", "numsteps", "For `play` or `test` program: number of steps to run per game (<=0: till the end)", false, 0, "integer", cmd);
     TCLAP::SwitchArg initStateArg("i", "initstate", "For `play` program: whether to set an initial state of the game board", cmd);
     TCLAP::ValueArg<int> timePauseMsArg("t", "timepause", "For `play` program: time (in milliseconds) to pause between steps", false, 0, "integer", cmd);
@@ -93,9 +93,10 @@ int main(int argc, char* argv[]) {
     auto gameStateHandler = new GameStateHandler(len);
     if (prog == "play") {
       srand(time(0));
+      auto cliHandler = new CliHandler();
       auto graphicsHandler = graphicsRes > 0 ? new GraphicsHandler(gameStateHandler, graphicsRes) : NULL;
-      auto playerX = getPlayer(playerXType, gameStateHandler, graphicsHandler);
-      auto playerO = getPlayer(playerOType, gameStateHandler, graphicsHandler);
+      auto playerX = getPlayer(playerXType, gameStateHandler, cliHandler, graphicsHandler);
+      auto playerO = getPlayer(playerOType, gameStateHandler, cliHandler, graphicsHandler);
       auto gamePlayHandler = new GamePlayHandler(playerX, playerO, timePauseMs, gameStateHandler, graphicsHandler);
       gamePlayHandler->startGame(initState ? getStateInteractive(graphicsHandler) : 0b0);
       auto winner = numSteps <= 0 ? gamePlayHandler->playTillEnd() : gamePlayHandler->playNTurns(numSteps);
@@ -106,6 +107,7 @@ int main(int argc, char* argv[]) {
       } else if (winner == WINNER_UNKNOWN) {
         std::cout << "No Winner Yet.\n";
       }
+      delete cliHandler;
       delete graphicsHandler;
       delete playerX;
       delete playerO;
@@ -116,9 +118,10 @@ int main(int argc, char* argv[]) {
         std::cerr << "warning: " << "using an interactive player for test runs is not a good idea; aborting\n";
         exit(1);
       }
-      auto playerX = getPlayer(playerXType, gameStateHandler);
-      auto playerO = getPlayer(playerOType, gameStateHandler);
-      auto gamePlayHandler = new GamePlayHandler(playerX, playerO, timePauseMs, gameStateHandler, NULL, true);
+      auto cliHandler = new CliHandler();
+      auto playerX = getPlayer(playerXType, gameStateHandler, cliHandler);
+      auto playerO = getPlayer(playerOType, gameStateHandler, cliHandler);
+      auto gamePlayHandler = new GamePlayHandler(playerX, playerO, 0, gameStateHandler, NULL, true);
       int xWins = 0;
       int oWins = 0;
       int draws = 0;
@@ -136,9 +139,14 @@ int main(int argc, char* argv[]) {
           std::cout << i << ": Draw!\n";
         }
       }
-      std::cout << "Player X (" << playerXType << ") compute time (s): " << gamePlayHandler->timeX/1000000.0 << " (" << gamePlayHandler->timeX/1000000.0/numGames << " average per game)\n";
-      std::cout << "Player O (" << playerOType << ") compute time (s): " << gamePlayHandler->timeO/1000000.0 << " (" << gamePlayHandler->timeO/1000000.0/numGames << " average per game)\n";
-      std::cout << "Results (X-O-D): " << xWins << "-" << oWins << "-" << draws << "\n";
+      std::cout << "\nResult summary for Player X (" << playerXType << ") vs. Player O (" << playerOType << ") on " << len << "X" << len << " Quixo\n";
+      std::cout << "--------------------------------------------------------------------------------\n";
+      std::cout << "Player X init compute time (s): " << gamePlayHandler->initTimeX/1000000.0 << " (" << gamePlayHandler->initTimeX/1000000.0/numGames << " average per game)\n";
+      std::cout << "Player O init compute time (s): " << gamePlayHandler->initTimeO/1000000.0 << " (" << gamePlayHandler->initTimeO/1000000.0/numGames << " average per game)\n";
+      std::cout << "Player X running compute time (s): " << gamePlayHandler->runTimeX/1000000.0 << " (" << gamePlayHandler->runTimeX/1000000.0/numGames << " average per game)\n";
+      std::cout << "Player O running compute time (s): " << gamePlayHandler->runTimeO/1000000.0 << " (" << gamePlayHandler->runTimeO/1000000.0/numGames << " average per game)\n";
+      std::cout << "Winners (X-O-D): " << xWins << "-" << oWins << "-" << draws << "\n";
+      delete cliHandler;
       delete playerX;
       delete playerO;
       delete gamePlayHandler;
