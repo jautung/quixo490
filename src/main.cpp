@@ -30,7 +30,7 @@ Player* getPlayer(std::string playerType, GameStateHandler* gameStateHandler, Cl
     auto initIters = cliHandler->readNonNegIntCliParam(cliParams[0], "mcts player init iters");
     auto perMoveIters = cliHandler->readNonNegIntCliParam(cliParams[1], "mcts player per move iters");
     return new MCTSPlayer(gameStateHandler, graphicsHandler, initIters, perMoveIters);
-  } else if (playerType == "q-learn") {
+  } else if (playerType.find("q-learn", 0) == 0) {
     auto cliParams = cliHandler->readCliParams(playerType.substr(std::string("q-learn").length()));
     if (cliParams.size() != 2) {
       std::cerr << "error: " << "incorrect number of params for q-learning player type (expected 2; got " << cliParams.size() << ")\n";
