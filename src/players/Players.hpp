@@ -72,3 +72,11 @@ class MCTSPlayer : public Player {
     bool equalInfo(const std::tuple<int, int> &infoA, const std::tuple<int, int> &infoB);
     bool worseInfo(const std::tuple<int, int> &infoA, const std::tuple<int, int> &infoB);
 };
+
+class QLearningPlayer : public Player {
+  public:
+    QLearningPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler = NULL);
+    ~QLearningPlayer();
+    move_t selectMove(state_t state, colormode_t colorMode) override;
+    void clearCache() override;
+};

@@ -11,6 +11,8 @@
   - For MacOS, this can be done simply with `brew install glfw3`.
 - [OpenMP](https://www.openmp.org/) for parallelization.
   - For MacOS, this can be done simply with `brew install llvm libomp`.
+- [Eigen](http://eigen.tuxfamily.org/) for matrix operations.
+  - For MacOS, this can be downloaded from the above link, and the `*/Eigen` folder can be copied to `./include` (which is `.gitignore`-ed).
 
 ### Usage
 - `make && ./bin/quixo -h` brings up the possible usages.
