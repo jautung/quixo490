@@ -7,20 +7,24 @@
 #include <tuple>
 #include <vector>
 
+extern std::mt19937 rng;
+
 namespace {
   state_t initState = 0b0;
   long unsigned int maxDepth = 10000;   // prevents infinite loops when playing out each iteration
   double initWeight = 0.0;              // initial weights in the weight matrix ...
-  double initWeightNoise = 0.001;       // ... perturbed by a uniform distribution of [-initWeightNoise, initWeightNoise]
-  double learningRateInit = 0.3;        // initial learning rate
-  double learningRateDecRatio = 0.9999; // factor for learning rate to decrease per iteration
-  double discountRate = 0.9999;         // temporal discount factor
+  double initWeightNoise = 0.0;         // ... perturbed by a uniform distribution of [-initWeightNoise, initWeightNoise]
+  double learningRateInit = 0.1;        // initial learning rate
+  double learningRateDecRatio = 0.999;  // factor for learning rate to decrease per iteration
+  double discountRate = 0.999;          // temporal discount factor
   double epsilon = 0.001;               // epsilon in epsilon-greedy play out of each iteration
 }
 
 QLearningPlayer::QLearningPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler, int initInitIters, int initPerMoveIters) : Player(initGameStateHandler, initGraphicsHandler) {
   initIters = initInitIters;
   perMoveIters = initPerMoveIters;
+  std::bernoulli_distribution initEpsilonDistri(epsilon);
+  epsilonDistri = initEpsilonDistri;
 }
 
 QLearningPlayer::~QLearningPlayer() {}
@@ -86,9 +90,10 @@ void QLearningPlayer::updateWeights(std::vector<std::tuple<state_t, int>> &state
 }
 
 int QLearningPlayer::selectQMoveIndex(state_t state) {
-  if ((double)rand()/(double)RAND_MAX < epsilon) { // epsilon ...
+  if (epsilonDistri(rng)) { // epsilon ...
     auto movesIndices = gameStateHandler->allMovesIndices(state);
-    return *std::next(std::begin(movesIndices), rand() % movesIndices.size());
+    std::uniform_int_distribution<int> dist(0, movesIndices.size() - 1);
+    return movesIndices[dist(rng)];
   } else { // ... greedy
     return selectBestMoveIndex(state);
   }

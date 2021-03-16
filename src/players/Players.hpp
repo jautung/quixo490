@@ -4,6 +4,7 @@
 #include "../optimal/OptComputer.hpp"
 #include "../utils/DataHandler.hpp"
 #include <Eigen/Core>
+#include <random>
 #include <tuple>
 #include <unordered_map>
 #include <unordered_set>
@@ -89,6 +90,7 @@ class QLearningPlayer : public Player {
     int perMoveIters;
     Eigen::MatrixXd weights;
     double learningRate;
+    std::bernoulli_distribution epsilonDistri;
     void runIter(state_t state);
     void updateWeights(std::vector<std::tuple<state_t, int>> &stateMoveStack, state_t finalState);
     int selectQMoveIndex(state_t state);

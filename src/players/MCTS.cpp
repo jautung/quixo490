@@ -9,6 +9,8 @@
 #include <unordered_set>
 #include <vector>
 
+extern std::mt19937 rng;
+
 namespace {
   state_t initState = 0b0;
   long unsigned int maxDepth = 1000;
@@ -56,7 +58,8 @@ void MCTSPlayer::runIter(state_t state) {
     auto exploredChildrenStates = std::get<0>(childrenStates);
     auto unexploredChildrenStates = std::get<1>(childrenStates);
     if (unexploredChildrenStates.size() > 0) { // at least one child has not been explored
-      auto playoutState = *std::next(std::begin(unexploredChildrenStates), rand() % unexploredChildrenStates.size());
+      std::uniform_int_distribution<int> dist(0, unexploredChildrenStates.size() - 1);
+      auto playoutState = *std::next(unexploredChildrenStates.begin(), dist(rng));
       playout(playoutState, traversedStates);
       break;
     } else { // all children have been explored at least once
@@ -110,7 +113,8 @@ void MCTSPlayer::playout(state_t state, std::vector<state_t> &traversedStates) {
       break;
     }
     auto moves = gameStateHandler->allMoves(state);
-    auto randomMove = *std::next(std::begin(moves), rand() % moves.size());
+    std::uniform_int_distribution<int> dist(0, moves.size() - 1);
+    auto randomMove = moves[dist(rng)];
     state = gameStateHandler->swapPlayers(gameStateHandler->makeMove(state, randomMove));
   }
 }
@@ -133,7 +137,8 @@ state_t MCTSPlayer::selectBestUcbState(state_t state, std::unordered_set<state_t
       bestUcbStates.push_back(childState);
     }
   }
-  return *std::next(std::begin(bestUcbStates), rand() % bestUcbStates.size());
+  std::uniform_int_distribution<int> dist(0, bestUcbStates.size() - 1);
+  return bestUcbStates[dist(rng)];
 }
 
 move_t MCTSPlayer::selectBestMove(state_t state) {
@@ -157,7 +162,8 @@ move_t MCTSPlayer::selectBestMove(state_t state) {
       bestMoves.push_back(move);
     }
   }
-  return *std::next(std::begin(bestMoves), rand() % bestMoves.size());
+  std::uniform_int_distribution<int> dist(0, bestMoves.size() - 1);
+  return bestMoves[dist(rng)];
 }
 
 std::tuple<int, int> MCTSPlayer::addTuples(const std::tuple<int, int> &tupleA, const std::tuple<int, int> &tupleB) {

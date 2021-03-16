@@ -12,6 +12,8 @@
 #include <string>
 #include <tclap/CmdLine.h>
 
+std::mt19937 rng(time(0));
+
 Player* getPlayer(std::string playerType, GameStateHandler* gameStateHandler, CliHandler* cliHandler, GraphicsHandler* graphicsHandler = NULL) {
   if (playerType == "random") {
     return new RandomPlayer(gameStateHandler);
@@ -92,7 +94,6 @@ int main(int argc, char* argv[]) {
 
     auto gameStateHandler = new GameStateHandler(len);
     if (prog == "play") {
-      srand(time(0));
       auto cliHandler = new CliHandler();
       auto graphicsHandler = graphicsRes > 0 ? new GraphicsHandler(gameStateHandler, graphicsRes) : NULL;
       auto playerX = getPlayer(playerXType, gameStateHandler, cliHandler, graphicsHandler);
@@ -113,7 +114,6 @@ int main(int argc, char* argv[]) {
       delete playerO;
       delete gamePlayHandler;
     } else if (prog == "test") {
-      srand(time(0));
       if (playerXType == "interact" || playerOType == "interact") {
         std::cerr << "warning: " << "using an interactive player for test runs is not a good idea; aborting\n";
         exit(1);

@@ -6,6 +6,8 @@
 #include <random>
 #include <vector>
 
+extern std::mt19937 rng;
+
 OptimalPlayer::OptimalPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler) : Player(initGameStateHandler, initGraphicsHandler) {
   auto len = gameStateHandler->len;
   optComputer = new OptComputer(len*len, gameStateHandler);
@@ -22,7 +24,8 @@ move_t OptimalPlayer::selectMove(state_t state, colormode_t colorMode) {
   auto result = evalState(state);
 
   if (result == RESULT_LOSS) { // make a random move since loss anyway
-    return *std::next(std::begin(moves), rand() % moves.size());
+    std::uniform_int_distribution<int> dist(0, moves.size() - 1);
+    return moves[dist(rng)];
   }
 
   result_t filterChildStateResult = RESULT_LOSS; // dummy
@@ -42,7 +45,8 @@ move_t OptimalPlayer::selectMove(state_t state, colormode_t colorMode) {
   }
 
   // make a random move that has desired child state
-  return *std::next(std::begin(filteredMoves), rand() % filteredMoves.size());
+  std::uniform_int_distribution<int> dist(0, filteredMoves.size() - 1);
+  return filteredMoves[dist(rng)];
 }
 
 result_t OptimalPlayer::evalState(state_t state) {

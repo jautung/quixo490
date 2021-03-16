@@ -3,6 +3,8 @@
 #include "Players.hpp"
 #include <random>
 
+extern std::mt19937 rng;
+
 move_t HeuristicSimplePlayer::selectMove(state_t state, colormode_t colorMode) {
   auto moves = gameStateHandler->allMoves(state);
 
@@ -19,7 +21,8 @@ move_t HeuristicSimplePlayer::selectMove(state_t state, colormode_t colorMode) {
     }
   }
   if (winningMoves.size() > 0) {
-    return *std::next(std::begin(winningMoves), rand() % winningMoves.size());
+    std::uniform_int_distribution<int> dist(0, winningMoves.size() - 1);
+    return winningMoves[dist(rng)];
   }
 
   // implement simple heuristic among non-losing moves
@@ -32,11 +35,14 @@ move_t HeuristicSimplePlayer::selectMove(state_t state, colormode_t colorMode) {
       }
     }
     if (plusMoves.size() > 0) { // at least one plus move
-      return *std::next(std::begin(plusMoves), rand() % plusMoves.size());
+      std::uniform_int_distribution<int> dist(0, plusMoves.size() - 1);
+      return plusMoves[dist(rng)];
     }
-    return *std::next(std::begin(nonLosingMoves), rand() % nonLosingMoves.size()); // no plus moves
+    std::uniform_int_distribution<int> dist(0, nonLosingMoves.size() - 1); // no plus moves
+    return nonLosingMoves[dist(rng)];
   }
 
   // return random move otherwise (all losing moves)
-  return *std::next(std::begin(moves), rand() % moves.size());
+  std::uniform_int_distribution<int> dist(0, moves.size() - 1);
+  return moves[dist(rng)];
 }
