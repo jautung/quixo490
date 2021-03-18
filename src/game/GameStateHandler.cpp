@@ -203,7 +203,7 @@ std::vector<int> GameStateHandler::allMovesIndices(state_t state) {
 }
 
 void GameStateHandler::allMovesAux(state_t state, std::vector<move_t> &moves, std::vector<int> &movesIndices) {
-  for (int moveIndex = 0; moveIndex < allPotentialMovesCache.size(); moveIndex++) {
+  for (size_t moveIndex = 0; moveIndex < allPotentialMovesCache.size(); moveIndex++) {
     auto move = allPotentialMovesCache[moveIndex];
     auto i = moveHandler->getRow(move);
     auto j = moveHandler->getCol(move);
