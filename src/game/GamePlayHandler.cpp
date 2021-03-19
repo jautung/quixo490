@@ -63,7 +63,7 @@ winner_t GamePlayHandler::playTurn() {
   auto startTimeO = std::chrono::high_resolution_clock::now();
   move = playerO->selectMove(state, COLOR_FLIP);
   auto endTimeO = std::chrono::high_resolution_clock::now();
-  runTimeO += std::chrono::duration_cast<std::chrono::microseconds>(endTimeO-startTimeO).count();
+  runTimeO += std::chrono::duration_cast<std::chrono::milliseconds>(endTimeO-startTimeO).count();
   if (!dynamic_cast<InteractivePlayer*>(playerO)) { // pause for all except interactive player
     std::this_thread::sleep_for(std::chrono::milliseconds(timePauseMs));
   }
