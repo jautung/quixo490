@@ -3,6 +3,7 @@
 #include <cstdint>
 
 #ifdef __APPLE__
+#define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>
 #endif // __APPLE__
 
