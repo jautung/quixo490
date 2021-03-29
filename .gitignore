@@ -4,4 +4,5 @@ build
 data
 data_frozen
 include
+logs
 tmp
