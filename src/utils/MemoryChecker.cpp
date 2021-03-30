@@ -18,10 +18,10 @@ void MemoryChecker::checkVmRss(std::string prefix) {
   double vmUsage = vsize / 1024.0;
   double residentSetSize = rss * pageSizeKb;
 
-  std::cerr << "Memory [" << prefix << "]: VM=" << vmUsage << ", RSS=" << residentSetSize << "\n";
+  std::cout << "Memory [" << prefix << "]: VM=" << vmUsage << ", RSS=" << residentSetSize << "\n";
 #endif // __APPLE__
 }
 
 void MemoryChecker::checkVector(void* beginPointer, void* endPointer, std::string prefix) {
-  std::cerr << "Memory [Vector " << prefix << " loaded]: " << (uint8_t*)endPointer - (uint8_t*)beginPointer << " bytes\n";
+  std::cout << "Memory [Vector " << prefix << " loaded]: " << (uint8_t*)endPointer - (uint8_t*)beginPointer << " bytes\n";
 }

@@ -74,6 +74,7 @@ int main(int argc, char* argv[]) {
     TCLAP::ValueArg<int> graphicsResArg("g", "graphicsres", "For `play` or `opt-check` program: graphical output screen resolution (<0: no graphics)", false, 0, "integer", cmd);
     TCLAP::ValueArg<int> numGamesArg("N", "Ngames", "For `test` program: number of game iterations to run", false, 1, "integer", cmd);
     TCLAP::SwitchArg memoryCheckArg("m", "memorycheck", "For `opt-compute` program: check run-time memory usage", cmd);
+    TCLAP::SwitchArg speedCheckArg("s", "speedcheck", "For `opt-compute` program: profile running-time of various functions", cmd);
     TCLAP::ValueArg<int> numThreadsArg("T", "Threads", "For `opt-compute` program: number of Threads to use", false, 1, "integer", cmd);
     cmd.parse(argc, argv);
     auto prog = progArg.getValue();
@@ -90,6 +91,7 @@ int main(int argc, char* argv[]) {
     auto graphicsRes = graphicsResArg.getValue();
     auto numGames = numGamesArg.getValue();
     auto memoryCheck = memoryCheckArg.getValue();
+    auto speedCheck = speedCheckArg.getValue();
     auto numThreads = numThreadsArg.getValue();
 
     auto gameStateHandler = new GameStateHandler(len);
@@ -160,7 +162,7 @@ int main(int argc, char* argv[]) {
       }
       omp_set_num_threads(numThreads);
       auto startTime = std::chrono::high_resolution_clock::now();
-      auto optComputer = new OptComputer(len*len, gameStateHandler, memoryChecker);
+      auto optComputer = new OptComputer(len*len, gameStateHandler, memoryChecker, speedCheck);
       auto endTime = std::chrono::high_resolution_clock::now();
       std::cout << "OptComputer initialization time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime-startTime).count()/1000.0 << "\n";
       optComputer->computeAll();

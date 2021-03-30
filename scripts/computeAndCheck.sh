@@ -1,7 +1,9 @@
 #!/bin/bash
 DATE=$(date +'%Y-%m-%d-%H%M%S')
-L=3
-OPT_COMP_FLAGS='-l '$L' -T 2'
+L=4
+OPT_COMP_FLAGS='-l '$L' -T 4 -s'
+OPT_COMP_FLAGS_NOSPACE="$(echo -e "${OPT_COMP_FLAGS}" | tr -d '[:space:]')"
+LOGFILE="${DATE}${OPT_COMP_FLAGS_NOSPACE}.log"
 
 export TIME='
 > real time       : %E
@@ -20,13 +22,13 @@ echo
 
 echo '--- COMPUTING ---'
 echo 'flags:' $OPT_COMP_FLAGS
-echo 'flags:' $OPT_COMP_FLAGS > logs/$DATE.log
-echo '' >> logs/$DATE.log
-/usr/bin/time --output=logs/$DATE.log --append ./bin/quixo -p opt-compute $OPT_COMP_FLAGS >> logs/$DATE.log
+echo 'flags:' $OPT_COMP_FLAGS > logs/$LOGFILE
+echo '' >> logs/$LOGFILE
+/usr/bin/time --output=logs/$LOGFILE --append ./bin/quixo -p opt-compute $OPT_COMP_FLAGS >> logs/$LOGFILE
 echo
 
-echo '--- COMPUTING COMPLETE; TAILING LOGFILE (logs/'$DATE'.log) ---'
-tail -n 9 logs/$DATE.log
+echo '--- COMPUTING COMPLETE; TAILING LOGFILE (logs/'$LOGFILE') ---'
+tail -n 9 logs/$LOGFILE
 echo
 
 echo '--- COMPARING TO KNOWN CORRECT OUTPUT ---'

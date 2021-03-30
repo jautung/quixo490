@@ -16,13 +16,23 @@ namespace {
   state_t halfStateMask = 0b11111111111111111111111111111111;
 }
 
-OptComputer::OptComputer(nbit_t initNumTiles, GameStateHandler* initGameStateHandler, MemoryChecker* initMemoryChecker) {
+namespace {
+  bool speedCheck;
+  long long initClassTime = 0;
+  long long checkTerminalsClassTime = 0;
+  long long parentLinkCacheClassTime = 0;
+  long long valueIterateClassTime = 0;
+  long long elimWinOrDrawClassTime = 0;
+}
+
+OptComputer::OptComputer(nbit_t initNumTiles, GameStateHandler* initGameStateHandler, MemoryChecker* initMemoryChecker, bool initSpeedCheck) {
   numTiles = initNumTiles;
   gameStateHandler = initGameStateHandler;
   memoryChecker = initMemoryChecker;
   ncrCalculator = new NcrCalculator(numTiles);
   ordCalculator = new OrdCalculator(numTiles);
   dataHandler = new DataHandler();
+  speedCheck = initSpeedCheck;
 }
 
 OptComputer::~OptComputer() {
@@ -69,6 +79,14 @@ void OptComputer::computeAll() {
       break;
     }
   }
+  if (speedCheck) {
+    std::cout << "Total initClass() times (s)            : " << initClassTime/1000.0 << "\n";
+    std::cout << "Total checkTerminalsClass() times (s)  : " << checkTerminalsClassTime/1000.0 << "\n";
+    std::cout << "Total parentLinkCacheClass() times (s) : " << parentLinkCacheClassTime/1000.0 << "\n";
+    std::cout << "Total valueIterateClass() times (s)    : " << valueIterateClassTime/1000.0 << "\n";
+    std::cout << "Total elimWinOrDrawClass() times (s)   : " << elimWinOrDrawClassTime/1000.0 << "\n";
+    std::cout << "\n";
+  }
 }
 
 sindex_t OptComputer::numStatesClass(nbit_t numA, nbit_t numB) {
@@ -94,12 +112,19 @@ void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result4_t> 
   {
     #pragma omp single
     {
+      std::chrono::time_point<std::chrono::high_resolution_clock> startTimeInner;
+      std::chrono::time_point<std::chrono::high_resolution_clock> endTimeInner;
+
+      if (speedCheck) startTimeInner = std::chrono::high_resolution_clock::now();
       initClass(numA, numB, resultsNorm);
       if (numA != numB) {
         initClass(numB, numA, resultsFlip);
       }
       #pragma omp taskwait
+      if (speedCheck) endTimeInner = std::chrono::high_resolution_clock::now();
+      if (speedCheck) initClassTime += std::chrono::duration_cast<std::chrono::milliseconds>(endTimeInner-startTimeInner).count();
 
+      if (speedCheck) startTimeInner = std::chrono::high_resolution_clock::now();
       if (numA != numB) {
         checkTerminalsClass(numA, numB, resultsNorm, resultsFlip, resultsNormLock, resultsFlipLock);
         checkTerminalsClass(numB, numA, resultsFlip, resultsNorm, resultsFlipLock, resultsNormLock);
@@ -107,13 +132,19 @@ void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result4_t> 
         checkTerminalsClass(numA, numB, resultsNorm, resultsNorm, resultsNormLock, resultsNormLock);
       }
       #pragma omp taskwait
+      if (speedCheck) endTimeInner = std::chrono::high_resolution_clock::now();
+      if (speedCheck) checkTerminalsClassTime += std::chrono::duration_cast<std::chrono::milliseconds>(endTimeInner-startTimeInner).count();
 
+      if (speedCheck) startTimeInner = std::chrono::high_resolution_clock::now();
       parentLinkCacheClass(numA, numB, resultsNorm, resultsCacheNormPlus, resultsNormLock); // parent link optimization
       if (numA != numB) {
         parentLinkCacheClass(numB, numA, resultsFlip, resultsCacheFlipPlus, resultsFlipLock);
       }
       #pragma omp taskwait
+      if (speedCheck) endTimeInner = std::chrono::high_resolution_clock::now();
+      if (speedCheck) parentLinkCacheClassTime += std::chrono::duration_cast<std::chrono::milliseconds>(endTimeInner-startTimeInner).count();
 
+      if (speedCheck) startTimeInner = std::chrono::high_resolution_clock::now();
       while (true) {
         bool updateMade = false;
         if (numA != numB) {
@@ -127,12 +158,17 @@ void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result4_t> 
           break;
         }
       }
+      if (speedCheck) endTimeInner = std::chrono::high_resolution_clock::now();
+      if (speedCheck) valueIterateClassTime += std::chrono::duration_cast<std::chrono::milliseconds>(endTimeInner-startTimeInner).count();
 
+      if (speedCheck) startTimeInner = std::chrono::high_resolution_clock::now();
       elimWinOrDrawClass(numA, numB, resultsNorm);
       if (numA != numB) {
         elimWinOrDrawClass(numB, numA, resultsFlip);
       }
       #pragma omp taskwait
+      if (speedCheck) endTimeInner = std::chrono::high_resolution_clock::now();
+      if (speedCheck) elimWinOrDrawClassTime += std::chrono::duration_cast<std::chrono::milliseconds>(endTimeInner-startTimeInner).count();
     }
   }
 

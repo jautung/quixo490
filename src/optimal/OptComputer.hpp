@@ -11,7 +11,7 @@
 
 class OptComputer {
   public:
-    OptComputer(nbit_t initNumTiles, GameStateHandler* initGameStateHandler, MemoryChecker* initMemoryChecker = NULL);
+    OptComputer(nbit_t initNumTiles, GameStateHandler* initGameStateHandler, MemoryChecker* initMemoryChecker = NULL, bool initSpeedCheck = false);
     ~OptComputer();
     void computeAll();
     sindex_t stateToIndex(state_t state);
