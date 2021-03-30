@@ -195,7 +195,79 @@
       ↳ Thread 1 total task time (s)       : 0.019671 (45 tasks)
       ↳ Thread 2 total task time (s)       : 0.015404 (35 tasks)
       ↳ Thread 3 total task time (s)       : 0.009102 (28 tasks)
-     ```
+    ```
+  - `-l 4 -T 8 -s`:
+    ```
+    Total initClass() time (s)            : 0.03295
+     ↳ Thread 0 total task time (s)       : 0.026444 (53 tasks)
+     ↳ Thread 1 total task time (s)       : 0.005235 (16 tasks)
+     ↳ Thread 2 total task time (s)       : 0.004622 (8 tasks)
+     ↳ Thread 3 total task time (s)       : 0.006708 (15 tasks)
+     ↳ Thread 4 total task time (s)       : 0.008362 (22 tasks)
+     ↳ Thread 5 total task time (s)       : 0.003441 (13 tasks)
+     ↳ Thread 6 total task time (s)       : 0.003252 (13 tasks)
+     ↳ Thread 7 total task time (s)       : 0.002783 (13 tasks)
+    Total checkTerminalsClass() time (s)  : 40.2798
+     ↳ Thread 0 total task time (s)       : 6.53376 (1702047 tasks)
+       ↳ Total time in locks (s)          : 3.41926
+     ↳ Thread 1 total task time (s)       : 9.22429 (5756578 tasks)
+       ↳ Total time in locks (s)          : 4.68332
+     ↳ Thread 2 total task time (s)       : 9.22152 (5815006 tasks)
+       ↳ Total time in locks (s)          : 4.67348
+     ↳ Thread 3 total task time (s)       : 9.23377 (5939953 tasks)
+       ↳ Total time in locks (s)          : 4.69642
+     ↳ Thread 4 total task time (s)       : 9.23828 (5978202 tasks)
+       ↳ Total time in locks (s)          : 4.71042
+     ↳ Thread 5 total task time (s)       : 9.25768 (5989432 tasks)
+       ↳ Total time in locks (s)          : 4.56737
+     ↳ Thread 6 total task time (s)       : 9.24649 (5969238 tasks)
+       ↳ Total time in locks (s)          : 4.66347
+     ↳ Thread 7 total task time (s)       : 9.24834 (5896265 tasks)
+       ↳ Total time in locks (s)          : 4.67094
+    Total parentLinkCacheClass() time (s) : 46.1586
+     ↳ Thread 0 total task time (s)       : 41.0678 (2040438 tasks)
+       ↳ Total time in locks (s)          : 21.2886
+     ↳ Thread 1 total task time (s)       : 43.1602 (2079774 tasks)
+       ↳ Total time in locks (s)          : 22.8253
+     ↳ Thread 2 total task time (s)       : 43.1669 (2077824 tasks)
+       ↳ Total time in locks (s)          : 22.7716
+     ↳ Thread 3 total task time (s)       : 43.1858 (2082035 tasks)
+       ↳ Total time in locks (s)          : 22.9238
+     ↳ Thread 4 total task time (s)       : 43.1855 (2085516 tasks)
+       ↳ Total time in locks (s)          : 22.9967
+     ↳ Thread 5 total task time (s)       : 43.2348 (2081078 tasks)
+       ↳ Total time in locks (s)          : 22.4535
+     ↳ Thread 6 total task time (s)       : 43.2135 (2083164 tasks)
+       ↳ Total time in locks (s)          : 22.8404
+     ↳ Thread 7 total task time (s)       : 43.2073 (2082403 tasks)
+       ↳ Total time in locks (s)          : 22.8549
+    Total valueIterateClass() time (s)    : 48.9134
+     ↳ Thread 0 total task time (s)       : 45.4952 (1303160 tasks)
+       ↳ Total time in locks (s)          : 23.2146
+     ↳ Thread 1 total task time (s)       : 46.8968 (1346901 tasks)
+       ↳ Total time in locks (s)          : 24.7743
+     ↳ Thread 2 total task time (s)       : 46.9033 (1345505 tasks)
+       ↳ Total time in locks (s)          : 24.7901
+     ↳ Thread 3 total task time (s)       : 46.9126 (1348127 tasks)
+       ↳ Total time in locks (s)          : 24.9051
+     ↳ Thread 4 total task time (s)       : 46.9214 (1350549 tasks)
+       ↳ Total time in locks (s)          : 24.9011
+     ↳ Thread 5 total task time (s)       : 46.9673 (1317139 tasks)
+       ↳ Total time in locks (s)          : 24.3942
+     ↳ Thread 6 total task time (s)       : 46.943 (1348104 tasks)
+       ↳ Total time in locks (s)          : 24.55
+     ↳ Thread 7 total task time (s)       : 46.9395 (1348139 tasks)
+       ↳ Total time in locks (s)          : 24.6855
+    Total elimWinOrDrawClass() time (s)   : 0.044459
+     ↳ Thread 0 total task time (s)       : 0.009838 (29 tasks)
+     ↳ Thread 1 total task time (s)       : 0.008882 (11 tasks)
+     ↳ Thread 2 total task time (s)       : 0.002769 (14 tasks)
+     ↳ Thread 3 total task time (s)       : 0.016271 (27 tasks)
+     ↳ Thread 4 total task time (s)       : 0.003487 (17 tasks)
+     ↳ Thread 5 total task time (s)       : 0.003553 (19 tasks)
+     ↳ Thread 6 total task time (s)       : 0.009015 (18 tasks)
+     ↳ Thread 7 total task time (s)       : 0.013536 (18 tasks)
+    ```
 
 ## To Do / Next Steps
 0. **Improve speed of optimal computation.**
