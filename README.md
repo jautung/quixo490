@@ -115,91 +115,91 @@
     Player O (mcts300) compute time (s): 29.8628 (0.0298628 average per game)
     Results (X-O-D): 456-544-0
     ```
-
+- Mar 30, 2021: Speed profiling for 4X4 optimal computation:
+  - `-l 4 -T 1 -s`:
+    ```
+     Total initClass() time (s)            : 0.022844
+      ↳ Thread 0 total task time (s)       : 0.022618 (153 tasks)
+     Total checkTerminalsClass() time (s)  : 20.7791
+      ↳ Thread 0 total task time (s)       : 10.02 (43046721 tasks)
+        ↳ Total time in locks (s)          : 0.006086
+     Total parentLinkCacheClass() time (s) : 46.0704
+      ↳ Thread 0 total task time (s)       : 36.0588 (16612232 tasks)
+        ↳ Total time in locks (s)          : 0.012314
+     Total valueIterateClass() time (s)    : 58.2625
+      ↳ Thread 0 total task time (s)       : 51.6136 (10705288 tasks)
+        ↳ Total time in locks (s)          : 0.013543
+     Total elimWinOrDrawClass() time (s)   : 0.067547
+      ↳ Thread 0 total task time (s)       : 0.067483 (153 tasks)
+    ```
+  - `-l 4 -T 2 -s`:
+    ```
+     Total initClass() time (s)            : 0.029857
+      ↳ Thread 0 total task time (s)       : 0.02927 (75 tasks)
+      ↳ Thread 1 total task time (s)       : 0.026729 (78 tasks)
+     Total checkTerminalsClass() time (s)  : 20.4918
+      ↳ Thread 0 total task time (s)       : 6.98051 (29372052 tasks)
+        ↳ Total time in locks (s)          : 0.003359
+      ↳ Thread 1 total task time (s)       : 6.55821 (13674669 tasks)
+        ↳ Total time in locks (s)          : 0.003031
+     Total parentLinkCacheClass() time (s) : 34.4449
+      ↳ Thread 0 total task time (s)       : 26.0258 (8789836 tasks)
+        ↳ Total time in locks (s)          : 0.011005
+      ↳ Thread 1 total task time (s)       : 24.2516 (7822396 tasks)
+        ↳ Total time in locks (s)          : 0.009767
+     Total valueIterateClass() time (s)    : 39.1571
+      ↳ Thread 0 total task time (s)       : 33.7249 (5400747 tasks)
+        ↳ Total time in locks (s)          : 0.011826
+      ↳ Thread 1 total task time (s)       : 32.1874 (5298051 tasks)
+        ↳ Total time in locks (s)          : 0.011251
+     Total elimWinOrDrawClass() time (s)   : 0.044086
+      ↳ Thread 0 total task time (s)       : 0.02785 (76 tasks)
+      ↳ Thread 1 total task time (s)       : 0.039172 (77 tasks)
+    ```
+  - `-l 4 -T 4 -s`:
+    ```
+     Total initClass() time (s)            : 0.029555
+      ↳ Thread 0 total task time (s)       : 0.013131 (42 tasks)
+      ↳ Thread 1 total task time (s)       : 0.018038 (43 tasks)
+      ↳ Thread 2 total task time (s)       : 0.007434 (26 tasks)
+      ↳ Thread 3 total task time (s)       : 0.016587 (42 tasks)
+     Total checkTerminalsClass() time (s)  : 23.9194
+      ↳ Thread 0 total task time (s)       : 5.35768 (4476050 tasks)
+        ↳ Total time in locks (s)          : 0.208325
+      ↳ Thread 1 total task time (s)       : 6.90439 (12869903 tasks)
+        ↳ Total time in locks (s)          : 0.264648
+      ↳ Thread 2 total task time (s)       : 6.91162 (12779006 tasks)
+        ↳ Total time in locks (s)          : 0.259897
+      ↳ Thread 3 total task time (s)       : 6.89694 (12921762 tasks)
+        ↳ Total time in locks (s)          : 0.217248
+     Total parentLinkCacheClass() time (s) : 38.2504
+      ↳ Thread 0 total task time (s)       : 31.7834 (4148042 tasks)
+        ↳ Total time in locks (s)          : 1.46793
+      ↳ Thread 1 total task time (s)       : 32.24 (4147873 tasks)
+        ↳ Total time in locks (s)          : 1.72476
+      ↳ Thread 2 total task time (s)       : 32.2761 (4106635 tasks)
+        ↳ Total time in locks (s)          : 1.70398
+      ↳ Thread 3 total task time (s)       : 32.2349 (4209682 tasks)
+        ↳ Total time in locks (s)          : 1.41105
+     Total valueIterateClass() time (s)    : 38.7578
+      ↳ Thread 0 total task time (s)       : 34.5358 (2624896 tasks)
+        ↳ Total time in locks (s)          : 1.93657
+      ↳ Thread 1 total task time (s)       : 34.8102 (2685404 tasks)
+        ↳ Total time in locks (s)          : 2.25809
+      ↳ Thread 2 total task time (s)       : 34.8242 (2666566 tasks)
+        ↳ Total time in locks (s)          : 2.25668
+      ↳ Thread 3 total task time (s)       : 34.8045 (2728693 tasks)
+        ↳ Total time in locks (s)          : 1.91034
+     Total elimWinOrDrawClass() time (s)   : 0.044266
+      ↳ Thread 0 total task time (s)       : 0.022901 (45 tasks)
+      ↳ Thread 1 total task time (s)       : 0.019671 (45 tasks)
+      ↳ Thread 2 total task time (s)       : 0.015404 (35 tasks)
+      ↳ Thread 3 total task time (s)       : 0.009102 (28 tasks)
+     ```
 ## To Do / Next Steps
 0. **Improve speed of optimal computation.**
    - `gprof`
    - `valgrind callgrind`
-   - `-l 4 -T 1 -s`:
-     ```
-      Total initClass() time (s)            : 0.022844
-       ↳ Thread 0 total task time (s)       : 0.022618 (153 tasks)
-      Total checkTerminalsClass() time (s)  : 20.7791
-       ↳ Thread 0 total task time (s)       : 10.02 (43046721 tasks)
-         ↳ Total time in locks (s)          : 0.006086
-      Total parentLinkCacheClass() time (s) : 46.0704
-       ↳ Thread 0 total task time (s)       : 36.0588 (16612232 tasks)
-         ↳ Total time in locks (s)          : 0.012314
-      Total valueIterateClass() time (s)    : 58.2625
-       ↳ Thread 0 total task time (s)       : 51.6136 (10705288 tasks)
-         ↳ Total time in locks (s)          : 0.013543
-      Total elimWinOrDrawClass() time (s)   : 0.067547
-       ↳ Thread 0 total task time (s)       : 0.067483 (153 tasks)
-     ```
-   - `-l 4 -T 2 -s`:
-     ```
-      Total initClass() time (s)            : 0.029857
-       ↳ Thread 0 total task time (s)       : 0.02927 (75 tasks)
-       ↳ Thread 1 total task time (s)       : 0.026729 (78 tasks)
-      Total checkTerminalsClass() time (s)  : 20.4918
-       ↳ Thread 0 total task time (s)       : 6.98051 (29372052 tasks)
-         ↳ Total time in locks (s)          : 0.003359
-       ↳ Thread 1 total task time (s)       : 6.55821 (13674669 tasks)
-         ↳ Total time in locks (s)          : 0.003031
-      Total parentLinkCacheClass() time (s) : 34.4449
-       ↳ Thread 0 total task time (s)       : 26.0258 (8789836 tasks)
-         ↳ Total time in locks (s)          : 0.011005
-       ↳ Thread 1 total task time (s)       : 24.2516 (7822396 tasks)
-         ↳ Total time in locks (s)          : 0.009767
-      Total valueIterateClass() time (s)    : 39.1571
-       ↳ Thread 0 total task time (s)       : 33.7249 (5400747 tasks)
-         ↳ Total time in locks (s)          : 0.011826
-       ↳ Thread 1 total task time (s)       : 32.1874 (5298051 tasks)
-         ↳ Total time in locks (s)          : 0.011251
-      Total elimWinOrDrawClass() time (s)   : 0.044086
-       ↳ Thread 0 total task time (s)       : 0.02785 (76 tasks)
-       ↳ Thread 1 total task time (s)       : 0.039172 (77 tasks)
-     ```
-   - `-l 4 -T 4 -s`:
-     ```
-      Total initClass() time (s)            : 0.029555
-       ↳ Thread 0 total task time (s)       : 0.013131 (42 tasks)
-       ↳ Thread 1 total task time (s)       : 0.018038 (43 tasks)
-       ↳ Thread 2 total task time (s)       : 0.007434 (26 tasks)
-       ↳ Thread 3 total task time (s)       : 0.016587 (42 tasks)
-      Total checkTerminalsClass() time (s)  : 23.9194
-       ↳ Thread 0 total task time (s)       : 5.35768 (4476050 tasks)
-         ↳ Total time in locks (s)          : 0.208325
-       ↳ Thread 1 total task time (s)       : 6.90439 (12869903 tasks)
-         ↳ Total time in locks (s)          : 0.264648
-       ↳ Thread 2 total task time (s)       : 6.91162 (12779006 tasks)
-         ↳ Total time in locks (s)          : 0.259897
-       ↳ Thread 3 total task time (s)       : 6.89694 (12921762 tasks)
-         ↳ Total time in locks (s)          : 0.217248
-      Total parentLinkCacheClass() time (s) : 38.2504
-       ↳ Thread 0 total task time (s)       : 31.7834 (4148042 tasks)
-         ↳ Total time in locks (s)          : 1.46793
-       ↳ Thread 1 total task time (s)       : 32.24 (4147873 tasks)
-         ↳ Total time in locks (s)          : 1.72476
-       ↳ Thread 2 total task time (s)       : 32.2761 (4106635 tasks)
-         ↳ Total time in locks (s)          : 1.70398
-       ↳ Thread 3 total task time (s)       : 32.2349 (4209682 tasks)
-         ↳ Total time in locks (s)          : 1.41105
-      Total valueIterateClass() time (s)    : 38.7578
-       ↳ Thread 0 total task time (s)       : 34.5358 (2624896 tasks)
-         ↳ Total time in locks (s)          : 1.93657
-       ↳ Thread 1 total task time (s)       : 34.8102 (2685404 tasks)
-         ↳ Total time in locks (s)          : 2.25809
-       ↳ Thread 2 total task time (s)       : 34.8242 (2666566 tasks)
-         ↳ Total time in locks (s)          : 2.25668
-       ↳ Thread 3 total task time (s)       : 34.8045 (2728693 tasks)
-         ↳ Total time in locks (s)          : 1.91034
-      Total elimWinOrDrawClass() time (s)   : 0.044266
-       ↳ Thread 0 total task time (s)       : 0.022901 (45 tasks)
-       ↳ Thread 1 total task time (s)       : 0.019671 (45 tasks)
-       ↳ Thread 2 total task time (s)       : 0.015404 (35 tasks)
-       ↳ Thread 3 total task time (s)       : 0.009102 (28 tasks)
-     ```
 1. **Analysis/improvement of MCTS/Q-learning.**
    - Sanity check that MCTS/Q-learning is doing the right thing. Use them on another game and seeing whether it works (e.g. tic tac toe).
    - Get other features/heuristics.
