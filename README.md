@@ -196,6 +196,7 @@
       ↳ Thread 2 total task time (s)       : 0.015404 (35 tasks)
       ↳ Thread 3 total task time (s)       : 0.009102 (28 tasks)
      ```
+
 ## To Do / Next Steps
 0. **Improve speed of optimal computation.**
    - `gprof`
