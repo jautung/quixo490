@@ -11,7 +11,7 @@
 
 class OptComputer {
   public:
-    OptComputer(nbit_t initNumTiles, GameStateHandler* initGameStateHandler, MemoryChecker* initMemoryChecker = NULL, bool initSpeedCheck = false, int initNumThreads = 1, int initNumLocksPerArr = 1);
+    OptComputer(nbit_t initNumTiles, GameStateHandler* initGameStateHandler, int initNumThreads = 1, int initNumLocksPerArr = 1);
     ~OptComputer();
     void computeAll();
     sindex_t stateToIndex(state_t state);
@@ -19,12 +19,11 @@ class OptComputer {
   private:
     nbit_t numTiles;
     GameStateHandler* gameStateHandler;
-    MemoryChecker* memoryChecker;
-    bool speedCheck;
     int numThreads;
     int numLocksPerArr;
     NcrCalculator* ncrCalculator;
     OrdCalculator* ordCalculator;
+    MemoryChecker* memoryChecker;
     sindex_t numStatesClass(nbit_t numA, nbit_t numB);
     void computeClass(nbit_t numA, nbit_t numB, std::vector<result4_t> &resultsCacheNormPlus, std::vector<result4_t> &resultsCacheFlipPlus);
     void initClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results);

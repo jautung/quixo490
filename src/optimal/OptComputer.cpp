@@ -55,36 +55,51 @@ namespace {
   std::chrono::system_clock::duration filterOStatePerThreadTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
 }
 
-#define START_TIMING(startTimeVar) {if (speedCheck) startTimeVar = std::chrono::high_resolution_clock::now();}
-#define END_TIMING(totalTimeVar, startTimeVar) {if (speedCheck) totalTimeVar += std::chrono::high_resolution_clock::now() - startTimeVar;}
-#define END_TIMING_TASK(perThreadTaskTimesVar, perThreadNumTasksVar, startTimeVar) { \
-  if (speedCheck) { \
+#if OPT_COMPUTE_SPEED_CHECKING == 1
+  #define START_TIMING(startTimeVar) {startTimeVar = std::chrono::high_resolution_clock::now();}
+  #define END_TIMING(totalTimeVar, startTimeVar) {totalTimeVar += std::chrono::high_resolution_clock::now() - startTimeVar;}
+  #define END_TIMING_TASK(perThreadTaskTimesVar, perThreadNumTasksVar, startTimeVar) { \
     perThreadTaskTimesVar[omp_get_thread_num()] += std::chrono::high_resolution_clock::now() - startTimeVar; \
     perThreadNumTasksVar[omp_get_thread_num()] += 1; \
-  } \
-}
+  }
+#else
+  #define START_TIMING(startTimeVar) { }
+  #define END_TIMING(totalTimeVar, startTimeVar) { }
+  #define END_TIMING_TASK(perThreadTaskTimesVar, perThreadNumTasksVar, startTimeVar) { }
+#endif
 
-OptComputer::OptComputer(nbit_t initNumTiles, GameStateHandler* initGameStateHandler, MemoryChecker* initMemoryChecker, bool initSpeedCheck, int initNumThreads, int initNumLocksPerArr) {
+OptComputer::OptComputer(nbit_t initNumTiles, GameStateHandler* initGameStateHandler, int initNumThreads, int initNumLocksPerArr) {
   numTiles = initNumTiles;
   gameStateHandler = initGameStateHandler;
-  memoryChecker = initMemoryChecker;
-  speedCheck = initSpeedCheck;
   numThreads = initNumThreads;
   numLocksPerArr = initNumLocksPerArr;
+
   ncrCalculator = new NcrCalculator(numTiles);
   ordCalculator = new OrdCalculator(numTiles);
   dataHandler = new DataHandler();
+
   omp_set_num_threads(numThreads);
+
+  #if OPT_COMPUTE_MEMORY_CHECKING == 1
+    memoryChecker = new MemoryChecker();
+  #endif
 }
 
 OptComputer::~OptComputer() {
   delete ncrCalculator;
   delete ordCalculator;
   delete dataHandler;
+
+  #if OPT_COMPUTE_MEMORY_CHECKING == 1
+    delete memoryChecker;
+  #endif
 }
 
 void OptComputer::computeAll() {
-  if (memoryChecker) memoryChecker->checkVmRss("Initial");
+  #if OPT_COMPUTE_MEMORY_CHECKING == 1
+    memoryChecker->checkVmRss("Initial");
+  #endif
+
   for (nbit_t numUsed = numTiles;; numUsed--) {
     for (nbit_t numA = 0; numA <= numUsed/2; numA++) {
       nbit_t numB = numUsed - numA;
@@ -96,32 +111,43 @@ void OptComputer::computeAll() {
       std::vector<result4_t> resultsCacheNormPlus;
       std::vector<result4_t> resultsCacheFlipPlus;
       sindex_t numCacheStatesLoadedTotal = 0;
-      if (memoryChecker) memoryChecker->checkVmRss("Before loading for class (" + std::to_string(numA) + ", " + std::to_string(numB) + ")");
+
+      #if OPT_COMPUTE_MEMORY_CHECKING == 1
+        memoryChecker->checkVmRss("Before loading for class (" + std::to_string(numA) + ", " + std::to_string(numB) + ")");
+      #endif
+
       if (numUsed != numTiles) {
         resultsCacheNormPlus = dataHandler->loadClass(gameStateHandler->len, numB, numA+1); // (numA, numB) -- +1 --> (numB, numA+1)
-        if (memoryChecker) {
+
+        #if OPT_COMPUTE_MEMORY_CHECKING == 1
           auto numCacheStatesLoaded = numStatesClass(numA+1, numB);
           memoryChecker->checkVector(&(*resultsCacheNormPlus.begin()), &(*resultsCacheNormPlus.end()), "resultsCacheNormPlus (" + std::to_string(numCacheStatesLoaded) + " states)");
           numCacheStatesLoadedTotal += numCacheStatesLoaded;
-        }
+        #endif
+
         if (numA != numB) {
           resultsCacheFlipPlus = dataHandler->loadClass(gameStateHandler->len, numA, numB+1); // (numB, numA) -- +1 --> (numA, numB+1)
-          if (memoryChecker) {
+          #if OPT_COMPUTE_MEMORY_CHECKING == 1
             auto numCacheStatesLoaded = numStatesClass(numA, numB+1);
             memoryChecker->checkVector(&(*resultsCacheFlipPlus.begin()), &(*resultsCacheFlipPlus.end()), "resultsCacheFlipPlus (" + std::to_string(numCacheStatesLoaded) + " states)");
             numCacheStatesLoadedTotal += numCacheStatesLoaded;
-          }
+          #endif
         }
       }
-      if (memoryChecker) memoryChecker->checkVmRss("Loaded " + std::to_string(numCacheStatesLoadedTotal) + " cached states for class (" + std::to_string(numA) + ", " + std::to_string(numB) + ")");
+
+      #if OPT_COMPUTE_MEMORY_CHECKING == 1
+        memoryChecker->checkVmRss("Loaded " + std::to_string(numCacheStatesLoadedTotal) + " cached states for class (" + std::to_string(numA) + ", " + std::to_string(numB) + ")");
+      #endif
 
       computeClass(numA, numB, resultsCacheNormPlus, resultsCacheFlipPlus);
     }
+
     if (numUsed == 0) {
       break;
     }
   }
-  if (speedCheck) {
+
+  #if OPT_COMPUTE_SPEED_CHECKING == 1
     std::cout << "Total initClass() time (s)            : " << std::chrono::duration_cast<std::chrono::milliseconds>(initClassTime).count()/1000.0 << "\n";
     for (int i = 0; i < numThreads; i++) {
       std::cout << " ↳ Thread " << i << " total task time (s)       : " << std::chrono::duration_cast<std::chrono::milliseconds>(initClassPerThreadTaskTimes[i]).count()/1000.0 << " (" << initClassPerThreadNumTasks[i] << " tasks)" << "\n";
@@ -179,7 +205,7 @@ void OptComputer::computeAll() {
       std::cout << "   ↳ Thread " << i << " total time (s)          : " << std::chrono::duration_cast<std::chrono::milliseconds>(filterOStatePerThreadTimes[i]).count()/1000.0 << "\n";
     }
     std::cout << "\n";
-  }
+  #endif
 }
 
 sindex_t OptComputer::numStatesClass(nbit_t numA, nbit_t numB) {

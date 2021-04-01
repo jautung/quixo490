@@ -1,7 +1,7 @@
 #!/bin/bash
 DATE=$(date +'%Y-%m-%d-%H%M%S')
 L=4
-OPT_COMP_FLAGS='-l '$L' -T 16 -L 1000 -s'
+OPT_COMP_FLAGS='-l '$L' -T 16 -L 1000'
 OPT_COMP_FLAGS_NOSPACE="$(echo -e "${OPT_COMP_FLAGS}" | tr -d '[:space:]')"
 LOGFILE="${DATE}${OPT_COMP_FLAGS_NOSPACE}.log"
 
@@ -15,6 +15,7 @@ export TIME='
 
 export OPT_COMPUTE_ERROR_CHECKING=0
 export OPT_COMPUTE_SPEED_CHECKING=0
+export OPT_COMPUTE_MEMORY_CHECKING=0
 
 clear
 make purge
@@ -25,6 +26,12 @@ clear
 echo '--- COMPUTING ---'
 echo 'flags:' $OPT_COMP_FLAGS
 echo 'flags:' $OPT_COMP_FLAGS > logs/$LOGFILE
+echo 'ERROR_CHECKING:' $OPT_COMPUTE_ERROR_CHECKING
+echo 'ERROR_CHECKING:' $OPT_COMPUTE_ERROR_CHECKING >> logs/$LOGFILE
+echo 'SPEED_CHECKING:' $OPT_COMPUTE_SPEED_CHECKING
+echo 'SPEED_CHECKING:' $OPT_COMPUTE_SPEED_CHECKING >> logs/$LOGFILE
+echo 'MEMORY_CHECKING:' $OPT_COMPUTE_MEMORY_CHECKING
+echo 'MEMORY_CHECKING:' $OPT_COMPUTE_MEMORY_CHECKING >> logs/$LOGFILE
 echo '' >> logs/$LOGFILE
 /usr/bin/time --output=logs/$LOGFILE --append ./bin/quixo -p opt-compute $OPT_COMP_FLAGS >> logs/$LOGFILE
 echo
@@ -35,6 +42,7 @@ echo
 
 echo '--- COMPARING TO KNOWN CORRECT OUTPUT ---'
 diff -rq data/optimal /home/accts/jc3395/cs490/repoProd/data_frozen/$L
+diff -rq data/optimal /home/accts/jc3395/cs490/repoProd/data_frozen/$L >> logs/$LOGFILE
 echo
 
 echo '=== DONE ==='
