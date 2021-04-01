@@ -143,6 +143,7 @@ void OptComputer::computeAll(nbit_t numUsedComputeTill) {
     }
 
     if (numUsed == numUsedComputeTill) {
+      std::cout << "\n";
       break;
     }
   }
@@ -298,10 +299,6 @@ void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result4_t> 
   dataHandler->saveClass(resultsNorm, gameStateHandler->len, numA, numB);
   if (numA != numB) {
     dataHandler->saveClass(resultsFlip, gameStateHandler->len, numB, numA);
-  }
-  // std::cout << "Class (" << +numA << ", " << +numB << ") finished saving!\n";
-  if (numA == 0 && numB == 0) {
-    std::cout << "\n";
   }
 }
 
