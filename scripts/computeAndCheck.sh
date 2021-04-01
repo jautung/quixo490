@@ -1,7 +1,7 @@
 #!/bin/bash
 DATE=$(date +'%Y-%m-%d-%H%M%S')
 L=4
-OPT_COMP_FLAGS='-l '$L' -T 4 -L 10 -s'
+OPT_COMP_FLAGS='-l '$L' -T 8 -L 1000 -s'
 OPT_COMP_FLAGS_NOSPACE="$(echo -e "${OPT_COMP_FLAGS}" | tr -d '[:space:]')"
 LOGFILE="${DATE}${OPT_COMP_FLAGS_NOSPACE}.log"
 
