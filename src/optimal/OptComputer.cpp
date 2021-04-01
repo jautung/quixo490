@@ -17,7 +17,7 @@ namespace {
 }
 
 #define MAX_THREADS (16) // maximum that we will support for now
-#define BLOCK_TASK_FACTOR (10) // subdivide work into BLOCK_TASK_FACTOR * numThreads tasks, then leave it to OpenMP to allocate from there
+#define BLOCK_TASK_FACTOR (10) // subdivide work into BLOCK_TASK_FACTOR * numThreads tasks, then leave it to OpenMP to allocate from there (too small means large task overhead; too large means load imbalance)
 
 namespace {
   std::chrono::system_clock::duration initClassTime = std::chrono::system_clock::duration::zero();
@@ -356,60 +356,64 @@ void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result
   std::chrono::time_point<std::chrono::high_resolution_clock> startTimeLock;
 
   sindex_t numStates = numStatesClass(numX, numO);
-  for (sindex_t stateIndex = 0; stateIndex < numStates; stateIndex++) {
-    if (dataHandler->getResult(results, stateIndex) != RESULT_DRAW) { // no lock because outside any task
-      continue;
-    }
-    #pragma omp task shared(results, resultsOther, resultsCachePlus, updateMade, valueIterateClassPerThreadTaskTimes, valueIterateClassPerThreadNumTasks, valueIterateClassPerThreadWaitLockTimes, valueIterateClassPerThreadInCritSecTimes) firstprivate(numX, numO, stateIndex) private(startTimeLock)
+  sindex_t blockTaskInterval = BLOCK_TASK_FACTOR * numThreads; // each singular stateIndex is too small a task, so this 'block division' of tasks works faster for parallelization
+  for (sindex_t stateIndexBase = 0; stateIndexBase < blockTaskInterval && stateIndexBase < numStates; stateIndexBase += 1) {
+    #pragma omp task shared(results, resultsOther, resultsCachePlus, updateMade, valueIterateClassPerThreadTaskTimes, valueIterateClassPerThreadNumTasks, valueIterateClassPerThreadWaitLockTimes, valueIterateClassPerThreadInCritSecTimes) firstprivate(numX, numO, stateIndexBase) private(startTimeLock)
     {
       std::chrono::time_point<std::chrono::high_resolution_clock> startTimePerThread;
       START_TIMING(startTimePerThread);
 
-      auto state = indexToState(stateIndex, numX, numO);
-      auto moves = gameStateHandler->allMoves(state);
-      bool allChildrenWin = true;
-      for (auto move : moves) {
-        auto moveKind = gameStateHandler->moveHandler->getKind(move);
-        auto childState = gameStateHandler->swapPlayers(gameStateHandler->makeMove(state, move));
-        auto childStateIndex = stateToIndex(childState);
-        result_t childResult = RESULT_DRAW; // dummy
-        if (moveKind == MKIND_ZERO) {
-          START_TIMING(startTimeLock);
-          omp_set_lock(&resultsOtherLocks[(childStateIndex/4) % numLocksPerArr]);
-          END_TIMING(valueIterateClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeLock);
-          START_TIMING(startTimeLock);
-          childResult = dataHandler->getResult(resultsOther, childStateIndex);
-          omp_unset_lock(&resultsOtherLocks[(childStateIndex/4) % numLocksPerArr]);
-          END_TIMING(valueIterateClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeLock);
-        } else if (moveKind == MKIND_PLUS) {
-          childResult = dataHandler->getResult(resultsCachePlus, childStateIndex);
+      for (sindex_t stateIndex = stateIndexBase; stateIndex < numStates; stateIndex += blockTaskInterval) {
+        if (dataHandler->getResult(results, stateIndex) != RESULT_DRAW) { // no lock because outside any task
+          continue;
         }
-        if (childResult != RESULT_WIN) {
-          allChildrenWin = false;
-          break;
-        }
-      }
-      if (allChildrenWin) {
-        updateMade = true;
-        START_TIMING(startTimeLock);
-        omp_set_lock(&resultsLocks[(stateIndex/4) % numLocksPerArr]);
-        END_TIMING(valueIterateClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeLock);
-        START_TIMING(startTimeLock);
-        dataHandler->setResult(results, stateIndex, RESULT_LOSS);
-        omp_unset_lock(&resultsLocks[(stateIndex/4) % numLocksPerArr]);
-        END_TIMING(valueIterateClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeLock);
-        for (auto parentState : gameStateHandler->allZeroParents(state)) { // parent link optimization
-          auto parentStateIndex = stateToIndex(parentState);
-          START_TIMING(startTimeLock);
-          omp_set_lock(&resultsOtherLocks[(parentStateIndex/4) % numLocksPerArr]);
-          END_TIMING(valueIterateClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeLock);
-          START_TIMING(startTimeLock);
-          auto result = dataHandler->getResult(resultsOther, parentStateIndex);
-          if (result == RESULT_DRAW || result == RESULT_WIN_OR_DRAW) {
-            dataHandler->setResult(resultsOther, parentStateIndex, RESULT_WIN);
+
+        auto state = indexToState(stateIndex, numX, numO);
+        auto moves = gameStateHandler->allMoves(state);
+        bool allChildrenWin = true;
+        for (auto move : moves) {
+          auto moveKind = gameStateHandler->moveHandler->getKind(move);
+          auto childState = gameStateHandler->swapPlayers(gameStateHandler->makeMove(state, move));
+          auto childStateIndex = stateToIndex(childState);
+          result_t childResult = RESULT_DRAW; // dummy
+          if (moveKind == MKIND_ZERO) {
+            START_TIMING(startTimeLock);
+            omp_set_lock(&resultsOtherLocks[(childStateIndex/4) % numLocksPerArr]);
+            END_TIMING(valueIterateClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeLock);
+            START_TIMING(startTimeLock);
+            childResult = dataHandler->getResult(resultsOther, childStateIndex);
+            omp_unset_lock(&resultsOtherLocks[(childStateIndex/4) % numLocksPerArr]);
+            END_TIMING(valueIterateClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeLock);
+          } else if (moveKind == MKIND_PLUS) {
+            childResult = dataHandler->getResult(resultsCachePlus, childStateIndex);
           }
-          omp_unset_lock(&resultsOtherLocks[(parentStateIndex/4) % numLocksPerArr]);
+          if (childResult != RESULT_WIN) {
+            allChildrenWin = false;
+            break;
+          }
+        }
+        if (allChildrenWin) {
+          updateMade = true;
+          START_TIMING(startTimeLock);
+          omp_set_lock(&resultsLocks[(stateIndex/4) % numLocksPerArr]);
+          END_TIMING(valueIterateClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeLock);
+          START_TIMING(startTimeLock);
+          dataHandler->setResult(results, stateIndex, RESULT_LOSS);
+          omp_unset_lock(&resultsLocks[(stateIndex/4) % numLocksPerArr]);
           END_TIMING(valueIterateClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeLock);
+          for (auto parentState : gameStateHandler->allZeroParents(state)) { // parent link optimization
+            auto parentStateIndex = stateToIndex(parentState);
+            START_TIMING(startTimeLock);
+            omp_set_lock(&resultsOtherLocks[(parentStateIndex/4) % numLocksPerArr]);
+            END_TIMING(valueIterateClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeLock);
+            START_TIMING(startTimeLock);
+            auto result = dataHandler->getResult(resultsOther, parentStateIndex);
+            if (result == RESULT_DRAW || result == RESULT_WIN_OR_DRAW) {
+              dataHandler->setResult(resultsOther, parentStateIndex, RESULT_WIN);
+            }
+            omp_unset_lock(&resultsOtherLocks[(parentStateIndex/4) % numLocksPerArr]);
+            END_TIMING(valueIterateClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeLock);
+          }
         }
       }
 
