@@ -116,7 +116,7 @@
     Results (X-O-D): 456-544-0
     ```
 - Mar 30, 2021: Speed profiling for 4X4 optimal computation:
-  - `-l 4 -T 1 -s`:
+  - `-l 4 -T 1 -s`: (total 129.04s)
     ```
     Total initClass() time (s)            : 0.023
      ↳ Thread 0 total task time (s)       : 0.023 (153 tasks)
@@ -132,7 +132,7 @@
     Total elimWinOrDrawClass() time (s)   : 0.062
      ↳ Thread 0 total task time (s)       : 0.062 (153 tasks)
     ```
-  - `-l 4 -T 2 -s`:
+  - `-l 4 -T 2 -s`: (total 97.634s)
     ```
     Total initClass() time (s)            : 0.033
      ↳ Thread 0 total task time (s)       : 0.032 (74 tasks)
@@ -156,7 +156,7 @@
      ↳ Thread 0 total task time (s)       : 0.028 (75 tasks)
      ↳ Thread 1 total task time (s)       : 0.034 (78 tasks)
     ```
-  - `-l 4 -T 4 -s`:
+  - `-l 4 -T 4 -s`: (total 103.186s)
     ```
     Total initClass() time (s)            : 0.029
      ↳ Thread 0 total task time (s)       : 0.007 (38 tasks)
@@ -196,7 +196,7 @@
      ↳ Thread 2 total task time (s)       : 0.021 (46 tasks)
      ↳ Thread 3 total task time (s)       : 0.009 (37 tasks)
     ```
-  - `-l 4 -T 8 -s`:
+  - `-l 4 -T 8 -s`: (total 135.372s)
     ```
     Total initClass() time (s)            : 0.029
      ↳ Thread 0 total task time (s)       : 0.008 (39 tasks)
