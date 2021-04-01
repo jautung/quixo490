@@ -17,6 +17,7 @@ namespace {
 }
 
 #define MAX_THREADS (16) // maximum that we will support for now
+#define BLOCK_TASK_FACTOR (10) // subdivide work into BLOCK_TASK_FACTOR * numThreads tasks, then leave it to OpenMP to allocate from there
 
 namespace {
   std::chrono::system_clock::duration initClassTime = std::chrono::system_clock::duration::zero();
@@ -253,7 +254,7 @@ void OptComputer::checkTerminalsClass(nbit_t numX, nbit_t numO, std::vector<resu
   std::chrono::time_point<std::chrono::high_resolution_clock> startTimeLock;
 
   sindex_t numStates = numStatesClass(numX, numO);
-  sindex_t blockTaskInterval = 10 * numThreads; // each singular stateIndex is too small a task, so this 'block division' of tasks works faster for parallelization
+  sindex_t blockTaskInterval = BLOCK_TASK_FACTOR * numThreads; // each singular stateIndex is too small a task, so this 'block division' of tasks works faster for parallelization
   for (sindex_t stateIndexBase = 0; stateIndexBase < blockTaskInterval && stateIndexBase < numStates; stateIndexBase += 1) {
     #pragma omp task shared(results, resultsOther, checkTerminalsClassPerThreadTaskTimes, checkTerminalsClassPerThreadNumTasks, checkTerminalsClassPerThreadWaitLockTimes, checkTerminalsClassPerThreadInCritSecTimes) firstprivate(numX, numO, stateIndexBase) private(startTimeLock)
     {
@@ -305,53 +306,48 @@ void OptComputer::parentLinkCacheClass(nbit_t numX, nbit_t numO, std::vector<res
   std::chrono::time_point<std::chrono::high_resolution_clock> startTimeLock;
 
   sindex_t numChildStates = numStatesClass(numO, numX+1);
-  for (sindex_t childStateIndex = 0; childStateIndex < numChildStates; childStateIndex++) {
-    auto childResult = dataHandler->getResult(resultsCachePlus, childStateIndex);
-    if (childResult == RESULT_LOSS) {
-      #pragma omp task shared(results, parentLinkCacheClassPerThreadTaskTimes, parentLinkCacheClassPerThreadNumTasks, parentLinkCacheClassPerThreadWaitLockTimes, parentLinkCacheClassPerThreadInCritSecTimes) firstprivate(numX, numO, childStateIndex) private(startTimeLock)
-      {
-        std::chrono::time_point<std::chrono::high_resolution_clock> startTimePerThread;
-        START_TIMING(startTimePerThread);
+  sindex_t blockTaskInterval = BLOCK_TASK_FACTOR * numThreads; // each singular childStateIndex is too small a task, so this 'block division' of tasks works faster for parallelization
+  for (sindex_t childStateIndexBase = 0; childStateIndexBase < blockTaskInterval && childStateIndexBase < numChildStates; childStateIndexBase++) {
+    #pragma omp task shared(results, resultsCachePlus, parentLinkCacheClassPerThreadTaskTimes, parentLinkCacheClassPerThreadNumTasks, parentLinkCacheClassPerThreadWaitLockTimes, parentLinkCacheClassPerThreadInCritSecTimes) firstprivate(numX, numO, childStateIndexBase) private(startTimeLock)
+    {
+      std::chrono::time_point<std::chrono::high_resolution_clock> startTimePerThread;
+      START_TIMING(startTimePerThread);
 
-        auto childState = indexToState(childStateIndex, numO, numX+1);
-        for (auto state : gameStateHandler->allPlusParents(childState)) {
-          auto stateIndex = stateToIndex(state);
-          START_TIMING(startTimeLock);
-          omp_set_lock(&resultsLocks[(stateIndex/4) % numLocksPerArr]);
-          END_TIMING(parentLinkCacheClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeLock);
-          START_TIMING(startTimeLock);
-          auto result = dataHandler->getResult(results, stateIndex);
-          if (result == RESULT_DRAW || result == RESULT_WIN_OR_DRAW) {
-            dataHandler->setResult(results, stateIndex, RESULT_WIN);
+      for (sindex_t childStateIndex = childStateIndexBase; childStateIndex < numChildStates; childStateIndex += blockTaskInterval) {
+        auto childResult = dataHandler->getResult(resultsCachePlus, childStateIndex);
+        if (childResult == RESULT_LOSS) {
+          auto childState = indexToState(childStateIndex, numO, numX+1);
+          for (auto state : gameStateHandler->allPlusParents(childState)) {
+            auto stateIndex = stateToIndex(state);
+            START_TIMING(startTimeLock);
+            omp_set_lock(&resultsLocks[(stateIndex/4) % numLocksPerArr]);
+            END_TIMING(parentLinkCacheClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeLock);
+            START_TIMING(startTimeLock);
+            auto result = dataHandler->getResult(results, stateIndex);
+            if (result == RESULT_DRAW || result == RESULT_WIN_OR_DRAW) {
+              dataHandler->setResult(results, stateIndex, RESULT_WIN);
+            }
+            omp_unset_lock(&resultsLocks[(stateIndex/4) % numLocksPerArr]);
+            END_TIMING(parentLinkCacheClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeLock);
           }
-          omp_unset_lock(&resultsLocks[(stateIndex/4) % numLocksPerArr]);
-          END_TIMING(parentLinkCacheClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeLock);
-        }
-
-        END_TIMING_TASK(parentLinkCacheClassPerThreadTaskTimes, parentLinkCacheClassPerThreadNumTasks, startTimePerThread);
-      }
-    } else if (childResult == RESULT_DRAW) {
-      #pragma omp task shared(results, parentLinkCacheClassPerThreadTaskTimes, parentLinkCacheClassPerThreadNumTasks, parentLinkCacheClassPerThreadWaitLockTimes, parentLinkCacheClassPerThreadInCritSecTimes) firstprivate(numX, numO, childStateIndex) private(startTimeLock)
-      {
-        std::chrono::time_point<std::chrono::high_resolution_clock> startTimePerThread;
-        START_TIMING(startTimePerThread);
-
-        auto childState = indexToState(childStateIndex, numO, numX+1);
-        for (auto state : gameStateHandler->allPlusParents(childState)) {
-          auto stateIndex = stateToIndex(state);
-          START_TIMING(startTimeLock);
-          omp_set_lock(&resultsLocks[(stateIndex/4) % numLocksPerArr]);
-          END_TIMING(parentLinkCacheClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeLock);
-          START_TIMING(startTimeLock);
-          if (dataHandler->getResult(results, stateIndex) == RESULT_DRAW) {
-            dataHandler->setResult(results, stateIndex, RESULT_WIN_OR_DRAW);
+        } else if (childResult == RESULT_DRAW) {
+          auto childState = indexToState(childStateIndex, numO, numX+1);
+          for (auto state : gameStateHandler->allPlusParents(childState)) {
+            auto stateIndex = stateToIndex(state);
+            START_TIMING(startTimeLock);
+            omp_set_lock(&resultsLocks[(stateIndex/4) % numLocksPerArr]);
+            END_TIMING(parentLinkCacheClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeLock);
+            START_TIMING(startTimeLock);
+            if (dataHandler->getResult(results, stateIndex) == RESULT_DRAW) {
+              dataHandler->setResult(results, stateIndex, RESULT_WIN_OR_DRAW);
+            }
+            omp_unset_lock(&resultsLocks[(stateIndex/4) % numLocksPerArr]);
+            END_TIMING(parentLinkCacheClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeLock);
           }
-          omp_unset_lock(&resultsLocks[(stateIndex/4) % numLocksPerArr]);
-          END_TIMING(parentLinkCacheClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeLock);
         }
-
-        END_TIMING_TASK(parentLinkCacheClassPerThreadTaskTimes, parentLinkCacheClassPerThreadNumTasks, startTimePerThread);
       }
+
+      END_TIMING_TASK(parentLinkCacheClassPerThreadTaskTimes, parentLinkCacheClassPerThreadNumTasks, startTimePerThread);
     }
   }
 }
