@@ -1,8 +1,8 @@
 #!/bin/bash
 DATE=$(date +'%Y-%m-%d-%H%M%S')
 
-L=4
-NUM_USED_UNTIL=0
+L=5
+NUM_USED_UNTIL=24
 
 OPT_COMP_FLAGS='-p opt-compute'$NUM_USED_UNTIL' -l '$L' -T 16 -L 1000'
 OPT_COMP_FLAGS_NOSPACE="$(echo -e "${OPT_COMP_FLAGS}" | tr -d '[:space:]')"
@@ -23,7 +23,7 @@ export OPT_COMPUTE_MEMORY_CHECKING=0
 
 clear
 make purge
-# make clean # necessary when one of the OPT_COMPUTE exports change
+make clean # necessary when one of the OPT_COMPUTE exports change
 make
 clear
 
