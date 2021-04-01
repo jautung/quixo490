@@ -788,7 +788,7 @@
      ↳ Thread 14 total task time (s)       : 0.001 (8 tasks)
      ↳ Thread 15 total task time (s)       : 0.013 (12 tasks)
     ```
-  - Fully moved to block tasks (of factor 10)! `-l 4 -T 16 -L 1000 -s`: (total 24.215s)
+  - Fully moved to block tasks (of factor 10)! `-l 4 -T 16 -L 1000 -s`: (total 20.767s)
     ```
     Total initClass() time (s)            : 0.045
      ↳ Thread 0 total task time (s)       : 0.017 (25 tasks)
