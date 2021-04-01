@@ -41,9 +41,13 @@ namespace {
   int valueIterateClassPerThreadNumTasks[MAX_THREADS] = { 0 };
   int elimWinOrDrawClassPerThreadNumTasks[MAX_THREADS] = { 0 };
 
-  std::chrono::system_clock::duration checkTerminalsClassPerThreadInLockTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
-  std::chrono::system_clock::duration parentLinkCacheClassPerThreadInLockTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
-  std::chrono::system_clock::duration valueIterateClassPerThreadInLockTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
+  std::chrono::system_clock::duration checkTerminalsClassPerThreadWaitLockTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
+  std::chrono::system_clock::duration parentLinkCacheClassPerThreadWaitLockTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
+  std::chrono::system_clock::duration valueIterateClassPerThreadWaitLockTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
+
+  std::chrono::system_clock::duration checkTerminalsClassPerThreadInCritSecTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
+  std::chrono::system_clock::duration parentLinkCacheClassPerThreadInCritSecTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
+  std::chrono::system_clock::duration valueIterateClassPerThreadInCritSecTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
 }
 
 #define START_TIMING(startTimeVar) {if (speedCheck) startTimeVar = std::chrono::high_resolution_clock::now();}
@@ -117,17 +121,20 @@ void OptComputer::computeAll() {
     std::cout << "Total checkTerminalsClass() time (s)  : " << std::chrono::duration_cast<std::chrono::milliseconds>(checkTerminalsClassTime).count()/1000.0 << "\n";
     for (int i = 0; i < numThreads; i++) {
       std::cout << " ↳ Thread " << i << " total task time (s)       : " << std::chrono::duration_cast<std::chrono::milliseconds>(checkTerminalsClassPerThreadTaskTimes[i]).count()/1000.0 << " (" << checkTerminalsClassPerThreadNumTasks[i] << " tasks)" << "\n";
-      std::cout << "   ↳ Total time in locks (s)          : " << std::chrono::duration_cast<std::chrono::milliseconds>(checkTerminalsClassPerThreadInLockTimes[i]).count()/1000.0 << "\n";
+      std::cout << "   ↳ Total time waiting for locks (s) : " << std::chrono::duration_cast<std::chrono::milliseconds>(checkTerminalsClassPerThreadWaitLockTimes[i]).count()/1000.0 << "\n";
+      std::cout << "   ↳ Total time in CSes (s)           : " << std::chrono::duration_cast<std::chrono::milliseconds>(checkTerminalsClassPerThreadInCritSecTimes[i]).count()/1000.0 << "\n";
     }
     std::cout << "Total parentLinkCacheClass() time (s) : " << std::chrono::duration_cast<std::chrono::milliseconds>(parentLinkCacheClassTime).count()/1000.0 << "\n";
     for (int i = 0; i < numThreads; i++) {
       std::cout << " ↳ Thread " << i << " total task time (s)       : " << std::chrono::duration_cast<std::chrono::milliseconds>(parentLinkCacheClassPerThreadTaskTimes[i]).count()/1000.0 << " (" << parentLinkCacheClassPerThreadNumTasks[i] << " tasks)" << "\n";
-      std::cout << "   ↳ Total time in locks (s)          : " << std::chrono::duration_cast<std::chrono::milliseconds>(parentLinkCacheClassPerThreadInLockTimes[i]).count()/1000.0 << "\n";
+      std::cout << "   ↳ Total time waiting for locks (s) : " << std::chrono::duration_cast<std::chrono::milliseconds>(parentLinkCacheClassPerThreadWaitLockTimes[i]).count()/1000.0 << "\n";
+      std::cout << "   ↳ Total time in CSes (s)           : " << std::chrono::duration_cast<std::chrono::milliseconds>(parentLinkCacheClassPerThreadInCritSecTimes[i]).count()/1000.0 << "\n";
     }
     std::cout << "Total valueIterateClass() time (s)    : " << std::chrono::duration_cast<std::chrono::milliseconds>(valueIterateClassTime).count()/1000.0 << "\n";
     for (int i = 0; i < numThreads; i++) {
       std::cout << " ↳ Thread " << i << " total task time (s)       : " << std::chrono::duration_cast<std::chrono::milliseconds>(valueIterateClassPerThreadTaskTimes[i]).count()/1000.0 << " (" << valueIterateClassPerThreadNumTasks[i] << " tasks)" << "\n";
-      std::cout << "   ↳ Total time in locks (s)          : " << std::chrono::duration_cast<std::chrono::milliseconds>(valueIterateClassPerThreadInLockTimes[i]).count()/1000.0 << "\n";
+      std::cout << "   ↳ Total time waiting for locks (s) : " << std::chrono::duration_cast<std::chrono::milliseconds>(valueIterateClassPerThreadWaitLockTimes[i]).count()/1000.0 << "\n";
+      std::cout << "   ↳ Total time in CSes (s)           : " << std::chrono::duration_cast<std::chrono::milliseconds>(valueIterateClassPerThreadInCritSecTimes[i]).count()/1000.0 << "\n";
     }
     std::cout << "Total elimWinOrDrawClass() time (s)   : " << std::chrono::duration_cast<std::chrono::milliseconds>(elimWinOrDrawClassTime).count()/1000.0 << "\n";
     for (int i = 0; i < numThreads; i++) {
@@ -245,11 +252,11 @@ void OptComputer::initClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &re
 }
 
 void OptComputer::checkTerminalsClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results, std::vector<result4_t> &resultsOther, omp_lock_t &resultsLock, omp_lock_t &resultsOtherLock) {
-  std::chrono::time_point<std::chrono::high_resolution_clock> startTimeInLock;
+  std::chrono::time_point<std::chrono::high_resolution_clock> startTimeLock;
 
   sindex_t numStates = numStatesClass(numX, numO);
   for (sindex_t stateIndex = 0; stateIndex < numStates; stateIndex++) {
-    #pragma omp task shared(results, resultsOther, checkTerminalsClassPerThreadTaskTimes, checkTerminalsClassPerThreadNumTasks, checkTerminalsClassPerThreadInLockTimes) firstprivate(numX, numO, stateIndex) private(startTimeInLock)
+    #pragma omp task shared(results, resultsOther, checkTerminalsClassPerThreadTaskTimes, checkTerminalsClassPerThreadNumTasks, checkTerminalsClassPerThreadWaitLockTimes, checkTerminalsClassPerThreadInCritSecTimes) firstprivate(numX, numO, stateIndex) private(startTimeLock)
     {
       std::chrono::time_point<std::chrono::high_resolution_clock> startTimePerThread;
       START_TIMING(startTimePerThread);
@@ -257,28 +264,34 @@ void OptComputer::checkTerminalsClass(nbit_t numX, nbit_t numO, std::vector<resu
       auto state = indexToState(stateIndex, numX, numO);
 
       if (gameStateHandler->containsLine(state, TILE_X)) {
-        START_TIMING(startTimeInLock);
+        START_TIMING(startTimeLock);
         omp_set_lock(&resultsLock);
+        END_TIMING(checkTerminalsClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeLock);
+        START_TIMING(startTimeLock);
         dataHandler->setResult(results, stateIndex, RESULT_WIN);
         omp_unset_lock(&resultsLock);
-        END_TIMING(checkTerminalsClassPerThreadInLockTimes[omp_get_thread_num()], startTimeInLock);
+        END_TIMING(checkTerminalsClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeLock);
       }
 
       else if (gameStateHandler->containsLine(state, TILE_O)) {
-        START_TIMING(startTimeInLock);
+        START_TIMING(startTimeLock);
         omp_set_lock(&resultsLock);
+        END_TIMING(checkTerminalsClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeLock);
+        START_TIMING(startTimeLock);
         dataHandler->setResult(results, stateIndex, RESULT_LOSS);
         omp_unset_lock(&resultsLock);
-        END_TIMING(checkTerminalsClassPerThreadInLockTimes[omp_get_thread_num()], startTimeInLock);
+        END_TIMING(checkTerminalsClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeLock);
         for (auto parentState : gameStateHandler->allZeroParents(state)) { // parent link optimization
           auto parentStateIndex = stateToIndex(parentState);
-          START_TIMING(startTimeInLock);
+          START_TIMING(startTimeLock);
           omp_set_lock(&resultsOtherLock);
+          END_TIMING(checkTerminalsClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeLock);
+          START_TIMING(startTimeLock);
           if (dataHandler->getResult(resultsOther, parentStateIndex) == RESULT_DRAW) {
             dataHandler->setResult(resultsOther, parentStateIndex, RESULT_WIN);
           }
           omp_unset_lock(&resultsOtherLock);
-          END_TIMING(checkTerminalsClassPerThreadInLockTimes[omp_get_thread_num()], startTimeInLock);
+          END_TIMING(checkTerminalsClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeLock);
         }
       }
 
@@ -288,13 +301,13 @@ void OptComputer::checkTerminalsClass(nbit_t numX, nbit_t numO, std::vector<resu
 }
 
 void OptComputer::parentLinkCacheClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results, std::vector<result4_t> &resultsCachePlus, omp_lock_t &resultsLock) {
-  std::chrono::time_point<std::chrono::high_resolution_clock> startTimeInLock;
+  std::chrono::time_point<std::chrono::high_resolution_clock> startTimeLock;
 
   sindex_t numChildStates = numStatesClass(numO, numX+1);
   for (sindex_t childStateIndex = 0; childStateIndex < numChildStates; childStateIndex++) {
     auto childResult = dataHandler->getResult(resultsCachePlus, childStateIndex);
     if (childResult == RESULT_LOSS) {
-      #pragma omp task shared(results, parentLinkCacheClassPerThreadTaskTimes, parentLinkCacheClassPerThreadNumTasks, parentLinkCacheClassPerThreadInLockTimes) firstprivate(numX, numO, childStateIndex) private(startTimeInLock)
+      #pragma omp task shared(results, parentLinkCacheClassPerThreadTaskTimes, parentLinkCacheClassPerThreadNumTasks, parentLinkCacheClassPerThreadWaitLockTimes, parentLinkCacheClassPerThreadInCritSecTimes) firstprivate(numX, numO, childStateIndex) private(startTimeLock)
       {
         std::chrono::time_point<std::chrono::high_resolution_clock> startTimePerThread;
         START_TIMING(startTimePerThread);
@@ -302,20 +315,22 @@ void OptComputer::parentLinkCacheClass(nbit_t numX, nbit_t numO, std::vector<res
         auto childState = indexToState(childStateIndex, numO, numX+1);
         for (auto state : gameStateHandler->allPlusParents(childState)) {
           auto stateIndex = stateToIndex(state);
-          START_TIMING(startTimeInLock);
+          START_TIMING(startTimeLock);
           omp_set_lock(&resultsLock);
+          END_TIMING(parentLinkCacheClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeLock);
+          START_TIMING(startTimeLock);
           auto result = dataHandler->getResult(results, stateIndex);
           if (result == RESULT_DRAW || result == RESULT_WIN_OR_DRAW) {
             dataHandler->setResult(results, stateIndex, RESULT_WIN);
           }
           omp_unset_lock(&resultsLock);
-          END_TIMING(parentLinkCacheClassPerThreadInLockTimes[omp_get_thread_num()], startTimeInLock);
+          END_TIMING(parentLinkCacheClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeLock);
         }
 
         END_TIMING_TASK(parentLinkCacheClassPerThreadTaskTimes, parentLinkCacheClassPerThreadNumTasks, startTimePerThread);
       }
     } else if (childResult == RESULT_DRAW) {
-      #pragma omp task shared(results, parentLinkCacheClassPerThreadTaskTimes, parentLinkCacheClassPerThreadNumTasks, parentLinkCacheClassPerThreadInLockTimes) firstprivate(numX, numO, childStateIndex) private(startTimeInLock)
+      #pragma omp task shared(results, parentLinkCacheClassPerThreadTaskTimes, parentLinkCacheClassPerThreadNumTasks, parentLinkCacheClassPerThreadWaitLockTimes, parentLinkCacheClassPerThreadInCritSecTimes) firstprivate(numX, numO, childStateIndex) private(startTimeLock)
       {
         std::chrono::time_point<std::chrono::high_resolution_clock> startTimePerThread;
         START_TIMING(startTimePerThread);
@@ -323,13 +338,15 @@ void OptComputer::parentLinkCacheClass(nbit_t numX, nbit_t numO, std::vector<res
         auto childState = indexToState(childStateIndex, numO, numX+1);
         for (auto state : gameStateHandler->allPlusParents(childState)) {
           auto stateIndex = stateToIndex(state);
-          START_TIMING(startTimeInLock);
+          START_TIMING(startTimeLock);
           omp_set_lock(&resultsLock);
+          END_TIMING(parentLinkCacheClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeLock);
+          START_TIMING(startTimeLock);
           if (dataHandler->getResult(results, stateIndex) == RESULT_DRAW) {
             dataHandler->setResult(results, stateIndex, RESULT_WIN_OR_DRAW);
           }
           omp_unset_lock(&resultsLock);
-          END_TIMING(parentLinkCacheClassPerThreadInLockTimes[omp_get_thread_num()], startTimeInLock);
+          END_TIMING(parentLinkCacheClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeLock);
         }
 
         END_TIMING_TASK(parentLinkCacheClassPerThreadTaskTimes, parentLinkCacheClassPerThreadNumTasks, startTimePerThread);
@@ -339,14 +356,14 @@ void OptComputer::parentLinkCacheClass(nbit_t numX, nbit_t numO, std::vector<res
 }
 
 void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result4_t> &results, std::vector<result4_t> &resultsOther, std::vector<result4_t> &resultsCachePlus, omp_lock_t &resultsLock, omp_lock_t &resultsOtherLock, bool &updateMade) {
-  std::chrono::time_point<std::chrono::high_resolution_clock> startTimeInLock;
+  std::chrono::time_point<std::chrono::high_resolution_clock> startTimeLock;
 
   sindex_t numStates = numStatesClass(numX, numO);
   for (sindex_t stateIndex = 0; stateIndex < numStates; stateIndex++) {
     if (dataHandler->getResult(results, stateIndex) != RESULT_DRAW) { // no lock because outside any task
       continue;
     }
-    #pragma omp task shared(results, resultsOther, resultsCachePlus, updateMade, valueIterateClassPerThreadTaskTimes, valueIterateClassPerThreadNumTasks, valueIterateClassPerThreadInLockTimes) firstprivate(numX, numO, stateIndex) private(startTimeInLock)
+    #pragma omp task shared(results, resultsOther, resultsCachePlus, updateMade, valueIterateClassPerThreadTaskTimes, valueIterateClassPerThreadNumTasks, valueIterateClassPerThreadWaitLockTimes, valueIterateClassPerThreadInCritSecTimes) firstprivate(numX, numO, stateIndex) private(startTimeLock)
     {
       std::chrono::time_point<std::chrono::high_resolution_clock> startTimePerThread;
       START_TIMING(startTimePerThread);
@@ -360,11 +377,13 @@ void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result
         auto childStateIndex = stateToIndex(childState);
         result_t childResult = RESULT_DRAW; // dummy
         if (moveKind == MKIND_ZERO) {
-          START_TIMING(startTimeInLock);
+          START_TIMING(startTimeLock);
           omp_set_lock(&resultsOtherLock);
+          END_TIMING(valueIterateClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeLock);
+          START_TIMING(startTimeLock);
           childResult = dataHandler->getResult(resultsOther, childStateIndex);
           omp_unset_lock(&resultsOtherLock);
-          END_TIMING(valueIterateClassPerThreadInLockTimes[omp_get_thread_num()], startTimeInLock);
+          END_TIMING(valueIterateClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeLock);
         } else if (moveKind == MKIND_PLUS) {
           childResult = dataHandler->getResult(resultsCachePlus, childStateIndex);
         }
@@ -375,21 +394,25 @@ void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result
       }
       if (allChildrenWin) {
         updateMade = true;
-        START_TIMING(startTimeInLock);
+        START_TIMING(startTimeLock);
         omp_set_lock(&resultsLock);
+        END_TIMING(valueIterateClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeLock);
+        START_TIMING(startTimeLock);
         dataHandler->setResult(results, stateIndex, RESULT_LOSS);
         omp_unset_lock(&resultsLock);
-        END_TIMING(valueIterateClassPerThreadInLockTimes[omp_get_thread_num()], startTimeInLock);
+        END_TIMING(valueIterateClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeLock);
         for (auto parentState : gameStateHandler->allZeroParents(state)) { // parent link optimization
           auto parentStateIndex = stateToIndex(parentState);
-          START_TIMING(startTimeInLock);
+          START_TIMING(startTimeLock);
           omp_set_lock(&resultsOtherLock);
+          END_TIMING(valueIterateClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeLock);
+          START_TIMING(startTimeLock);
           auto result = dataHandler->getResult(resultsOther, parentStateIndex);
           if (result == RESULT_DRAW || result == RESULT_WIN_OR_DRAW) {
             dataHandler->setResult(resultsOther, parentStateIndex, RESULT_WIN);
           }
           omp_unset_lock(&resultsOtherLock);
-          END_TIMING(valueIterateClassPerThreadInLockTimes[omp_get_thread_num()], startTimeInLock);
+          END_TIMING(valueIterateClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeLock);
         }
       }
 
