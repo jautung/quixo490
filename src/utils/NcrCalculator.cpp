@@ -18,14 +18,17 @@ NcrCalculator::NcrCalculator(int initLimit) {
 }
 
 int NcrCalculator::ncr(int n, int r) {
+  #if OPT_COMPUTE_ERROR_CHECKING == 1
   if (n < 0 || r < 0) {
     std::cerr << "error: ncr: provided n=" << n << " and r=" << r << " are not both non-negative\n";
-    return -1;
+    exit(1);
   }
   if (n > limit) {
     std::cerr << "error: ncr: provided n=" << n << " is larger than limit=" << limit << "\n";
-    return -1;
+    exit(1);
   }
+  #endif
+
   if (n < r) {
     return 0;
   }

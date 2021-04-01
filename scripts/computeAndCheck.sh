@@ -13,12 +13,14 @@ export TIME='
 > num page faults : %F major, %R minor
 > filesystem I/O  : %I inputs, %O outputs'
 
-clear
+export OPT_COMPUTE_ERROR_CHECKING=0
+export OPT_COMPUTE_SPEED_CHECKING=0
 
+clear
 make purge
-# make clean
+make clean
 make
-echo
+clear
 
 echo '--- COMPUTING ---'
 echo 'flags:' $OPT_COMP_FLAGS

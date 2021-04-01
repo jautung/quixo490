@@ -165,6 +165,10 @@ int main(int argc, char* argv[]) {
       } else if (numThreads > omp_get_num_procs()) {
         std::cerr << "warning: " << "number of threads requested (" << numThreads << ") is larger than the number of processors available (" << omp_get_num_procs() << "); proceed with caution\n";
       }
+      if (numLocksPerArr <= 0) {
+        std::cerr << "warning: " << "number of locks per array requested (" << numLocksPerArr << ") is not positive; automatically reverting to default of 1 lock per array\n";
+        numLocksPerArr = 1;
+      }
       auto startTime = std::chrono::high_resolution_clock::now();
       auto optComputer = new OptComputer(len*len, gameStateHandler, memoryChecker, speedCheck, numThreads, numLocksPerArr);
       auto endTime = std::chrono::high_resolution_clock::now();

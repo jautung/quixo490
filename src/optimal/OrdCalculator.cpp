@@ -24,30 +24,40 @@ ordpop_t OrdCalculator::ordPopCreate(ord_t ord, nbit_t pop) {
 }
 
 state_t OrdCalculator::ordPopToState(ord_t ord, nbit_t pop) {
+  #if OPT_COMPUTE_ERROR_CHECKING == 1
   if (ord < 0 || pop < 0) {
     std::cerr << "error: ord: provided ord=" << ord << " and pop=" << +pop << " are not both non-negative\n";
-    return 0;
+    exit(1);
   }
   if (pop > bitLimit) {
     std::cerr << "error: ord: provided pop=" << +pop << " is larger than limit=" << +bitLimit << "\n";
-    return 0;
+    exit(1);
   }
+  #endif
+
   ordpop_t ordPop = ordPopCreate(ord, pop);
+
+  #if OPT_COMPUTE_ERROR_CHECKING == 1
   if (ordPopToStateCache.find(ordPop) == ordPopToStateCache.end()) {
     std::cerr << "error: ord: provided ord=" << ord << " is invalid with pop=" << +pop << "\n";
-    return 0;
+    exit(1);
   }
+  #endif
+
   return ordPopToStateCache[ordPop];
 }
 
 ord_t OrdCalculator::stateToOrd(state_t state) {
+  #if OPT_COMPUTE_ERROR_CHECKING == 1
   if (state < 0) {
     std::cerr << "error: ord: provided state=" << state << " is not non-negative\n";
-    return 0;
+    exit(1);
   }
   if (state >= (state_t)0b1 << bitLimit) {
     std::cerr << "error: ord: provided state=" << state << " is larger than limit=" << (0b1 << bitLimit) << "\n";
-    return 0;
+    exit(1);
   }
+  #endif
+
   return stateToOrdCache[state];
 }

@@ -63,10 +63,13 @@ std::vector<result4_t> DataHandler::loadClass(len_t len, nbit_t numX, nbit_t num
 
   byte_t byteBuffer[byteBufferSize];
   std::ifstream dataFileStream(dataFileName(len, numX, numO), std::ios::in|std::ios::binary);
+
+  #if OPT_COMPUTE_ERROR_CHECKING == 1
   if (dataFileStream.fail()) {
     std::cerr << "error: " << "data file cannot be opened: " << dataFileName(len, numX, numO) << "\n";
     exit(1);
   }
+  #endif
 
   std::vector<result4_t> results;
   while (dataFileStream) { // reading bytes in byte blocks of byteBufferSize
@@ -87,10 +90,13 @@ std::vector<result4_t> DataHandler::loadClass(len_t len, nbit_t numX, nbit_t num
 result_t DataHandler::loadState(len_t len, nbit_t numX, nbit_t numO, sindex_t stateIndex) {
   byte_t byteBuffer[1];
   std::ifstream dataFileStream(dataFileName(len, numX, numO), std::ios::in|std::ios::binary);
+
+  #if OPT_COMPUTE_ERROR_CHECKING == 1
   if (dataFileStream.fail()) {
     std::cerr << "error: " << "data file cannot be opened: " << dataFileName(len, numX, numO) << "\n";
     exit(1);
   }
+  #endif
 
   dataFileStream.seekg(stateIndex/4);
   dataFileStream.read(byteBuffer, 1);
