@@ -63,6 +63,7 @@ state_t getStateInteractive(GraphicsHandler* graphicsHandler) {
 int main(int argc, char* argv[]) {
   try {
     TCLAP::CmdLine cmd("Quixo Project");
+
     TCLAP::ValueArg<std::string> progArg("p", "program", "Program to run (`play`, `test`, `opt-compute`, `opt-check`)", false, "play", "string", cmd);
     TCLAP::ValueArg<int> lenArg("l", "len", "For `play`, `test`, `opt-compute` or `opt-check` program: number of tiles per side", false, 5, "integer", cmd);
     TCLAP::ValueArg<std::string> playerXTypeArg("X", "playerX", "For `play` or `test` program: player X type (`random`, `interact`, `opt`, `heuris-simple`, `mcts*,*`, or `q-learn*,*`)", false, "random", "string", cmd);
@@ -75,6 +76,7 @@ int main(int argc, char* argv[]) {
     TCLAP::ValueArg<int> numThreadsArg("T", "Threads", "For `opt-compute` program: number of Threads to use", false, 1, "integer", cmd);
     TCLAP::ValueArg<int> numLocksPerArrArg("L", "Locksperarray", "For `opt-compute` program: number of Locks to use per result array", false, 1, "integer", cmd);
     cmd.parse(argc, argv);
+
     auto prog = progArg.getValue();
     auto len = lenArg.getValue();
     if (len <= 1 || len >= 6) {
@@ -92,6 +94,7 @@ int main(int argc, char* argv[]) {
     auto numLocksPerArr = numLocksPerArrArg.getValue();
 
     auto gameStateHandler = new GameStateHandler(len);
+
     if (prog == "play") {
       auto cliHandler = new CliHandler();
       auto graphicsHandler = graphicsRes > 0 ? new GraphicsHandler(gameStateHandler, graphicsRes) : NULL;
@@ -112,7 +115,9 @@ int main(int argc, char* argv[]) {
       delete playerX;
       delete playerO;
       delete gamePlayHandler;
-    } else if (prog == "test") {
+    }
+
+    else if (prog == "test") {
       if (playerXType == "interact" || playerOType == "interact") {
         std::cerr << "warning: " << "using an interactive player for test runs is not a good idea; aborting\n";
         exit(1);
@@ -149,7 +154,9 @@ int main(int argc, char* argv[]) {
       delete playerX;
       delete playerO;
       delete gamePlayHandler;
-    } else if (prog == "opt-compute") {
+    }
+
+    else if (prog == "opt-compute") {
       if (numThreads <= 0) {
         std::cerr << "warning: " << "number of threads requested (" << numThreads << ") is not positive; automatically reverting to default of 1 thread\n";
         numThreads = 1;
@@ -172,7 +179,9 @@ int main(int argc, char* argv[]) {
       std::cout << "OptComputer total time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime-startTime).count()/1000.0 << "\n";
       std::cout << "Total file I/O time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(optComputer->dataHandler->ioTime).count()/1000.0 << "\n";
       delete optComputer;
-    } else if (prog == "opt-check") {
+    }
+
+    else if (prog == "opt-check") {
       auto graphicsHandler = graphicsRes > 0 ? new GraphicsHandler(gameStateHandler, graphicsRes) : NULL;
       auto state = getStateInteractive(graphicsHandler);
       auto optimalPlayer = new OptimalPlayer(gameStateHandler);
@@ -186,13 +195,17 @@ int main(int argc, char* argv[]) {
       }
       delete graphicsHandler;
       delete optimalPlayer;
-    } else {
+    }
+
+    else {
       std::cerr << "error: " << "unknown program: " << prog << "\n";
       exit(1);
     }
     delete gameStateHandler;
+
   } catch (TCLAP::ArgException const &e) {
     std::cerr << "error: " << e.error() << " for arg " << e.argId() << "\n";
   }
+
   return 0;
 }
