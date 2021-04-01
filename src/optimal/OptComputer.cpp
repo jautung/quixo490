@@ -45,6 +45,12 @@ namespace {
   std::chrono::system_clock::duration checkTerminalsClassPerThreadInCritSecTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
   std::chrono::system_clock::duration parentLinkCacheClassPerThreadInCritSecTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
   std::chrono::system_clock::duration valueIterateClassPerThreadInCritSecTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
+
+  std::chrono::system_clock::duration numStatesClassPerThreadTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
+  std::chrono::system_clock::duration indexToStatePerThreadTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
+  std::chrono::system_clock::duration stateToIndexPerThreadTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
+  std::chrono::system_clock::duration unfilterOStatePerThreadTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
+  std::chrono::system_clock::duration filterOStatePerThreadTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
 }
 
 #define START_TIMING(startTimeVar) {if (speedCheck) startTimeVar = std::chrono::high_resolution_clock::now();}
@@ -141,11 +147,37 @@ void OptComputer::computeAll() {
       std::cout << " ↳ Thread " << i << " total task time (s)       : " << std::chrono::duration_cast<std::chrono::milliseconds>(elimWinOrDrawClassPerThreadTaskTimes[i]).count()/1000.0 << " (" << elimWinOrDrawClassPerThreadNumTasks[i] << " tasks)" << "\n";
     }
     std::cout << "\n";
+    std::cout << "Auxiliary functions:\n";
+    std::cout << " ↳ numStatesClass():\n";
+    for (int i = 0; i < numThreads; i++) {
+      std::cout << "   ↳ Thread " << i << " total time (s)          : " << std::chrono::duration_cast<std::chrono::milliseconds>(numStatesClassPerThreadTimes[i]).count()/1000.0 << "\n";
+    }
+    std::cout << " ↳ indexToState():\n";
+    for (int i = 0; i < numThreads; i++) {
+      std::cout << "   ↳ Thread " << i << " total time (s)          : " << std::chrono::duration_cast<std::chrono::milliseconds>(indexToStatePerThreadTimes[i]).count()/1000.0 << "\n";
+    }
+    std::cout << " ↳ stateToIndex():\n";
+    for (int i = 0; i < numThreads; i++) {
+      std::cout << "   ↳ Thread " << i << " total time (s)          : " << std::chrono::duration_cast<std::chrono::milliseconds>(stateToIndexPerThreadTimes[i]).count()/1000.0 << "\n";
+    }
+    std::cout << " ↳ unfilterOState():\n";
+    for (int i = 0; i < numThreads; i++) {
+      std::cout << "   ↳ Thread " << i << " total time (s)          : " << std::chrono::duration_cast<std::chrono::milliseconds>(unfilterOStatePerThreadTimes[i]).count()/1000.0 << "\n";
+    }
+    std::cout << " ↳ filterOState():\n";
+    for (int i = 0; i < numThreads; i++) {
+      std::cout << "   ↳ Thread " << i << " total time (s)          : " << std::chrono::duration_cast<std::chrono::milliseconds>(filterOStatePerThreadTimes[i]).count()/1000.0 << "\n";
+    }
+    std::cout << "\n";
   }
 }
 
 sindex_t OptComputer::numStatesClass(nbit_t numA, nbit_t numB) {
-  return (sindex_t)ncrCalculator->ncr(numTiles, numA) * (sindex_t)ncrCalculator->ncr(numTiles-numA, numB);
+  std::chrono::time_point<std::chrono::high_resolution_clock> startTimeBuf;
+  START_TIMING(startTimeBuf);
+  sindex_t numStates = (sindex_t)ncrCalculator->ncr(numTiles, numA) * (sindex_t)ncrCalculator->ncr(numTiles-numA, numB);
+  END_TIMING(numStatesClassPerThreadTimes[omp_get_thread_num()], startTimeBuf);
+  return numStates;
 }
 
 void OptComputer::computeClass(nbit_t numA, nbit_t numB, std::vector<result4_t> &resultsCacheNormPlus, std::vector<result4_t> &resultsCacheFlipPlus) { // value iteration
@@ -447,16 +479,25 @@ void OptComputer::elimWinOrDrawClass(nbit_t numX, nbit_t numO, std::vector<resul
 }
 
 state_t OptComputer::indexToState(sindex_t stateIndex, nbit_t numX, nbit_t numO) {
+  std::chrono::time_point<std::chrono::high_resolution_clock> startTimeBuf;
+  START_TIMING(startTimeBuf);
+
   sindex_t coeff = ncrCalculator->ncr(numTiles-numX, numO);
   ord_t xOrd = stateIndex / coeff;
   ord_t oFilteredOrd = stateIndex % coeff;
   auto xState = ordCalculator->ordPopToState(xOrd, numX);
   auto oFilteredState = ordCalculator->ordPopToState(oFilteredOrd, numO);
   auto oState = unfilterOState(oFilteredState, xState);
-  return xState << halfStateNBits | oState;
+  auto state = xState << halfStateNBits | oState;
+
+  END_TIMING(indexToStatePerThreadTimes[omp_get_thread_num()], startTimeBuf);
+  return state;
 }
 
 sindex_t OptComputer::stateToIndex(state_t state) {
+  std::chrono::time_point<std::chrono::high_resolution_clock> startTimeBuf;
+  START_TIMING(startTimeBuf);
+
   auto xState = (state >> halfStateNBits) & halfStateMask;
   auto oState = state & halfStateMask;
   auto oFilteredState = filterOState(oState, xState);
@@ -465,10 +506,16 @@ sindex_t OptComputer::stateToIndex(state_t state) {
   auto numX = gameStateHandler->getNumX(state);
   auto numO = gameStateHandler->getNumO(state);
   sindex_t coeff = ncrCalculator->ncr(numTiles-numX, numO);
-  return xOrd*coeff + oFilteredOrd;
+  sindex_t stateIndex = xOrd*coeff + oFilteredOrd;
+
+  END_TIMING(stateToIndexPerThreadTimes[omp_get_thread_num()], startTimeBuf);
+  return stateIndex;
 }
 
 state_t OptComputer::unfilterOState(state_t oFilteredState, state_t xState) {
+  std::chrono::time_point<std::chrono::high_resolution_clock> startTimeBuf;
+  START_TIMING(startTimeBuf);
+
   state_t mainPointer = 0b1;
   state_t filteredPointer = 0b1;
   state_t oState = 0b0;
@@ -480,10 +527,15 @@ state_t OptComputer::unfilterOState(state_t oFilteredState, state_t xState) {
       filteredPointer <<= 1;
     }
   }
+
+  END_TIMING(unfilterOStatePerThreadTimes[omp_get_thread_num()], startTimeBuf);
   return oState;
 }
 
 state_t OptComputer::filterOState(state_t oState, state_t xState) {
+  std::chrono::time_point<std::chrono::high_resolution_clock> startTimeBuf;
+  START_TIMING(startTimeBuf);
+
   state_t mainPointer = 0b1;
   state_t filteredPointer = 0b1;
   state_t oFilteredState = 0b0;
@@ -495,5 +547,7 @@ state_t OptComputer::filterOState(state_t oState, state_t xState) {
       filteredPointer <<= 1;
     }
   }
+
+  END_TIMING(filterOStatePerThreadTimes[omp_get_thread_num()], startTimeBuf);
   return oFilteredState;
 }
