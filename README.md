@@ -1157,7 +1157,7 @@
      ↳ Thread 15 total task time (s)       : 0.097 (9 tasks)
     ```
     - Which indicates that lock waiting time is still quite significant.
-  - Looking at auxiliary functions (`-l 4 -T 16 -L 1000 -s`):
+  - Looking at auxiliary functions (`-l 4 -T 16 -L 1000 -s`), out of total time of 37.548s:
     ```
     Auxiliary functions:
      ↳ numStatesClass():
