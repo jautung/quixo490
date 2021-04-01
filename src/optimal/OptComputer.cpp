@@ -95,7 +95,7 @@ OptComputer::~OptComputer() {
   #endif
 }
 
-void OptComputer::computeAll() {
+void OptComputer::computeAll(nbit_t numUsedComputeTill) {
   #if OPT_COMPUTE_MEMORY_CHECKING == 1
     memoryChecker->checkVmRss("Initial");
   #endif
@@ -142,7 +142,7 @@ void OptComputer::computeAll() {
       computeClass(numA, numB, resultsCacheNormPlus, resultsCacheFlipPlus);
     }
 
-    if (numUsed == 0) {
+    if (numUsed == numUsedComputeTill) {
       break;
     }
   }

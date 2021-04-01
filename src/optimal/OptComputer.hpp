@@ -13,7 +13,7 @@ class OptComputer {
   public:
     OptComputer(nbit_t initNumTiles, GameStateHandler* initGameStateHandler, int initNumThreads = 1, int initNumLocksPerArr = 1);
     ~OptComputer();
-    void computeAll();
+    void computeAll(nbit_t numUsedComputeTill = 0);
     sindex_t stateToIndex(state_t state);
     DataHandler* dataHandler;
   private:

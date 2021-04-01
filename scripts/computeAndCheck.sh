@@ -1,8 +1,12 @@
 #!/bin/bash
 DATE=$(date +'%Y-%m-%d-%H%M%S')
+
 L=4
-OPT_COMP_FLAGS='-l '$L' -T 16 -L 1000'
+NUM_USED_UNTIL=0
+
+OPT_COMP_FLAGS='-p opt-compute'$NUM_USED_UNTIL' -l '$L' -T 16 -L 1000'
 OPT_COMP_FLAGS_NOSPACE="$(echo -e "${OPT_COMP_FLAGS}" | tr -d '[:space:]')"
+
 LOGFILE="${DATE}${OPT_COMP_FLAGS_NOSPACE}.log"
 
 export TIME='
@@ -19,7 +23,7 @@ export OPT_COMPUTE_MEMORY_CHECKING=0
 
 clear
 make purge
-make clean
+# make clean # necessary when one of the OPT_COMPUTE exports change
 make
 clear
 
@@ -33,8 +37,9 @@ echo 'SPEED_CHECKING:' $OPT_COMPUTE_SPEED_CHECKING >> logs/$LOGFILE
 echo 'MEMORY_CHECKING:' $OPT_COMPUTE_MEMORY_CHECKING
 echo 'MEMORY_CHECKING:' $OPT_COMPUTE_MEMORY_CHECKING >> logs/$LOGFILE
 echo '' >> logs/$LOGFILE
-/usr/bin/time --output=logs/$LOGFILE --append ./bin/quixo -p opt-compute $OPT_COMP_FLAGS >> logs/$LOGFILE
+/usr/bin/time --output=logs/$LOGFILE --append ./bin/quixo $OPT_COMP_FLAGS >> logs/$LOGFILE
 echo
+echo '' >> logs/$LOGFILE
 
 echo '--- COMPUTING COMPLETE; TAILING LOGFILE (logs/'$LOGFILE') ---'
 tail -n 9 logs/$LOGFILE

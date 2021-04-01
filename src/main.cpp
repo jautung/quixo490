@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
   try {
     TCLAP::CmdLine cmd("Quixo Project");
 
-    TCLAP::ValueArg<std::string> progArg("p", "program", "Program to run (`play`, `test`, `opt-compute`, `opt-check`)", false, "play", "string", cmd);
+    TCLAP::ValueArg<std::string> progArg("p", "program", "Program to run (`play`, `test`, `opt-compute*`, `opt-check`)", false, "play", "string", cmd);
     TCLAP::ValueArg<int> lenArg("l", "len", "For `play`, `test`, `opt-compute` or `opt-check` program: number of tiles per side", false, 5, "integer", cmd);
     TCLAP::ValueArg<std::string> playerXTypeArg("X", "playerX", "For `play` or `test` program: player X type (`random`, `interact`, `opt`, `heuris-simple`, `mcts*,*`, or `q-learn*,*`)", false, "random", "string", cmd);
     TCLAP::ValueArg<std::string> playerOTypeArg("O", "playerO", "For `play` or `test` program: player O type (`random`, `interact`, `opt`, `heuris-simple`, `mcts*,*`, or `q-learn*,*`)", false, "random", "string", cmd);
@@ -91,7 +91,20 @@ int main(int argc, char* argv[]) {
     auto graphicsRes = graphicsResArg.getValue();
     auto numGames = numGamesArg.getValue();
     auto numThreads = numThreadsArg.getValue();
+    if (numThreads <= 0) {
+      std::cerr << "warning: " << "number of threads requested (" << numThreads << ") is not positive; automatically reverting to default of 1 thread\n";
+      numThreads = 1;
+    } else if (numThreads > 16) {
+      std::cerr << "warning: " << "number of threads requested (" << numThreads << ") is larger than 16); automatically reverting to default of 1 thread\n";
+      numThreads = 1;
+    } else if (numThreads > omp_get_num_procs()) {
+      std::cerr << "warning: " << "number of threads requested (" << numThreads << ") is larger than the number of processors available (" << omp_get_num_procs() << "); proceed with caution\n";
+    }
     auto numLocksPerArr = numLocksPerArrArg.getValue();
+    if (numLocksPerArr <= 0) {
+      std::cerr << "warning: " << "number of locks per array requested (" << numLocksPerArr << ") is not positive; automatically reverting to default of 1 lock per array\n";
+      numLocksPerArr = 1;
+    }
 
     auto gameStateHandler = new GameStateHandler(len);
 
@@ -156,28 +169,26 @@ int main(int argc, char* argv[]) {
       delete gamePlayHandler;
     }
 
-    else if (prog == "opt-compute") {
-      if (numThreads <= 0) {
-        std::cerr << "warning: " << "number of threads requested (" << numThreads << ") is not positive; automatically reverting to default of 1 thread\n";
-        numThreads = 1;
-      } else if (numThreads > 16) {
-        std::cerr << "warning: " << "number of threads requested (" << numThreads << ") is larger than 16); automatically reverting to default of 1 thread\n";
-        numThreads = 1;
-      } else if (numThreads > omp_get_num_procs()) {
-        std::cerr << "warning: " << "number of threads requested (" << numThreads << ") is larger than the number of processors available (" << omp_get_num_procs() << "); proceed with caution\n";
+    else if (prog.find("opt-compute", 0) == 0) { // string starts with opt-compute prefix
+      auto cliHandler = new CliHandler();
+      auto cliParams = cliHandler->readCliParams(prog.substr(std::string("opt-compute").length()));
+      if (cliParams.size() != 0 && cliParams.size() != 1) {
+        std::cerr << "error: " << "incorrect number of params for opt-compute program (expected 0 or 1; got " << cliParams.size() << ")\n";
+        exit(1);
       }
-      if (numLocksPerArr <= 0) {
-        std::cerr << "warning: " << "number of locks per array requested (" << numLocksPerArr << ") is not positive; automatically reverting to default of 1 lock per array\n";
-        numLocksPerArr = 1;
+      nbit_t numUsedComputeTill = 0;
+      if (cliParams.size() == 1 && cliParams[0] != "") {
+        numUsedComputeTill = cliHandler->readNonNegIntCliParam(cliParams[0], "opt-compute numUsedComputeTill");
       }
       auto startTime = std::chrono::high_resolution_clock::now();
       auto optComputer = new OptComputer(len*len, gameStateHandler, numThreads, numLocksPerArr);
       auto endTime = std::chrono::high_resolution_clock::now();
       std::cout << "OptComputer initialization time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime-startTime).count()/1000.0 << "\n";
-      optComputer->computeAll();
+      optComputer->computeAll(numUsedComputeTill);
       endTime = std::chrono::high_resolution_clock::now();
       std::cout << "OptComputer total time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime-startTime).count()/1000.0 << "\n";
       std::cout << "Total file I/O time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(optComputer->dataHandler->ioTime).count()/1000.0 << "\n";
+      delete cliHandler;
       delete optComputer;
     }
 
