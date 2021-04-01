@@ -116,157 +116,202 @@
     Results (X-O-D): 456-544-0
     ```
 - Mar 30, 2021: Speed profiling for 4X4 optimal computation:
-  - `-l 4 -T 1 -s`: (total 129.04s)
+  - `-l 4 -T 1 -s`: (total 143.72s)
     ```
-    Total initClass() time (s)            : 0.023
-     ↳ Thread 0 total task time (s)       : 0.023 (153 tasks)
-    Total checkTerminalsClass() time (s)  : 21.066
-     ↳ Thread 0 total task time (s)       : 17.269 (43046721 tasks)
-       ↳ Total time in locks (s)          : 3.062
-    Total parentLinkCacheClass() time (s) : 47.03
-     ↳ Thread 0 total task time (s)       : 45.389 (16612232 tasks)
-       ↳ Total time in locks (s)          : 9.776
-    Total valueIterateClass() time (s)    : 59.838
-     ↳ Thread 0 total task time (s)       : 58.567 (10705288 tasks)
-       ↳ Total time in locks (s)          : 10.446
-    Total elimWinOrDrawClass() time (s)   : 0.062
-     ↳ Thread 0 total task time (s)       : 0.062 (153 tasks)
+    Total initClass() time (s)            : 0.022
+     ↳ Thread 0 total task time (s)       : 0.021 (153 tasks)
+    Total checkTerminalsClass() time (s)  : 22.916
+     ↳ Thread 0 total task time (s)       : 19.213 (43046721 tasks)
+       ↳ Total time waiting for locks (s) : 1.915
+       ↳ Total time in CSes (s)           : 2.022
+    Total parentLinkCacheClass() time (s) : 53.169
+     ↳ Thread 0 total task time (s)       : 51.598 (16612232 tasks)
+       ↳ Total time waiting for locks (s) : 6.298
+       ↳ Total time in CSes (s)           : 6.323
+    Total valueIterateClass() time (s)    : 66.378
+     ↳ Thread 0 total task time (s)       : 65.095 (10705288 tasks)
+       ↳ Total time waiting for locks (s) : 6.93
+       ↳ Total time in CSes (s)           : 6.775
+    Total elimWinOrDrawClass() time (s)   : 0.069
+     ↳ Thread 0 total task time (s)       : 0.069 (153 tasks)
     ```
-  - `-l 4 -T 2 -s`: (total 97.634s)
+  - `-l 4 -T 2 -s`: (total 127.997s)
     ```
-    Total initClass() time (s)            : 0.033
-     ↳ Thread 0 total task time (s)       : 0.032 (74 tasks)
-     ↳ Thread 1 total task time (s)       : 0.029 (79 tasks)
-    Total checkTerminalsClass() time (s)  : 20.852
-     ↳ Thread 0 total task time (s)       : 11.824 (29410069 tasks)
-       ↳ Total time in locks (s)          : 2.941
-     ↳ Thread 1 total task time (s)       : 9.527 (13636652 tasks)
-       ↳ Total time in locks (s)          : 2.685
-    Total parentLinkCacheClass() time (s) : 35.372
-     ↳ Thread 0 total task time (s)       : 31.384 (8814518 tasks)
-       ↳ Total time in locks (s)          : 10.248
-     ↳ Thread 1 total task time (s)       : 28.998 (7797714 tasks)
-       ↳ Total time in locks (s)          : 9.643
-    Total valueIterateClass() time (s)    : 40.442
-     ↳ Thread 0 total task time (s)       : 37.755 (5425024 tasks)
-       ↳ Total time in locks (s)          : 11.024
-     ↳ Thread 1 total task time (s)       : 36.085 (5280348 tasks)
-       ↳ Total time in locks (s)          : 10.477
-    Total elimWinOrDrawClass() time (s)   : 0.041
-     ↳ Thread 0 total task time (s)       : 0.028 (75 tasks)
-     ↳ Thread 1 total task time (s)       : 0.034 (78 tasks)
+    Total initClass() time (s)            : 0.028
+     ↳ Thread 0 total task time (s)       : 0.027 (75 tasks)
+     ↳ Thread 1 total task time (s)       : 0.025 (78 tasks)
+    Total checkTerminalsClass() time (s)  : 23.543
+     ↳ Thread 0 total task time (s)       : 15.019 (29487213 tasks)
+       ↳ Total time waiting for locks (s) : 2.85
+       ↳ Total time in CSes (s)           : 2.16
+     ↳ Thread 1 total task time (s)       : 12.661 (13559508 tasks)
+       ↳ Total time waiting for locks (s) : 2.788
+       ↳ Total time in CSes (s)           : 2.027
+    Total parentLinkCacheClass() time (s) : 49.001
+     ↳ Thread 0 total task time (s)       : 44.83 (8793821 tasks)
+       ↳ Total time waiting for locks (s) : 11.749
+       ↳ Total time in CSes (s)           : 7.825
+     ↳ Thread 1 total task time (s)       : 42.507 (7818411 tasks)
+       ↳ Total time waiting for locks (s) : 11.7
+       ↳ Total time in CSes (s)           : 7.633
+    Total valueIterateClass() time (s)    : 54.481
+     ↳ Thread 0 total task time (s)       : 51.551 (5412320 tasks)
+       ↳ Total time waiting for locks (s) : 12.719
+       ↳ Total time in CSes (s)           : 8.18
+     ↳ Thread 1 total task time (s)       : 49.991 (5284490 tasks)
+       ↳ Total time waiting for locks (s) : 12.557
+       ↳ Total time in CSes (s)           : 7.886
+    Total elimWinOrDrawClass() time (s)   : 0.044
+     ↳ Thread 0 total task time (s)       : 0.033 (77 tasks)
+     ↳ Thread 1 total task time (s)       : 0.036 (76 tasks)
     ```
-  - `-l 4 -T 4 -s`: (total 103.186s)
+  - `-l 4 -T 4 -s`: (total 145.945s)
     ```
-    Total initClass() time (s)            : 0.029
-     ↳ Thread 0 total task time (s)       : 0.007 (38 tasks)
-     ↳ Thread 1 total task time (s)       : 0.014 (42 tasks)
-     ↳ Thread 2 total task time (s)       : 0.016 (33 tasks)
-     ↳ Thread 3 total task time (s)       : 0.016 (40 tasks)
-    Total checkTerminalsClass() time (s)  : 23.656
-     ↳ Thread 0 total task time (s)       : 6.509 (4695482 tasks)
-       ↳ Total time in locks (s)          : 3.673
-     ↳ Thread 1 total task time (s)       : 9.498 (12621992 tasks)
-       ↳ Total time in locks (s)          : 4.817
-     ↳ Thread 2 total task time (s)       : 9.541 (12888262 tasks)
-       ↳ Total time in locks (s)          : 4.825
-     ↳ Thread 3 total task time (s)       : 9.521 (12840985 tasks)
-       ↳ Total time in locks (s)          : 4.83
-    Total parentLinkCacheClass() time (s) : 38.774
-     ↳ Thread 0 total task time (s)       : 34.426 (4117612 tasks)
-       ↳ Total time in locks (s)          : 23.494
-     ↳ Thread 1 total task time (s)       : 34.986 (4129839 tasks)
-       ↳ Total time in locks (s)          : 24.08
-     ↳ Thread 2 total task time (s)       : 35.066 (4175860 tasks)
-       ↳ Total time in locks (s)          : 24.27
-     ↳ Thread 3 total task time (s)       : 35.067 (4188921 tasks)
-       ↳ Total time in locks (s)          : 24.264
-    Total valueIterateClass() time (s)    : 39.768
-     ↳ Thread 0 total task time (s)       : 36.866 (2604869 tasks)
-       ↳ Total time in locks (s)          : 22.795
-     ↳ Thread 1 total task time (s)       : 37.245 (2670452 tasks)
-       ↳ Total time in locks (s)          : 23.305
-     ↳ Thread 2 total task time (s)       : 37.305 (2712424 tasks)
-       ↳ Total time in locks (s)          : 23.587
-     ↳ Thread 3 total task time (s)       : 37.298 (2717775 tasks)
-       ↳ Total time in locks (s)          : 23.595
-    Total elimWinOrDrawClass() time (s)   : 0.041
-     ↳ Thread 0 total task time (s)       : 0.013 (33 tasks)
-     ↳ Thread 1 total task time (s)       : 0.018 (37 tasks)
-     ↳ Thread 2 total task time (s)       : 0.021 (46 tasks)
-     ↳ Thread 3 total task time (s)       : 0.009 (37 tasks)
+    Total initClass() time (s)            : 0.03
+     ↳ Thread 0 total task time (s)       : 0.015 (43 tasks)
+     ↳ Thread 1 total task time (s)       : 0.013 (39 tasks)
+     ↳ Thread 2 total task time (s)       : 0.012 (37 tasks)
+     ↳ Thread 3 total task time (s)       : 0.015 (34 tasks)
+    Total checkTerminalsClass() time (s)  : 27.378
+     ↳ Thread 0 total task time (s)       : 11.527 (6847161 tasks)
+       ↳ Total time waiting for locks (s) : 6.039
+       ↳ Total time in CSes (s)           : 1.371
+     ↳ Thread 1 total task time (s)       : 14.173 (12205626 tasks)
+       ↳ Total time waiting for locks (s) : 7.062
+       ↳ Total time in CSes (s)           : 1.78
+     ↳ Thread 2 total task time (s)       : 14.229 (12286266 tasks)
+       ↳ Total time waiting for locks (s) : 7.098
+       ↳ Total time in CSes (s)           : 1.727
+     ↳ Thread 3 total task time (s)       : 13.897 (11707668 tasks)
+       ↳ Total time waiting for locks (s) : 7.067
+       ↳ Total time in CSes (s)           : 1.675
+    Total parentLinkCacheClass() time (s) : 57.324
+     ↳ Thread 0 total task time (s)       : 53.054 (4212555 tasks)
+       ↳ Total time waiting for locks (s) : 33.322
+       ↳ Total time in CSes (s)           : 5.686
+     ↳ Thread 1 total task time (s)       : 53.571 (4124647 tasks)
+       ↳ Total time waiting for locks (s) : 34.752
+       ↳ Total time in CSes (s)           : 5.516
+     ↳ Thread 2 total task time (s)       : 53.613 (4128971 tasks)
+       ↳ Total time waiting for locks (s) : 34.92
+       ↳ Total time in CSes (s)           : 5.356
+     ↳ Thread 3 total task time (s)       : 53.592 (4146059 tasks)
+       ↳ Total time waiting for locks (s) : 35.089
+       ↳ Total time in CSes (s)           : 5.315
+    Total valueIterateClass() time (s)    : 60.297
+     ↳ Thread 0 total task time (s)       : 57.427 (2643306 tasks)
+       ↳ Total time waiting for locks (s) : 33.836
+       ↳ Total time in CSes (s)           : 6.197
+     ↳ Thread 1 total task time (s)       : 57.782 (2682017 tasks)
+       ↳ Total time waiting for locks (s) : 35.126
+       ↳ Total time in CSes (s)           : 6.14
+     ↳ Thread 2 total task time (s)       : 57.813 (2687011 tasks)
+       ↳ Total time waiting for locks (s) : 35.493
+       ↳ Total time in CSes (s)           : 5.98
+     ↳ Thread 3 total task time (s)       : 57.776 (2683952 tasks)
+       ↳ Total time waiting for locks (s) : 35.63
+       ↳ Total time in CSes (s)           : 5.932
+    Total elimWinOrDrawClass() time (s)   : 0.044
+     ↳ Thread 0 total task time (s)       : 0.02 (42 tasks)
+     ↳ Thread 1 total task time (s)       : 0.021 (42 tasks)
+     ↳ Thread 2 total task time (s)       : 0.013 (32 tasks)
+     ↳ Thread 3 total task time (s)       : 0.015 (37 tasks)
     ```
-  - `-l 4 -T 8 -s`: (total 135.372s)
+  - `-l 4 -T 8 -s`: (total 167.974s)
     ```
-    Total initClass() time (s)            : 0.029
-     ↳ Thread 0 total task time (s)       : 0.008 (39 tasks)
-     ↳ Thread 1 total task time (s)       : 0.009 (21 tasks)
-     ↳ Thread 2 total task time (s)       : 0.016 (20 tasks)
-     ↳ Thread 3 total task time (s)       : 0.007 (19 tasks)
-     ↳ Thread 4 total task time (s)       : 0.002 (11 tasks)
-     ↳ Thread 5 total task time (s)       : 0.004 (13 tasks)
+    Total initClass() time (s)            : 0.01
+     ↳ Thread 0 total task time (s)       : 0.005 (44 tasks)
+     ↳ Thread 1 total task time (s)       : 0.001 (19 tasks)
+     ↳ Thread 2 total task time (s)       : 0.001 (14 tasks)
+     ↳ Thread 3 total task time (s)       : 0 (17 tasks)
+     ↳ Thread 4 total task time (s)       : 0.002 (13 tasks)
+     ↳ Thread 5 total task time (s)       : 0.003 (19 tasks)
      ↳ Thread 6 total task time (s)       : 0.001 (13 tasks)
-     ↳ Thread 7 total task time (s)       : 0.005 (17 tasks)
-    Total checkTerminalsClass() time (s)  : 40.416
-     ↳ Thread 0 total task time (s)       : 6.88 (1709301 tasks)
-       ↳ Total time in locks (s)          : 5.682
-     ↳ Thread 1 total task time (s)       : 10.327 (5798453 tasks)
-       ↳ Total time in locks (s)          : 8.077
-     ↳ Thread 2 total task time (s)       : 10.332 (5821739 tasks)
-       ↳ Total time in locks (s)          : 8.068
-     ↳ Thread 3 total task time (s)       : 10.327 (5892344 tasks)
-       ↳ Total time in locks (s)          : 8.068
-     ↳ Thread 4 total task time (s)       : 10.391 (6005142 tasks)
-       ↳ Total time in locks (s)          : 8.09
-     ↳ Thread 5 total task time (s)       : 10.372 (5938756 tasks)
-       ↳ Total time in locks (s)          : 8.048
-     ↳ Thread 6 total task time (s)       : 10.384 (5976985 tasks)
-       ↳ Total time in locks (s)          : 8.026
-     ↳ Thread 7 total task time (s)       : 10.397 (5904001 tasks)
-       ↳ Total time in locks (s)          : 8.051
-    Total parentLinkCacheClass() time (s) : 45.789
-     ↳ Thread 0 total task time (s)       : 41.727 (2043129 tasks)
-       ↳ Total time in locks (s)          : 36.123
-     ↳ Thread 1 total task time (s)       : 43.845 (2082672 tasks)
-       ↳ Total time in locks (s)          : 38.414
-     ↳ Thread 2 total task time (s)       : 43.826 (2080037 tasks)
-       ↳ Total time in locks (s)          : 38.372
-     ↳ Thread 3 total task time (s)       : 43.872 (2081285 tasks)
-       ↳ Total time in locks (s)          : 38.472
-     ↳ Thread 4 total task time (s)       : 43.907 (2087434 tasks)
-       ↳ Total time in locks (s)          : 38.467
-     ↳ Thread 5 total task time (s)       : 43.898 (2082923 tasks)
-       ↳ Total time in locks (s)          : 38.215
-     ↳ Thread 6 total task time (s)       : 43.882 (2079813 tasks)
-       ↳ Total time in locks (s)          : 38.187
-     ↳ Thread 7 total task time (s)       : 43.893 (2074939 tasks)
-       ↳ Total time in locks (s)          : 38.125
-    Total valueIterateClass() time (s)    : 48.234
-     ↳ Thread 0 total task time (s)       : 45.528 (1303856 tasks)
-       ↳ Total time in locks (s)          : 38.139
-     ↳ Thread 1 total task time (s)       : 46.913 (1345367 tasks)
-       ↳ Total time in locks (s)          : 39.803
-     ↳ Thread 2 total task time (s)       : 46.901 (1342790 tasks)
-       ↳ Total time in locks (s)          : 39.777
-     ↳ Thread 3 total task time (s)       : 46.926 (1344105 tasks)
-       ↳ Total time in locks (s)          : 39.895
-     ↳ Thread 4 total task time (s)       : 46.949 (1347847 tasks)
-       ↳ Total time in locks (s)          : 39.913
-     ↳ Thread 5 total task time (s)       : 46.948 (1344009 tasks)
-       ↳ Total time in locks (s)          : 39.606
-     ↳ Thread 6 total task time (s)       : 46.942 (1342622 tasks)
-       ↳ Total time in locks (s)          : 39.62
-     ↳ Thread 7 total task time (s)       : 46.946 (1337001 tasks)
-       ↳ Total time in locks (s)          : 39.561
-    Total elimWinOrDrawClass() time (s)   : 0.041
-     ↳ Thread 0 total task time (s)       : 0.008 (20 tasks)
-     ↳ Thread 1 total task time (s)       : 0.01 (15 tasks)
-     ↳ Thread 2 total task time (s)       : 0.003 (14 tasks)
-     ↳ Thread 3 total task time (s)       : 0.009 (20 tasks)
-     ↳ Thread 4 total task time (s)       : 0.009 (23 tasks)
-     ↳ Thread 5 total task time (s)       : 0.003 (13 tasks)
-     ↳ Thread 6 total task time (s)       : 0.015 (24 tasks)
-     ↳ Thread 7 total task time (s)       : 0.004 (24 tasks)
+     ↳ Thread 7 total task time (s)       : 0.001 (14 tasks)
+    Total checkTerminalsClass() time (s)  : 42.61
+     ↳ Thread 0 total task time (s)       : 10.413 (2313548 tasks)
+       ↳ Total time waiting for locks (s) : 8.178
+       ↳ Total time in CSes (s)           : 0.56
+     ↳ Thread 1 total task time (s)       : 14.207 (5711261 tasks)
+       ↳ Total time waiting for locks (s) : 10.661
+       ↳ Total time in CSes (s)           : 0.865
+     ↳ Thread 2 total task time (s)       : 14.213 (5738331 tasks)
+       ↳ Total time waiting for locks (s) : 10.657
+       ↳ Total time in CSes (s)           : 0.878
+     ↳ Thread 3 total task time (s)       : 14.253 (5864998 tasks)
+       ↳ Total time waiting for locks (s) : 10.684
+       ↳ Total time in CSes (s)           : 0.868
+     ↳ Thread 4 total task time (s)       : 14.26 (5876938 tasks)
+       ↳ Total time waiting for locks (s) : 10.642
+       ↳ Total time in CSes (s)           : 0.876
+     ↳ Thread 5 total task time (s)       : 14.251 (5836216 tasks)
+       ↳ Total time waiting for locks (s) : 10.572
+       ↳ Total time in CSes (s)           : 0.893
+     ↳ Thread 6 total task time (s)       : 14.268 (5891899 tasks)
+       ↳ Total time waiting for locks (s) : 10.593
+       ↳ Total time in CSes (s)           : 0.878
+     ↳ Thread 7 total task time (s)       : 14.247 (5813530 tasks)
+       ↳ Total time waiting for locks (s) : 10.651
+       ↳ Total time in CSes (s)           : 0.885
+    Total parentLinkCacheClass() time (s) : 60.62
+     ↳ Thread 0 total task time (s)       : 56.57 (2077622 tasks)
+       ↳ Total time waiting for locks (s) : 46.807
+       ↳ Total time in CSes (s)           : 2.733
+     ↳ Thread 1 total task time (s)       : 58.714 (2078549 tasks)
+       ↳ Total time waiting for locks (s) : 49.321
+       ↳ Total time in CSes (s)           : 2.648
+     ↳ Thread 2 total task time (s)       : 58.72 (2076110 tasks)
+       ↳ Total time waiting for locks (s) : 49.176
+       ↳ Total time in CSes (s)           : 2.691
+     ↳ Thread 3 total task time (s)       : 58.741 (2077391 tasks)
+       ↳ Total time waiting for locks (s) : 49.251
+       ↳ Total time in CSes (s)           : 2.653
+     ↳ Thread 4 total task time (s)       : 58.763 (2078700 tasks)
+       ↳ Total time waiting for locks (s) : 48.977
+       ↳ Total time in CSes (s)           : 2.693
+     ↳ Thread 5 total task time (s)       : 58.739 (2074493 tasks)
+       ↳ Total time waiting for locks (s) : 48.721
+       ↳ Total time in CSes (s)           : 2.759
+     ↳ Thread 6 total task time (s)       : 58.741 (2074373 tasks)
+       ↳ Total time waiting for locks (s) : 48.844
+       ↳ Total time in CSes (s)           : 2.702
+     ↳ Thread 7 total task time (s)       : 58.747 (2074994 tasks)
+       ↳ Total time waiting for locks (s) : 49.06
+       ↳ Total time in CSes (s)           : 2.739
+    Total valueIterateClass() time (s)    : 63.733
+     ↳ Thread 0 total task time (s)       : 61.004 (1317895 tasks)
+       ↳ Total time waiting for locks (s) : 49.07
+       ↳ Total time in CSes (s)           : 3.025
+     ↳ Thread 1 total task time (s)       : 62.433 (1343702 tasks)
+       ↳ Total time waiting for locks (s) : 51.142
+       ↳ Total time in CSes (s)           : 2.932
+     ↳ Thread 2 total task time (s)       : 62.433 (1341013 tasks)
+       ↳ Total time waiting for locks (s) : 51.145
+       ↳ Total time in CSes (s)           : 2.979
+     ↳ Thread 3 total task time (s)       : 62.449 (1342613 tasks)
+       ↳ Total time waiting for locks (s) : 51.196
+       ↳ Total time in CSes (s)           : 2.943
+     ↳ Thread 4 total task time (s)       : 62.46 (1342648 tasks)
+       ↳ Total time waiting for locks (s) : 50.969
+       ↳ Total time in CSes (s)           : 2.955
+     ↳ Thread 5 total task time (s)       : 62.452 (1339811 tasks)
+       ↳ Total time waiting for locks (s) : 50.531
+       ↳ Total time in CSes (s)           : 3.022
+     ↳ Thread 6 total task time (s)       : 62.451 (1339568 tasks)
+       ↳ Total time waiting for locks (s) : 50.594
+       ↳ Total time in CSes (s)           : 2.96
+     ↳ Thread 7 total task time (s)       : 62.457 (1340394 tasks)
+       ↳ Total time waiting for locks (s) : 50.94
+       ↳ Total time in CSes (s)           : 2.996
+    Total elimWinOrDrawClass() time (s)   : 0.045
+     ↳ Thread 0 total task time (s)       : 0.009 (32 tasks)
+     ↳ Thread 1 total task time (s)       : 0.014 (24 tasks)
+     ↳ Thread 2 total task time (s)       : 0.008 (16 tasks)
+     ↳ Thread 3 total task time (s)       : 0.007 (18 tasks)
+     ↳ Thread 4 total task time (s)       : 0.004 (12 tasks)
+     ↳ Thread 5 total task time (s)       : 0.008 (19 tasks)
+     ↳ Thread 6 total task time (s)       : 0.006 (20 tasks)
+     ↳ Thread 7 total task time (s)       : 0.009 (12 tasks)
     ```
 
 ## To Do / Next Steps
