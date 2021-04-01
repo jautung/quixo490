@@ -48,7 +48,9 @@ namespace {
 
   std::chrono::system_clock::duration numStatesClassPerThreadTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
   std::chrono::system_clock::duration indexToStatePerThreadTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
-  std::chrono::system_clock::duration stateToIndexPerThreadTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
+  std::chrono::system_clock::duration stateToIndex0PerThreadTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
+  std::chrono::system_clock::duration stateToIndex1PerThreadTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
+  std::chrono::system_clock::duration stateToIndex2PerThreadTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
   std::chrono::system_clock::duration unfilterOStatePerThreadTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
   std::chrono::system_clock::duration filterOStatePerThreadTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
 }
@@ -156,9 +158,17 @@ void OptComputer::computeAll() {
     for (int i = 0; i < numThreads; i++) {
       std::cout << "   ↳ Thread " << i << " total time (s)          : " << std::chrono::duration_cast<std::chrono::milliseconds>(indexToStatePerThreadTimes[i]).count()/1000.0 << "\n";
     }
-    std::cout << " ↳ stateToIndex():\n";
+    std::cout << " ↳ stateToIndex0():\n";
     for (int i = 0; i < numThreads; i++) {
-      std::cout << "   ↳ Thread " << i << " total time (s)          : " << std::chrono::duration_cast<std::chrono::milliseconds>(stateToIndexPerThreadTimes[i]).count()/1000.0 << "\n";
+      std::cout << "   ↳ Thread " << i << " total time (s)          : " << std::chrono::duration_cast<std::chrono::milliseconds>(stateToIndex1PerThreadTimes[i]).count()/1000.0 << "\n";
+    }
+    std::cout << " ↳ stateToIndex1():\n";
+    for (int i = 0; i < numThreads; i++) {
+      std::cout << "   ↳ Thread " << i << " total time (s)          : " << std::chrono::duration_cast<std::chrono::milliseconds>(stateToIndex1PerThreadTimes[i]).count()/1000.0 << "\n";
+    }
+    std::cout << " ↳ stateToIndex2():\n";
+    for (int i = 0; i < numThreads; i++) {
+      std::cout << "   ↳ Thread " << i << " total time (s)          : " << std::chrono::duration_cast<std::chrono::milliseconds>(stateToIndex2PerThreadTimes[i]).count()/1000.0 << "\n";
     }
     std::cout << " ↳ unfilterOState():\n";
     for (int i = 0; i < numThreads; i++) {
@@ -496,19 +506,25 @@ state_t OptComputer::indexToState(sindex_t stateIndex, nbit_t numX, nbit_t numO)
 
 sindex_t OptComputer::stateToIndex(state_t state) {
   std::chrono::time_point<std::chrono::high_resolution_clock> startTimeBuf;
-  START_TIMING(startTimeBuf);
 
+  START_TIMING(startTimeBuf);
   auto xState = (state >> halfStateNBits) & halfStateMask;
   auto oState = state & halfStateMask;
   auto oFilteredState = filterOState(oState, xState);
+  END_TIMING(stateToIndex0PerThreadTimes[omp_get_thread_num()], startTimeBuf);
+
+  START_TIMING(startTimeBuf);
   auto xOrd = ordCalculator->stateToOrd(xState);
   auto oFilteredOrd = ordCalculator->stateToOrd(oFilteredState);
+  END_TIMING(stateToIndex1PerThreadTimes[omp_get_thread_num()], startTimeBuf);
+
+  START_TIMING(startTimeBuf);
   auto numX = gameStateHandler->getNumX(state);
   auto numO = gameStateHandler->getNumO(state);
   sindex_t coeff = ncrCalculator->ncr(numTiles-numX, numO);
-  sindex_t stateIndex = xOrd*coeff + oFilteredOrd;
+  sindex_t stateIndex = xOrd * coeff + oFilteredOrd;
+  END_TIMING(stateToIndex2PerThreadTimes[omp_get_thread_num()], startTimeBuf);
 
-  END_TIMING(stateToIndexPerThreadTimes[omp_get_thread_num()], startTimeBuf);
   return stateIndex;
 }
 
