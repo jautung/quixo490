@@ -53,6 +53,7 @@
   - `diff -rq ../data_frozen/3/ tmp/ ; rm -rf tmp`
 - Mar 7, 2021: Full computation for 5X5 Quixo has been running on the Zoo (via a `screen`) for \~24 hours.
   - Because of the saving of intermediate results, we can always stop the computation, optimize, further, and start it again.
+  - `make clean && make && ./bin/quixo -p opt-compute -l 5 -T 16 -L 1000`.
   - Basic heuristic agent has been built.
   - Basic MCTS has been built using a UCB tree policy and a random default policy. Some preliminary results:
     - 4X4 Quixo:
