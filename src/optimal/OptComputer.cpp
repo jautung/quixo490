@@ -253,43 +253,46 @@ void OptComputer::checkTerminalsClass(nbit_t numX, nbit_t numO, std::vector<resu
   std::chrono::time_point<std::chrono::high_resolution_clock> startTimeLock;
 
   sindex_t numStates = numStatesClass(numX, numO);
-  for (sindex_t stateIndex = 0; stateIndex < numStates; stateIndex++) {
-    #pragma omp task shared(results, resultsOther, checkTerminalsClassPerThreadTaskTimes, checkTerminalsClassPerThreadNumTasks, checkTerminalsClassPerThreadWaitLockTimes, checkTerminalsClassPerThreadInCritSecTimes) firstprivate(numX, numO, stateIndex) private(startTimeLock)
+  sindex_t blockTaskInterval = 10 * numThreads; // each singular stateIndex is too small a task, so this 'block division' of tasks works faster for parallelization
+  for (sindex_t stateIndexBase = 0; stateIndexBase < blockTaskInterval && stateIndexBase < numStates; stateIndexBase += 1) {
+    #pragma omp task shared(results, resultsOther, checkTerminalsClassPerThreadTaskTimes, checkTerminalsClassPerThreadNumTasks, checkTerminalsClassPerThreadWaitLockTimes, checkTerminalsClassPerThreadInCritSecTimes) firstprivate(numX, numO, stateIndexBase) private(startTimeLock)
     {
       std::chrono::time_point<std::chrono::high_resolution_clock> startTimePerThread;
       START_TIMING(startTimePerThread);
 
-      auto state = indexToState(stateIndex, numX, numO);
+      for (sindex_t stateIndex = stateIndexBase; stateIndex < numStates; stateIndex += blockTaskInterval) {
+        auto state = indexToState(stateIndex, numX, numO);
 
-      if (gameStateHandler->containsLine(state, TILE_X)) {
-        START_TIMING(startTimeLock);
-        omp_set_lock(&resultsLocks[(stateIndex/4) % numLocksPerArr]);
-        END_TIMING(checkTerminalsClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeLock);
-        START_TIMING(startTimeLock);
-        dataHandler->setResult(results, stateIndex, RESULT_WIN);
-        omp_unset_lock(&resultsLocks[(stateIndex/4) % numLocksPerArr]);
-        END_TIMING(checkTerminalsClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeLock);
-      }
-
-      else if (gameStateHandler->containsLine(state, TILE_O)) {
-        START_TIMING(startTimeLock);
-        omp_set_lock(&resultsLocks[(stateIndex/4) % numLocksPerArr]);
-        END_TIMING(checkTerminalsClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeLock);
-        START_TIMING(startTimeLock);
-        dataHandler->setResult(results, stateIndex, RESULT_LOSS);
-        omp_unset_lock(&resultsLocks[(stateIndex/4) % numLocksPerArr]);
-        END_TIMING(checkTerminalsClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeLock);
-        for (auto parentState : gameStateHandler->allZeroParents(state)) { // parent link optimization
-          auto parentStateIndex = stateToIndex(parentState);
+        if (gameStateHandler->containsLine(state, TILE_X)) {
           START_TIMING(startTimeLock);
-          omp_set_lock(&resultsOtherLocks[(parentStateIndex/4) % numLocksPerArr]);
+          omp_set_lock(&resultsLocks[(stateIndex/4) % numLocksPerArr]);
           END_TIMING(checkTerminalsClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeLock);
           START_TIMING(startTimeLock);
-          if (dataHandler->getResult(resultsOther, parentStateIndex) == RESULT_DRAW) {
-            dataHandler->setResult(resultsOther, parentStateIndex, RESULT_WIN);
-          }
-          omp_unset_lock(&resultsOtherLocks[(parentStateIndex/4) % numLocksPerArr]);
+          dataHandler->setResult(results, stateIndex, RESULT_WIN);
+          omp_unset_lock(&resultsLocks[(stateIndex/4) % numLocksPerArr]);
           END_TIMING(checkTerminalsClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeLock);
+        }
+
+        else if (gameStateHandler->containsLine(state, TILE_O)) {
+          START_TIMING(startTimeLock);
+          omp_set_lock(&resultsLocks[(stateIndex/4) % numLocksPerArr]);
+          END_TIMING(checkTerminalsClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeLock);
+          START_TIMING(startTimeLock);
+          dataHandler->setResult(results, stateIndex, RESULT_LOSS);
+          omp_unset_lock(&resultsLocks[(stateIndex/4) % numLocksPerArr]);
+          END_TIMING(checkTerminalsClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeLock);
+          for (auto parentState : gameStateHandler->allZeroParents(state)) { // parent link optimization
+            auto parentStateIndex = stateToIndex(parentState);
+            START_TIMING(startTimeLock);
+            omp_set_lock(&resultsOtherLocks[(parentStateIndex/4) % numLocksPerArr]);
+            END_TIMING(checkTerminalsClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeLock);
+            START_TIMING(startTimeLock);
+            if (dataHandler->getResult(resultsOther, parentStateIndex) == RESULT_DRAW) {
+              dataHandler->setResult(resultsOther, parentStateIndex, RESULT_WIN);
+            }
+            omp_unset_lock(&resultsOtherLocks[(parentStateIndex/4) % numLocksPerArr]);
+            END_TIMING(checkTerminalsClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeLock);
+          }
         }
       }
 
