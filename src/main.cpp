@@ -76,6 +76,7 @@ int main(int argc, char* argv[]) {
     TCLAP::SwitchArg memoryCheckArg("m", "memorycheck", "For `opt-compute` program: check run-time memory usage", cmd);
     TCLAP::SwitchArg speedCheckArg("s", "speedcheck", "For `opt-compute` program: profile running-time of various functions", cmd);
     TCLAP::ValueArg<int> numThreadsArg("T", "Threads", "For `opt-compute` program: number of Threads to use", false, 1, "integer", cmd);
+    TCLAP::ValueArg<int> numLocksPerArrArg("L", "Locksperarray", "For `opt-compute` program: number of Locks to use per result array", false, 1, "integer", cmd);
     cmd.parse(argc, argv);
     auto prog = progArg.getValue();
     auto len = lenArg.getValue();
@@ -93,6 +94,7 @@ int main(int argc, char* argv[]) {
     auto memoryCheck = memoryCheckArg.getValue();
     auto speedCheck = speedCheckArg.getValue();
     auto numThreads = numThreadsArg.getValue();
+    auto numLocksPerArr = numLocksPerArrArg.getValue();
 
     auto gameStateHandler = new GameStateHandler(len);
     if (prog == "play") {
@@ -157,12 +159,14 @@ int main(int argc, char* argv[]) {
       if (numThreads <= 0) {
         std::cerr << "warning: " << "number of threads requested (" << numThreads << ") is not positive; automatically reverting to default of 1 thread\n";
         numThreads = 1;
+      } else if (numThreads > 16) {
+        std::cerr << "warning: " << "number of threads requested (" << numThreads << ") is larger than 16); automatically reverting to default of 1 thread\n";
+        numThreads = 1;
       } else if (numThreads > omp_get_num_procs()) {
         std::cerr << "warning: " << "number of threads requested (" << numThreads << ") is larger than the number of processors available (" << omp_get_num_procs() << "); proceed with caution\n";
       }
-      omp_set_num_threads(numThreads);
       auto startTime = std::chrono::high_resolution_clock::now();
-      auto optComputer = new OptComputer(len*len, gameStateHandler, memoryChecker, speedCheck);
+      auto optComputer = new OptComputer(len*len, gameStateHandler, memoryChecker, speedCheck, numThreads, numLocksPerArr);
       auto endTime = std::chrono::high_resolution_clock::now();
       std::cout << "OptComputer initialization time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime-startTime).count()/1000.0 << "\n";
       optComputer->computeAll();

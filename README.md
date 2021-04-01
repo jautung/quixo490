@@ -313,6 +313,7 @@
      ↳ Thread 6 total task time (s)       : 0.006 (20 tasks)
      ↳ Thread 7 total task time (s)       : 0.009 (12 tasks)
     ```
+  - I think the takeaway here is that the locks are far too coarse-grained; waiting for locks takes far too long. We need finer locks.
 
 ## To Do / Next Steps
 0. **Improve speed of optimal computation.**
