@@ -143,10 +143,10 @@ int main(int argc, char* argv[]) {
       }
       std::cout << "\nResult summary for Player X (" << playerXType << ") vs. Player O (" << playerOType << ") on " << len << "X" << len << " Quixo\n";
       std::cout << "--------------------------------------------------------------------------------\n";
-      std::cout << "Player X init compute time (s): " << gamePlayHandler->initTimeX/1000.0 << " (" << gamePlayHandler->initTimeX/1000.0/numGames << " average per game)\n";
-      std::cout << "Player O init compute time (s): " << gamePlayHandler->initTimeO/1000.0 << " (" << gamePlayHandler->initTimeO/1000.0/numGames << " average per game)\n";
-      std::cout << "Player X running compute time (s): " << gamePlayHandler->runTimeX/1000.0 << " (" << gamePlayHandler->runTimeX/1000.0/numGames << " average per game)\n";
-      std::cout << "Player O running compute time (s): " << gamePlayHandler->runTimeO/1000.0 << " (" << gamePlayHandler->runTimeO/1000.0/numGames << " average per game)\n";
+      std::cout << "Player X init compute time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->initTimeX).count()/1000.0 << " (" << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->initTimeX).count()/1000.0/numGames << " average per game)\n";
+      std::cout << "Player O init compute time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->initTimeO).count()/1000.0 << " (" << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->initTimeO).count()/1000.0/numGames << " average per game)\n";
+      std::cout << "Player X running compute time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0 << " (" << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0/numGames << " average per game)\n";
+      std::cout << "Player O running compute time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0 << " (" << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0/numGames << " average per game)\n";
       std::cout << "Winners (X-O-D): " << xWins << "-" << oWins << "-" << draws << "\n";
       delete cliHandler;
       delete playerX;
@@ -168,7 +168,7 @@ int main(int argc, char* argv[]) {
       optComputer->computeAll();
       endTime = std::chrono::high_resolution_clock::now();
       std::cout << "OptComputer total time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime-startTime).count()/1000.0 << "\n";
-      std::cout << "Total file I/O time (s): " << optComputer->dataHandler->ioTime/1000.0 << "\n";
+      std::cout << "Total file I/O time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(optComputer->dataHandler->ioTime).count()/1000.0 << "\n";
       delete memoryChecker;
       delete optComputer;
     } else if (prog == "opt-check") {

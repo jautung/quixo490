@@ -11,10 +11,10 @@ GamePlayHandler::GamePlayHandler(Player* initPlayerX, Player* initPlayerO, int i
   gameStateHandler = initGameStateHandler;
   graphicsHandler = initGraphicsHandler;
   silent = initSilent;
-  initTimeX = 0;
-  initTimeO = 0;
-  runTimeX = 0;
-  runTimeO = 0;
+  initTimeX = std::chrono::system_clock::duration::zero();
+  initTimeO = std::chrono::system_clock::duration::zero();
+  runTimeX = std::chrono::system_clock::duration::zero();
+  runTimeO = std::chrono::system_clock::duration::zero();
 }
 
 void GamePlayHandler::startGame(state_t initState) {
@@ -25,12 +25,12 @@ void GamePlayHandler::startGame(state_t initState) {
   auto startTimeX = std::chrono::high_resolution_clock::now();
   playerX->initLearn();
   auto endTimeX = std::chrono::high_resolution_clock::now();
-  initTimeX += std::chrono::duration_cast<std::chrono::milliseconds>(endTimeX-startTimeX).count();
+  initTimeX += endTimeX - startTimeX;
 
   auto startTimeO = std::chrono::high_resolution_clock::now();
   playerO->initLearn();
   auto endTimeO = std::chrono::high_resolution_clock::now();
-  initTimeO += std::chrono::duration_cast<std::chrono::milliseconds>(endTimeO-startTimeO).count();
+  initTimeO += endTimeO - startTimeO;
 }
 
 winner_t GamePlayHandler::playTurn() {
@@ -39,7 +39,7 @@ winner_t GamePlayHandler::playTurn() {
   auto startTimeX = std::chrono::high_resolution_clock::now();
   auto move = playerX->selectMove(state);
   auto endTimeX = std::chrono::high_resolution_clock::now();
-  runTimeX += std::chrono::duration_cast<std::chrono::milliseconds>(endTimeX-startTimeX).count();
+  runTimeX += endTimeX - startTimeX;
   if (!dynamic_cast<InteractivePlayer*>(playerX)) { // pause for all except interactive player
     std::this_thread::sleep_for(std::chrono::milliseconds(timePauseMs));
   }
@@ -63,7 +63,8 @@ winner_t GamePlayHandler::playTurn() {
   auto startTimeO = std::chrono::high_resolution_clock::now();
   move = playerO->selectMove(state, COLOR_FLIP);
   auto endTimeO = std::chrono::high_resolution_clock::now();
-  runTimeO += std::chrono::duration_cast<std::chrono::milliseconds>(endTimeO-startTimeO).count();
+  runTimeO += endTimeO - startTimeO
+  ;
   if (!dynamic_cast<InteractivePlayer*>(playerO)) { // pause for all except interactive player
     std::this_thread::sleep_for(std::chrono::milliseconds(timePauseMs));
   }

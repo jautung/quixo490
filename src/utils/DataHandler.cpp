@@ -14,7 +14,7 @@ namespace {
 }
 
 DataHandler::DataHandler() {
-  ioTime = 0;
+  ioTime = std::chrono::system_clock::duration::zero();
 }
 
 result_t DataHandler::getResult(std::vector<result4_t> &results, sindex_t stateIndex) {
@@ -48,7 +48,7 @@ void DataHandler::saveClass(std::vector<result4_t> &results, len_t len, nbit_t n
   dataFileStream.close();
 
   auto endTime = std::chrono::high_resolution_clock::now();
-  ioTime += std::chrono::duration_cast<std::chrono::milliseconds>(endTime-startTime).count();
+  ioTime += endTime - startTime;
 }
 
 bool DataHandler::existsClass(len_t len, nbit_t numX, nbit_t numO) {
@@ -79,7 +79,7 @@ std::vector<result4_t> DataHandler::loadClass(len_t len, nbit_t numX, nbit_t num
   dataFileStream.close();
 
   auto endTime = std::chrono::high_resolution_clock::now();
-  ioTime += std::chrono::duration_cast<std::chrono::milliseconds>(endTime-startTime).count();
+  ioTime += endTime - startTime;
 
   return results;
 }

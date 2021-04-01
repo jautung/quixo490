@@ -21,19 +21,19 @@ namespace {
 namespace {
   bool speedCheck;
 
-  long long initClassTime = 0;
-  long long checkTerminalsClassTime = 0;
-  long long parentLinkCacheClassTime = 0;
-  long long valueIterateClassTime = 0;
-  long long elimWinOrDrawClassTime = 0;
+  std::chrono::system_clock::duration initClassTime = std::chrono::system_clock::duration::zero();
+  std::chrono::system_clock::duration checkTerminalsClassTime = std::chrono::system_clock::duration::zero();
+  std::chrono::system_clock::duration parentLinkCacheClassTime = std::chrono::system_clock::duration::zero();
+  std::chrono::system_clock::duration valueIterateClassTime = std::chrono::system_clock::duration::zero();
+  std::chrono::system_clock::duration elimWinOrDrawClassTime = std::chrono::system_clock::duration::zero();
 
   int numThreads;
 
-  long long initClassPerThreadTaskTimes[MAX_THREADS] = { 0 };
-  long long checkTerminalsClassPerThreadTaskTimes[MAX_THREADS] = { 0 };
-  long long parentLinkCacheClassPerThreadTaskTimes[MAX_THREADS] = { 0 };
-  long long valueIterateClassPerThreadTaskTimes[MAX_THREADS] = { 0 };
-  long long elimWinOrDrawClassPerThreadTaskTimes[MAX_THREADS] = { 0 };
+  std::chrono::system_clock::duration initClassPerThreadTaskTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
+  std::chrono::system_clock::duration checkTerminalsClassPerThreadTaskTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
+  std::chrono::system_clock::duration parentLinkCacheClassPerThreadTaskTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
+  std::chrono::system_clock::duration valueIterateClassPerThreadTaskTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
+  std::chrono::system_clock::duration elimWinOrDrawClassPerThreadTaskTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
 
   int initClassPerThreadNumTasks[MAX_THREADS] = { 0 };
   int checkTerminalsClassPerThreadNumTasks[MAX_THREADS] = { 0 };
@@ -41,16 +41,16 @@ namespace {
   int valueIterateClassPerThreadNumTasks[MAX_THREADS] = { 0 };
   int elimWinOrDrawClassPerThreadNumTasks[MAX_THREADS] = { 0 };
 
-  long long checkTerminalsClassPerThreadInLockTimes[MAX_THREADS] = { 0 };
-  long long parentLinkCacheClassPerThreadInLockTimes[MAX_THREADS] = { 0 };
-  long long valueIterateClassPerThreadInLockTimes[MAX_THREADS] = { 0 };
+  std::chrono::system_clock::duration checkTerminalsClassPerThreadInLockTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
+  std::chrono::system_clock::duration parentLinkCacheClassPerThreadInLockTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
+  std::chrono::system_clock::duration valueIterateClassPerThreadInLockTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
 }
 
 #define START_TIMING(startTimeVar) {if (speedCheck) startTimeVar = std::chrono::high_resolution_clock::now();}
-#define END_TIMING(totalTimeVar, startTimeVar) {if (speedCheck) totalTimeVar += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now()-startTimeVar).count();}
+#define END_TIMING(totalTimeVar, startTimeVar) {if (speedCheck) totalTimeVar += std::chrono::high_resolution_clock::now() - startTimeVar;}
 #define END_TIMING_TASK(perThreadTaskTimesVar, perThreadNumTasksVar, startTimeVar) { \
   if (speedCheck) { \
-    perThreadTaskTimesVar[omp_get_thread_num()] += std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now()-startTimeVar).count(); \
+    perThreadTaskTimesVar[omp_get_thread_num()] += std::chrono::high_resolution_clock::now() - startTimeVar; \
     perThreadNumTasksVar[omp_get_thread_num()] += 1; \
   } \
 }
@@ -110,28 +110,28 @@ void OptComputer::computeAll() {
     }
   }
   if (speedCheck) {
-    std::cout << "Total initClass() time (s)            : " << initClassTime/1000000.0 << "\n";
+    std::cout << "Total initClass() time (s)            : " << std::chrono::duration_cast<std::chrono::milliseconds>(initClassTime).count()/1000.0 << "\n";
     for (int i = 0; i < numThreads; i++) {
-      std::cout << " ↳ Thread " << i << " total task time (s)       : " << initClassPerThreadTaskTimes[i]/1000000.0 << " (" << initClassPerThreadNumTasks[i] << " tasks)" << "\n";
+      std::cout << " ↳ Thread " << i << " total task time (s)       : " << std::chrono::duration_cast<std::chrono::milliseconds>(initClassPerThreadTaskTimes[i]).count()/1000.0 << " (" << initClassPerThreadNumTasks[i] << " tasks)" << "\n";
     }
-    std::cout << "Total checkTerminalsClass() time (s)  : " << checkTerminalsClassTime/1000000.0 << "\n";
+    std::cout << "Total checkTerminalsClass() time (s)  : " << std::chrono::duration_cast<std::chrono::milliseconds>(checkTerminalsClassTime).count()/1000.0 << "\n";
     for (int i = 0; i < numThreads; i++) {
-      std::cout << " ↳ Thread " << i << " total task time (s)       : " << checkTerminalsClassPerThreadTaskTimes[i]/1000000.0 << " (" << checkTerminalsClassPerThreadNumTasks[i] << " tasks)" << "\n";
-      std::cout << "   ↳ Total time in locks (s)          : " << checkTerminalsClassPerThreadInLockTimes[i]/1000000.0 << "\n";
+      std::cout << " ↳ Thread " << i << " total task time (s)       : " << std::chrono::duration_cast<std::chrono::milliseconds>(checkTerminalsClassPerThreadTaskTimes[i]).count()/1000.0 << " (" << checkTerminalsClassPerThreadNumTasks[i] << " tasks)" << "\n";
+      std::cout << "   ↳ Total time in locks (s)          : " << std::chrono::duration_cast<std::chrono::milliseconds>(checkTerminalsClassPerThreadInLockTimes[i]).count()/1000.0 << "\n";
     }
-    std::cout << "Total parentLinkCacheClass() time (s) : " << parentLinkCacheClassTime/1000000.0 << "\n";
+    std::cout << "Total parentLinkCacheClass() time (s) : " << std::chrono::duration_cast<std::chrono::milliseconds>(parentLinkCacheClassTime).count()/1000.0 << "\n";
     for (int i = 0; i < numThreads; i++) {
-      std::cout << " ↳ Thread " << i << " total task time (s)       : " << parentLinkCacheClassPerThreadTaskTimes[i]/1000000.0 << " (" << parentLinkCacheClassPerThreadNumTasks[i] << " tasks)" << "\n";
-      std::cout << "   ↳ Total time in locks (s)          : " << parentLinkCacheClassPerThreadInLockTimes[i]/1000000.0 << "\n";
+      std::cout << " ↳ Thread " << i << " total task time (s)       : " << std::chrono::duration_cast<std::chrono::milliseconds>(parentLinkCacheClassPerThreadTaskTimes[i]).count()/1000.0 << " (" << parentLinkCacheClassPerThreadNumTasks[i] << " tasks)" << "\n";
+      std::cout << "   ↳ Total time in locks (s)          : " << std::chrono::duration_cast<std::chrono::milliseconds>(parentLinkCacheClassPerThreadInLockTimes[i]).count()/1000.0 << "\n";
     }
-    std::cout << "Total valueIterateClass() time (s)    : " << valueIterateClassTime/1000000.0 << "\n";
+    std::cout << "Total valueIterateClass() time (s)    : " << std::chrono::duration_cast<std::chrono::milliseconds>(valueIterateClassTime).count()/1000.0 << "\n";
     for (int i = 0; i < numThreads; i++) {
-      std::cout << " ↳ Thread " << i << " total task time (s)       : " << valueIterateClassPerThreadTaskTimes[i]/1000000.0 << " (" << valueIterateClassPerThreadNumTasks[i] << " tasks)" << "\n";
-      std::cout << "   ↳ Total time in locks (s)          : " << valueIterateClassPerThreadInLockTimes[i]/1000000.0 << "\n";
+      std::cout << " ↳ Thread " << i << " total task time (s)       : " << std::chrono::duration_cast<std::chrono::milliseconds>(valueIterateClassPerThreadTaskTimes[i]).count()/1000.0 << " (" << valueIterateClassPerThreadNumTasks[i] << " tasks)" << "\n";
+      std::cout << "   ↳ Total time in locks (s)          : " << std::chrono::duration_cast<std::chrono::milliseconds>(valueIterateClassPerThreadInLockTimes[i]).count()/1000.0 << "\n";
     }
-    std::cout << "Total elimWinOrDrawClass() time (s)   : " << elimWinOrDrawClassTime/1000000.0 << "\n";
+    std::cout << "Total elimWinOrDrawClass() time (s)   : " << std::chrono::duration_cast<std::chrono::milliseconds>(elimWinOrDrawClassTime).count()/1000.0 << "\n";
     for (int i = 0; i < numThreads; i++) {
-      std::cout << " ↳ Thread " << i << " total task time (s)       : " << elimWinOrDrawClassPerThreadTaskTimes[i]/1000000.0 << " (" << elimWinOrDrawClassPerThreadNumTasks[i] << " tasks)" << "\n";
+      std::cout << " ↳ Thread " << i << " total task time (s)       : " << std::chrono::duration_cast<std::chrono::milliseconds>(elimWinOrDrawClassPerThreadTaskTimes[i]).count()/1000.0 << " (" << elimWinOrDrawClassPerThreadNumTasks[i] << " tasks)" << "\n";
     }
     std::cout << "\n";
   }

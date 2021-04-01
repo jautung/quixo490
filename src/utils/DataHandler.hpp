@@ -1,5 +1,6 @@
 #pragma once
 #include "../game/GameStateHandler.hpp"
+#include <chrono>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -21,7 +22,7 @@ typedef uint8_t result4_t; // block of 4 result_t's
 class DataHandler {
   public:
     DataHandler();
-    int ioTime;
+    std::chrono::system_clock::duration ioTime;
     result_t getResult(std::vector<result4_t> &results, sindex_t stateIndex);
     void setResult(std::vector<result4_t> &results, sindex_t stateIndex, result_t result);
     void saveClass(std::vector<result4_t> &results, len_t len, nbit_t numX, nbit_t numO);

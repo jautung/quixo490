@@ -2,6 +2,7 @@
 #include "../players/Players.hpp"
 #include "GameStateHandler.hpp"
 #include "GraphicsHandler.hpp"
+#include <chrono>
 #include <cstdint>
 
 enum winner_t : uint8_t {
@@ -17,10 +18,10 @@ class GamePlayHandler {
     winner_t playTurn();
     winner_t playNTurns(int nTurns);
     winner_t playTillEnd();
-    long long initTimeX;
-    long long initTimeO;
-    long long runTimeX;
-    long long runTimeO;
+    std::chrono::system_clock::duration initTimeX;
+    std::chrono::system_clock::duration initTimeO;
+    std::chrono::system_clock::duration runTimeX;
+    std::chrono::system_clock::duration runTimeO;
   private:
     Player* playerX;
     Player* playerO;
