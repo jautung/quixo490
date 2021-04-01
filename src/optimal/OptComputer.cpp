@@ -364,9 +364,15 @@ void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result
       START_TIMING(startTimePerThread);
 
       for (sindex_t stateIndex = stateIndexBase; stateIndex < numStates; stateIndex += blockTaskInterval) {
-        if (dataHandler->getResult(results, stateIndex) != RESULT_DRAW) { // no lock because outside any task
+        START_TIMING(startTimeLock);
+        omp_set_lock(&resultsLocks[(stateIndex/4) % numLocksPerArr]);
+        END_TIMING(valueIterateClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeLock);
+        START_TIMING(startTimeLock);
+        if (dataHandler->getResult(results, stateIndex) != RESULT_DRAW) {
           continue;
         }
+        omp_unset_lock(&resultsLocks[(stateIndex/4) % numLocksPerArr]);
+        END_TIMING(valueIterateClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeLock);
 
         auto state = indexToState(stateIndex, numX, numO);
         auto moves = gameStateHandler->allMoves(state);
