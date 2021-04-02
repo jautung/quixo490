@@ -18,7 +18,7 @@ export TIME='
 > filesystem I/O  : %I inputs, %O outputs'
 
 export OPT_COMPUTE_ERROR_CHECKING=0
-export OPT_COMPUTE_SPEED_CHECKING=1
+export OPT_COMPUTE_SPEED_CHECKING=0
 export OPT_COMPUTE_MEMORY_CHECKING=0
 
 clear
