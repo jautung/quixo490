@@ -9,35 +9,7 @@ namespace {
   nbit_t stateNBits = 64;
   nbit_t halfStateNBits = stateNBits/2;
   state_t halfStateMask = 0b11111111111111111111111111111111;
-  move_t dirFieldMask = 0b1111;
-  move_t moveFieldMask = 0b1111;
-  move_t moveKindFieldMask = 0b111;
-  move_t dirrevFieldMask = 0b1;
   move_t moveMainMask = 0b111111111111;
-}
-
-move_t MoveHandler::create(dir_t dir, bindex_t rowIndex, bindex_t colIndex, mkind_t moveKind, dirrev_t dirrev) {
-  return dir | rowIndex << 4 | colIndex << 8 | moveKind << 12 | dirrev << 15;
-}
-
-dir_t MoveHandler::getDir(move_t move) {
-  return (dir_t)(move & dirFieldMask);
-}
-
-bindex_t MoveHandler::getRow(move_t move) {
-  return (bindex_t)((move >> 4) & moveFieldMask);
-}
-
-bindex_t MoveHandler::getCol(move_t move) {
-  return (bindex_t)((move >> 8) & moveFieldMask);
-}
-
-mkind_t MoveHandler::getKind(move_t move) {
-  return (mkind_t)((move >> 12) & moveKindFieldMask);
-}
-
-dirrev_t MoveHandler::getDirRev(move_t move) {
-  return (dirrev_t)((move >> 15) & dirrevFieldMask);
 }
 
 void MoveHandler::print(move_t move) {

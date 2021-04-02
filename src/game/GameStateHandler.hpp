@@ -37,14 +37,31 @@ enum mkind_t : uint8_t {
 
 typedef uint16_t move_t;  // from LSB to MSB: 4 bits direction, 4 bits row index, 4 bits column index, 3 bits move kind, 1 bit direction reversal
 
+#define DIR_FIELD_MASK (0b1111)
+#define MOVE_FIELD_MASK (0b1111)
+#define MOVEKIND_FIELD_MASK (0b111)
+#define DIRREV_FIELD_MASK (0b1)
+
 class MoveHandler {
   public:
-    move_t create(dir_t dir, bindex_t rowIndex, bindex_t colIndex, mkind_t moveKind = MKIND_UNDEFINED, dirrev_t dirrev = DIR_NOREV);
-    dir_t getDir(move_t move);
-    bindex_t getRow(move_t move);
-    bindex_t getCol(move_t move);
-    mkind_t getKind(move_t move);
-    dirrev_t getDirRev(move_t move);
+    move_t create(dir_t dir, bindex_t rowIndex, bindex_t colIndex, mkind_t moveKind = MKIND_UNDEFINED, dirrev_t dirrev = DIR_NOREV) {
+      return dir | rowIndex << 4 | colIndex << 8 | moveKind << 12 | dirrev << 15;
+    }
+    dir_t getDir(move_t move) {
+      return (dir_t)(move & DIR_FIELD_MASK);
+    }
+    bindex_t getRow(move_t move) {
+      return (bindex_t)((move >> 4) & MOVE_FIELD_MASK);
+    }
+    bindex_t getCol(move_t move) {
+      return (bindex_t)((move >> 8) & MOVE_FIELD_MASK);
+    }
+    mkind_t getKind(move_t move) {
+      return (mkind_t)((move >> 12) & MOVEKIND_FIELD_MASK);
+    }
+    dirrev_t getDirRev(move_t move) {
+      return (dirrev_t)((move >> 15) & DIRREV_FIELD_MASK);
+    }
     void print(move_t move);
 };
 
