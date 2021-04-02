@@ -37,17 +37,22 @@ echo 'SPEED_CHECKING:' $OPT_COMPUTE_SPEED_CHECKING >> logs/$LOGFILE
 echo 'MEMORY_CHECKING:' $OPT_COMPUTE_MEMORY_CHECKING
 echo 'MEMORY_CHECKING:' $OPT_COMPUTE_MEMORY_CHECKING >> logs/$LOGFILE
 echo '' >> logs/$LOGFILE
-/usr/bin/time --output=logs/$LOGFILE --append ./bin/quixo $OPT_COMP_FLAGS >> logs/$LOGFILE
-echo
-echo '' >> logs/$LOGFILE
+if [ "$USER" == "jc3395" ]
+then
+    /usr/bin/time --output=logs/$LOGFILE --append ./bin/quixo $OPT_COMP_FLAGS >> logs/$LOGFILE
+    echo
+    echo '' >> logs/$LOGFILE
 
-echo '--- COMPUTING COMPLETE; TAILING LOGFILE (logs/'$LOGFILE') ---'
-tail -n 9 logs/$LOGFILE
-echo
+    echo '--- COMPUTING COMPLETE; TAILING LOGFILE (logs/'$LOGFILE') ---'
+    tail -n 9 logs/$LOGFILE
+    echo
 
-echo '--- COMPARING TO KNOWN CORRECT OUTPUT ---'
-diff -rq data/optimal /home/accts/jc3395/cs490/repoProd/data_frozen/$L
-diff -rq data/optimal /home/accts/jc3395/cs490/repoProd/data_frozen/$L >> logs/$LOGFILE
-echo
+    echo '--- COMPARING TO KNOWN CORRECT OUTPUT ---'
+    diff -rq data/optimal /home/accts/jc3395/cs490/repoProd/data_frozen/$L
+    diff -rq data/optimal /home/accts/jc3395/cs490/repoProd/data_frozen/$L >> logs/$LOGFILE
+    echo
+else
+    time ./bin/quixo $OPT_COMP_FLAGS
+fi
 
 echo '=== DONE ==='

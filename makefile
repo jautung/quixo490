@@ -11,7 +11,7 @@ TARGET := bin/quixo
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -g3 -Wall -std=c++11 -O3 -march=native -Xpreprocessor -fopenmp -Wno-unused-variable -DOPT_COMPUTE_ERROR_CHECKING=$$OPT_COMPUTE_ERROR_CHECKING -DOPT_COMPUTE_SPEED_CHECKING=$$OPT_COMPUTE_SPEED_CHECKING -DOPT_COMPUTE_MEMORY_CHECKING=$$OPT_COMPUTE_MEMORY_CHECKING
+CFLAGS := -g3 -Wall -std=c++11 -O3 -march=native -Xpreprocessor -fopenmp -Wno-unused-variable -Wno-unused-private-field -DOPT_COMPUTE_ERROR_CHECKING=$$OPT_COMPUTE_ERROR_CHECKING -DOPT_COMPUTE_SPEED_CHECKING=$$OPT_COMPUTE_SPEED_CHECKING -DOPT_COMPUTE_MEMORY_CHECKING=$$OPT_COMPUTE_MEMORY_CHECKING
 INC := -I include -I /usr/local/include -I /usr/local/opt/libomp/include
 
 ifeq ($(USER), jc3395)
