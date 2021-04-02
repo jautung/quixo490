@@ -209,7 +209,7 @@ void OptComputer::computeAll(nbit_t numUsedComputeTill) {
   #endif
 }
 
-sindex_t OptComputer::numStatesClass(nbit_t numA, nbit_t numB) {
+inline sindex_t OptComputer::numStatesClass(nbit_t numA, nbit_t numB) {
   std::chrono::time_point<std::chrono::high_resolution_clock> startTimeBuf;
   START_TIMING(startTimeBuf);
   sindex_t numStates = (sindex_t)ncrCalculator->ncr(numTiles, numA) * (sindex_t)ncrCalculator->ncr(numTiles-numA, numB);
