@@ -1587,8 +1587,11 @@
 
 ## To Do / Next Steps
 0. **Improve speed of optimal computation.**
-   - `gprof`
-   - `valgrind callgrind`
+   - Collating multiple reads or writes for one lock to reduce number of locks/unlocks
+   - Maybe go back to reader-writer once that^ is done
+   - Try pthreads
+   - Optimize `filterOState` by caching 8-bit numbers from (`oState`, `xState`) to (`oFilteredState`, `numBits`), then concatenate later
+   - Why is `filterOState` taking longer than `stateToIndex0`?
 1. **Analysis/improvement of MCTS/Q-learning.**
    - Sanity check that MCTS/Q-learning is doing the right thing. Use them on another game and seeing whether it works (e.g. tic tac toe).
    - Get other features/heuristics.
