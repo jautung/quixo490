@@ -11,10 +11,10 @@ GamePlayHandler::GamePlayHandler(Player* initPlayerX, Player* initPlayerO, int i
   gameStateHandler = initGameStateHandler;
   graphicsHandler = initGraphicsHandler;
   silent = initSilent;
-  initTimeX = std::chrono::system_clock::duration::zero();
-  initTimeO = std::chrono::system_clock::duration::zero();
-  runTimeX = std::chrono::system_clock::duration::zero();
-  runTimeO = std::chrono::system_clock::duration::zero();
+  initTimeX = std::chrono::high_resolution_clock::duration::zero();
+  initTimeO = std::chrono::high_resolution_clock::duration::zero();
+  runTimeX = std::chrono::high_resolution_clock::duration::zero();
+  runTimeO = std::chrono::high_resolution_clock::duration::zero();
 }
 
 void GamePlayHandler::startGame(state_t initState) {

@@ -14,7 +14,7 @@ namespace {
 }
 
 DataHandler::DataHandler() {
-  ioTime = std::chrono::system_clock::duration::zero();
+  ioTime = std::chrono::high_resolution_clock::duration::zero();
 }
 
 result_t DataHandler::getResult(std::vector<result4_t> &results, sindex_t stateIndex) {

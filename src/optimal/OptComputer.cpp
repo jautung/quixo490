@@ -20,17 +20,17 @@ namespace {
 #define BLOCK_TASK_FACTOR (10) // subdivide work into BLOCK_TASK_FACTOR * numThreads tasks, then leave it to OpenMP to allocate from there (too small means large task overhead; too large means load imbalance)
 
 namespace {
-  std::chrono::system_clock::duration initClassTime = std::chrono::system_clock::duration::zero();
-  std::chrono::system_clock::duration checkTerminalsClassTime = std::chrono::system_clock::duration::zero();
-  std::chrono::system_clock::duration parentLinkCacheClassTime = std::chrono::system_clock::duration::zero();
-  std::chrono::system_clock::duration valueIterateClassTime = std::chrono::system_clock::duration::zero();
-  std::chrono::system_clock::duration elimWinOrDrawClassTime = std::chrono::system_clock::duration::zero();
+  std::chrono::high_resolution_clock::duration initClassTime = std::chrono::high_resolution_clock::duration::zero();
+  std::chrono::high_resolution_clock::duration checkTerminalsClassTime = std::chrono::high_resolution_clock::duration::zero();
+  std::chrono::high_resolution_clock::duration parentLinkCacheClassTime = std::chrono::high_resolution_clock::duration::zero();
+  std::chrono::high_resolution_clock::duration valueIterateClassTime = std::chrono::high_resolution_clock::duration::zero();
+  std::chrono::high_resolution_clock::duration elimWinOrDrawClassTime = std::chrono::high_resolution_clock::duration::zero();
 
-  std::chrono::system_clock::duration initClassPerThreadTaskTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
-  std::chrono::system_clock::duration checkTerminalsClassPerThreadTaskTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
-  std::chrono::system_clock::duration parentLinkCacheClassPerThreadTaskTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
-  std::chrono::system_clock::duration valueIterateClassPerThreadTaskTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
-  std::chrono::system_clock::duration elimWinOrDrawClassPerThreadTaskTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
+  std::chrono::high_resolution_clock::duration initClassPerThreadTaskTimes[MAX_THREADS] = { std::chrono::high_resolution_clock::duration::zero() };
+  std::chrono::high_resolution_clock::duration checkTerminalsClassPerThreadTaskTimes[MAX_THREADS] = { std::chrono::high_resolution_clock::duration::zero() };
+  std::chrono::high_resolution_clock::duration parentLinkCacheClassPerThreadTaskTimes[MAX_THREADS] = { std::chrono::high_resolution_clock::duration::zero() };
+  std::chrono::high_resolution_clock::duration valueIterateClassPerThreadTaskTimes[MAX_THREADS] = { std::chrono::high_resolution_clock::duration::zero() };
+  std::chrono::high_resolution_clock::duration elimWinOrDrawClassPerThreadTaskTimes[MAX_THREADS] = { std::chrono::high_resolution_clock::duration::zero() };
 
   int initClassPerThreadNumTasks[MAX_THREADS] = { 0 };
   int checkTerminalsClassPerThreadNumTasks[MAX_THREADS] = { 0 };
@@ -38,21 +38,21 @@ namespace {
   int valueIterateClassPerThreadNumTasks[MAX_THREADS] = { 0 };
   int elimWinOrDrawClassPerThreadNumTasks[MAX_THREADS] = { 0 };
 
-  std::chrono::system_clock::duration checkTerminalsClassPerThreadWaitLockTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
-  std::chrono::system_clock::duration parentLinkCacheClassPerThreadWaitLockTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
-  std::chrono::system_clock::duration valueIterateClassPerThreadWaitLockTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
+  std::chrono::high_resolution_clock::duration checkTerminalsClassPerThreadWaitLockTimes[MAX_THREADS] = { std::chrono::high_resolution_clock::duration::zero() };
+  std::chrono::high_resolution_clock::duration parentLinkCacheClassPerThreadWaitLockTimes[MAX_THREADS] = { std::chrono::high_resolution_clock::duration::zero() };
+  std::chrono::high_resolution_clock::duration valueIterateClassPerThreadWaitLockTimes[MAX_THREADS] = { std::chrono::high_resolution_clock::duration::zero() };
 
-  std::chrono::system_clock::duration checkTerminalsClassPerThreadInCritSecTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
-  std::chrono::system_clock::duration parentLinkCacheClassPerThreadInCritSecTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
-  std::chrono::system_clock::duration valueIterateClassPerThreadInCritSecTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
+  std::chrono::high_resolution_clock::duration checkTerminalsClassPerThreadInCritSecTimes[MAX_THREADS] = { std::chrono::high_resolution_clock::duration::zero() };
+  std::chrono::high_resolution_clock::duration parentLinkCacheClassPerThreadInCritSecTimes[MAX_THREADS] = { std::chrono::high_resolution_clock::duration::zero() };
+  std::chrono::high_resolution_clock::duration valueIterateClassPerThreadInCritSecTimes[MAX_THREADS] = { std::chrono::high_resolution_clock::duration::zero() };
 
-  std::chrono::system_clock::duration numStatesClassPerThreadTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
-  std::chrono::system_clock::duration indexToStatePerThreadTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
-  std::chrono::system_clock::duration stateToIndex0PerThreadTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
-  std::chrono::system_clock::duration stateToIndex1PerThreadTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
-  std::chrono::system_clock::duration stateToIndex2PerThreadTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
-  std::chrono::system_clock::duration unfilterOStatePerThreadTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
-  std::chrono::system_clock::duration filterOStatePerThreadTimes[MAX_THREADS] = { std::chrono::system_clock::duration::zero() };
+  std::chrono::high_resolution_clock::duration numStatesClassPerThreadTimes[MAX_THREADS] = { std::chrono::high_resolution_clock::duration::zero() };
+  std::chrono::high_resolution_clock::duration indexToStatePerThreadTimes[MAX_THREADS] = { std::chrono::high_resolution_clock::duration::zero() };
+  std::chrono::high_resolution_clock::duration stateToIndex0PerThreadTimes[MAX_THREADS] = { std::chrono::high_resolution_clock::duration::zero() };
+  std::chrono::high_resolution_clock::duration stateToIndex1PerThreadTimes[MAX_THREADS] = { std::chrono::high_resolution_clock::duration::zero() };
+  std::chrono::high_resolution_clock::duration stateToIndex2PerThreadTimes[MAX_THREADS] = { std::chrono::high_resolution_clock::duration::zero() };
+  std::chrono::high_resolution_clock::duration unfilterOStatePerThreadTimes[MAX_THREADS] = { std::chrono::high_resolution_clock::duration::zero() };
+  std::chrono::high_resolution_clock::duration filterOStatePerThreadTimes[MAX_THREADS] = { std::chrono::high_resolution_clock::duration::zero() };
 }
 
 #if OPT_COMPUTE_SPEED_CHECKING == 1
