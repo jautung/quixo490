@@ -1583,6 +1583,7 @@
        ↳ Thread 14 total time (s)          : 26.249
        ↳ Thread 15 total time (s)          : 26.452
     ```
+    - Locks still seem slow, tried implementing reader-writer lock using [Raynal's method](https://en.wikipedia.org/wiki/Readers%E2%80%93writer_lock); speed decreased significantly (from 3:24.49 to 4:46.10), so code was reverted to the simple lock. I suppose the overhead of using two locks per lock is too high...
 
 ## To Do / Next Steps
 0. **Improve speed of optimal computation.**
