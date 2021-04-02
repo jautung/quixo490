@@ -95,7 +95,7 @@ int main(int argc, char* argv[]) {
       std::cerr << "warning: " << "number of threads requested (" << numThreads << ") is not positive; automatically reverting to default of 1 thread\n";
       numThreads = 1;
     } else if (numThreads > 16) {
-      std::cerr << "warning: " << "number of threads requested (" << numThreads << ") is larger than 16); automatically reverting to default of 1 thread\n";
+      std::cerr << "warning: " << "number of threads requested (" << numThreads << ") is larger than 16; automatically reverting to default of 1 thread\n";
       numThreads = 1;
     } else if (numThreads > omp_get_num_procs()) {
       std::cerr << "warning: " << "number of threads requested (" << numThreads << ") is larger than the number of processors available (" << omp_get_num_procs() << "); proceed with caution\n";
