@@ -15,7 +15,8 @@
   - For MacOS, this can be downloaded from the above link, and the `*/Eigen` folder can be copied to `./include` (which is `.gitignore`-ed).
 
 ### Usage
-- `make && ./bin/quixo -h` brings up the possible usages.
+- Initializing: `export OPT_COMPUTE_ERROR_CHECKING=0 ; export OPT_COMPUTE_SPEED_CHECKING=0 ; export OPT_COMPUTE_MEMORY_CHECKING=0 ; make`.
+- `./bin/quixo -h` brings up the possible usages.
 - Some common usages are included in `./scripts/`.
 - Some other usages:
   - Pre-computing optimal moves:
