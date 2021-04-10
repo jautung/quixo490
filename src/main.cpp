@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
     TCLAP::ValueArg<int> lenArg("l", "len", "For `play`, `test`, `opt-compute`, `opt-check` or `opt-analyze` program: number of tiles per side", false, 5, "integer", cmd);
     TCLAP::ValueArg<std::string> playerXTypeArg("X", "playerX", "For `play` or `test` program: player X type (`random`, `interact`, `opt`, `heuris-simple`, `mcts*,*`, or `q-learn*,*`)", false, "random", "string", cmd);
     TCLAP::ValueArg<std::string> playerOTypeArg("O", "playerO", "For `play` or `test` program: player O type (`random`, `interact`, `opt`, `heuris-simple`, `mcts*,*`, or `q-learn*,*`)", false, "random", "string", cmd);
-    TCLAP::ValueArg<int> numStepsArg("n", "numsteps", "For `play` or `test` program: number of steps to run per game (<=0: till the end)", false, 0, "integer", cmd);
+    TCLAP::ValueArg<int> nTurnsArg("n", "numturns", "For `play` or `test` program: turn limit per game (<=0: till the end)", false, 0, "integer", cmd);
     TCLAP::SwitchArg initStateArg("i", "initstate", "For `play` program: whether to set an initial state of the game board", cmd);
     TCLAP::ValueArg<int> timePauseMsArg("t", "timepause", "For `play` program: time (in milliseconds) to pause between steps", false, 0, "integer", cmd);
     TCLAP::ValueArg<int> graphicsResArg("g", "graphicsres", "For `play` or `opt-check` program: graphical output screen resolution (<0: no graphics)", false, 0, "integer", cmd);
@@ -86,7 +86,7 @@ int main(int argc, char* argv[]) {
     }
     auto playerXType = playerXTypeArg.getValue();
     auto playerOType = playerOTypeArg.getValue();
-    auto numSteps = numStepsArg.getValue();
+    auto nTurns = nTurnsArg.getValue();
     auto initState = initStateArg.getValue();
     auto timePauseMs = timePauseMsArg.getValue();
     auto graphicsRes = graphicsResArg.getValue();
@@ -116,13 +116,14 @@ int main(int argc, char* argv[]) {
       auto playerO = getPlayer(playerOType, gameStateHandler, cliHandler, graphicsHandler);
       auto gamePlayHandler = new GamePlayHandler(playerX, playerO, timePauseMs, gameStateHandler, graphicsHandler);
       gamePlayHandler->startGame(initState ? getStateInteractive(graphicsHandler) : 0b0);
-      auto winner = numSteps <= 0 ? gamePlayHandler->playTillEnd() : gamePlayHandler->playNTurns(numSteps);
+      int nTurnsPlayed;
+      auto winner = nTurns <= 0 ? gamePlayHandler->playTillEnd(nTurnsPlayed) : gamePlayHandler->playNTurns(nTurns, nTurnsPlayed);
       if (winner == WINNER_X) {
-        std::cout << "X Wins!\n";
+        std::cout << "X Wins (after " << nTurnsPlayed << " turns)!\n";
       } else if (winner == WINNER_O) {
-        std::cout << "O Wins!\n";
+        std::cout << "O Wins (after " << nTurnsPlayed << " turns)!\n";
       } else if (winner == WINNER_UNKNOWN) {
-        std::cout << "No Winner Yet.\n";
+        std::cout << "No Winner Yet (after " << nTurnsPlayed << " turns).\n";
       }
       delete cliHandler;
       delete graphicsHandler;
@@ -145,16 +146,17 @@ int main(int argc, char* argv[]) {
       int draws = 0;
       for (int i = 0; i < numGames; i++) {
         gamePlayHandler->startGame();
-        auto winner = numSteps <= 0 ? gamePlayHandler->playTillEnd() : gamePlayHandler->playNTurns(numSteps);
+        int nTurnsPlayed;
+        auto winner = nTurns <= 0 ? gamePlayHandler->playTillEnd(nTurnsPlayed) : gamePlayHandler->playNTurns(nTurns, nTurnsPlayed);
         if (winner == WINNER_X) {
           xWins += 1;
-          std::cout << i << ": X Wins!\n";
+          std::cout << i << ": X Wins (after " << nTurnsPlayed << " turns)!\n";
         } else if (winner == WINNER_O) {
           oWins += 1;
-          std::cout << i << ": O Wins!\n";
+          std::cout << i << ": O Wins (after " << nTurnsPlayed << " turns)!\n";
         } else if (winner == WINNER_UNKNOWN) {
           draws += 1;
-          std::cout << i << ": Draw!\n";
+          std::cout << i << ": Draw (after " << nTurnsPlayed << " turns)!\n";
         }
       }
       std::cout << "\nResult summary for Player X (" << playerXType << ") vs. Player O (" << playerOType << ") on " << len << "X" << len << " Quixo\n";
@@ -211,8 +213,8 @@ int main(int argc, char* argv[]) {
 
     else if (prog == "opt-analyze") {
       auto optAnalyzer = new OptAnalyzer(gameStateHandler);
-      optAnalyzer->analyzeNumWinLossDrawStates(); // full counts of win, loss, and draw states
-      // optAnalyzer->analyzeNumWinLossDrawStates(true); // counts of win, loss, and draw states for adjacent numbers of Xs and Os (what the paper does)
+      // optAnalyzer->analyzeNumWinLossDrawStates(); // full counts of win, loss, and draw states
+      optAnalyzer->analyzeNumWinLossDrawStates(true); // counts of win, loss, and draw states for adjacent numbers of Xs and Os (what the paper does)
       delete optAnalyzer;
     }
 

@@ -86,10 +86,11 @@ winner_t GamePlayHandler::playTurn() {
   return WINNER_UNKNOWN;
 }
 
-winner_t GamePlayHandler::playNTurns(int nTurns) {
+winner_t GamePlayHandler::playNTurns(int nTurns, int& nTurnsPlayed) {
   for (int i = 0; i < nTurns; i++) {
     auto winner = playTurn();
     if (winner == WINNER_X || winner == WINNER_O) {
+      nTurnsPlayed = i;
       return winner;
     }
   }
@@ -97,10 +98,11 @@ winner_t GamePlayHandler::playNTurns(int nTurns) {
   return WINNER_UNKNOWN;
 }
 
-winner_t GamePlayHandler::playTillEnd() {
-  while (true) {
+winner_t GamePlayHandler::playTillEnd(int& nTurnsPlayed) {
+  for (int i = 0; i < INT_MAX; i++) {
     auto winner = playTurn();
     if (winner == WINNER_X || winner == WINNER_O) {
+      nTurnsPlayed = i;
       return winner;
     }
   }

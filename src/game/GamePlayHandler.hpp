@@ -16,8 +16,8 @@ class GamePlayHandler {
     GamePlayHandler(Player* initPlayerX, Player* initPlayerO, int initTimePauseMs, GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler = NULL, bool initSilent = false);
     void startGame(state_t initState = 0b0);
     winner_t playTurn();
-    winner_t playNTurns(int nTurns);
-    winner_t playTillEnd();
+    winner_t playNTurns(int nTurns, int& nTurnsPlayed);
+    winner_t playTillEnd(int& nTurnsPlayed);
     std::chrono::high_resolution_clock::duration initTimeX;
     std::chrono::high_resolution_clock::duration initTimeO;
     std::chrono::high_resolution_clock::duration runTimeX;

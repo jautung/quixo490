@@ -24,7 +24,7 @@ void OptAnalyzer::analyzeNumWinLossDrawStates(bool adjacentXOs) {
   printf("(X,O)\tWins\tLosses\tDraws\tTotal\t%% Wins\t%% Losses\t%% Draws\n");
   for (nbit_t numX = 0; numX <= len*len; numX++) {
     for (nbit_t numO = 0; numO <= len*len - numX; numO++) {
-      if (numO - numX > 1 || numO < numX) continue;
+      if (adjacentXOs && (numO - numX > 1 || numO < numX)) continue;
       auto results = dataHandler->loadClass(len, numX, numO);
       sindex_t wins=0, losses=0, draws=0;
       sindex_t numStates = optComputer->numStatesClass(numX, numO);
