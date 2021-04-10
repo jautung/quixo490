@@ -1,6 +1,7 @@
 #include "game/GamePlayHandler.hpp"
 #include "game/GameStateHandler.hpp"
 #include "game/GraphicsHandler.hpp"
+#include "optimal/OptAnalyzer.hpp"
 #include "optimal/OptComputer.hpp"
 #include "players/Players.hpp"
 #include "utils/CliHandler.hpp"
@@ -64,8 +65,8 @@ int main(int argc, char* argv[]) {
   try {
     TCLAP::CmdLine cmd("Quixo Project");
 
-    TCLAP::ValueArg<std::string> progArg("p", "program", "Program to run (`play`, `test`, `opt-compute*`, `opt-check`)", false, "play", "string", cmd);
-    TCLAP::ValueArg<int> lenArg("l", "len", "For `play`, `test`, `opt-compute` or `opt-check` program: number of tiles per side", false, 5, "integer", cmd);
+    TCLAP::ValueArg<std::string> progArg("p", "program", "Program to run (`play`, `test`, `opt-compute*`, `opt-check`, or `opt-analyze`)", false, "play", "string", cmd);
+    TCLAP::ValueArg<int> lenArg("l", "len", "For `play`, `test`, `opt-compute`, `opt-check` or `opt-analyze` program: number of tiles per side", false, 5, "integer", cmd);
     TCLAP::ValueArg<std::string> playerXTypeArg("X", "playerX", "For `play` or `test` program: player X type (`random`, `interact`, `opt`, `heuris-simple`, `mcts*,*`, or `q-learn*,*`)", false, "random", "string", cmd);
     TCLAP::ValueArg<std::string> playerOTypeArg("O", "playerO", "For `play` or `test` program: player O type (`random`, `interact`, `opt`, `heuris-simple`, `mcts*,*`, or `q-learn*,*`)", false, "random", "string", cmd);
     TCLAP::ValueArg<int> numStepsArg("n", "numsteps", "For `play` or `test` program: number of steps to run per game (<=0: till the end)", false, 0, "integer", cmd);
@@ -181,7 +182,7 @@ int main(int argc, char* argv[]) {
         numUsedComputeTill = cliHandler->readNonNegIntCliParam(cliParams[0], "opt-compute numUsedComputeTill");
       }
       auto startTime = std::chrono::high_resolution_clock::now();
-      auto optComputer = new OptComputer(len*len, gameStateHandler, numThreads, numLocksPerArr);
+      auto optComputer = new OptComputer(gameStateHandler, numThreads, numLocksPerArr);
       auto endTime = std::chrono::high_resolution_clock::now();
       std::cout << "OptComputer initialization time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime-startTime).count()/1000.0 << "\n";
       optComputer->computeAll(numUsedComputeTill);
@@ -206,6 +207,12 @@ int main(int argc, char* argv[]) {
       }
       delete graphicsHandler;
       delete optimalPlayer;
+    }
+
+    else if (prog == "opt-analyze") {
+      auto optAnalyzer = new OptAnalyzer(gameStateHandler);
+      optAnalyzer->analyzeNumWinLossDrawStates();
+      delete optAnalyzer;
     }
 
     else {

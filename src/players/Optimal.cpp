@@ -10,7 +10,7 @@ extern std::mt19937 rng;
 
 OptimalPlayer::OptimalPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler) : Player(initGameStateHandler, initGraphicsHandler) {
   auto len = gameStateHandler->len;
-  optComputer = new OptComputer(len*len, gameStateHandler);
+  optComputer = new OptComputer(gameStateHandler);
   dataHandler = new DataHandler();
 }
 

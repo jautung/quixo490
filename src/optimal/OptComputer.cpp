@@ -68,9 +68,9 @@ namespace {
   #define END_TIMING_TASK(perThreadTaskTimesVar, perThreadNumTasksVar, startTimeVar) { }
 #endif
 
-OptComputer::OptComputer(nbit_t initNumTiles, GameStateHandler* initGameStateHandler, int initNumThreads, int initNumLocksPerArr) {
-  numTiles = initNumTiles;
+OptComputer::OptComputer(GameStateHandler* initGameStateHandler, int initNumThreads, int initNumLocksPerArr) {
   gameStateHandler = initGameStateHandler;
+  numTiles = (gameStateHandler->len) * (gameStateHandler->len);
   numThreads = initNumThreads;
   numLocksPerArr = initNumLocksPerArr;
 

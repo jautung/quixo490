@@ -30,6 +30,10 @@
     - `./bin/quixo -p opt-check -l 3 -g 800`: checks a one state on a 3X3 board (i.e. whether it is a win, lose, or draw state); state is interactively provided.
     - `./bin/quixo -p opt-check -l 4 -g 800`: checks a one state on a 4X4 board.
     - `./bin/quixo -p opt-check -l 4 -g 800`: checks a one state on a 5X5 board.
+  - Aggregate statistics for optimal:
+    - `./bin/quixo -p opt-analyze -l 3`: prints some aggregate statistics about the optimal results on a 3X3 board.
+    - `./bin/quixo -p opt-analyze -l 4`: prints some aggregate statistics about the optimal results on a 4X4 board.
+    - `./bin/quixo -p opt-analyze -l 5`: prints some aggregate statistics about the optimal results on a 5X5 board.
   - Single games (default):
     - `./bin/quixo -g 800 -X interact`: play interactively as X against a random player O (default) on a 5X5 board (default).
     - `./bin/quixo -g 800 -l 3 -X interact`: play interactively as X against a random player O (default) on a 3X3 board.
