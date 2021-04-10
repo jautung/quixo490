@@ -27,9 +27,9 @@
     - `./bin/quixo -p opt-compute5 -l 4`: computes optimal moves for a 4X4 board, for number of used tiles decreasing from the maximum (i.e. 16), and _stopping_ at 5.
     - `./bin/quixo -p opt-compute -l 5 -T 16 -L 1000`: computes optimal moves for a 5X5 board, using 16 threads, and 1000 thread-locks per result array.
   - Single evaluations for optimal:
-    - `./bin/quixo -p opt-check -l 3 -g 800`: checks a one state on a 3X3 board (i.e. whether it is a win, lose, or draw state); state is interactively provided.
-    - `./bin/quixo -p opt-check -l 4 -g 800`: checks a one state on a 4X4 board.
-    - `./bin/quixo -p opt-check -l 4 -g 800`: checks a one state on a 5X5 board.
+    - `./bin/quixo -p opt-check -l 3 -g 800`: checks one state on a 3X3 board (i.e. whether it is a win, lose, or draw state); state is interactively provided.
+    - `./bin/quixo -p opt-check -l 4 -g 800`: checks one state on a 4X4 board.
+    - `./bin/quixo -p opt-check -l 5 -g 800`: checks one state on a 5X5 board.
   - Aggregate statistics for optimal:
     - `./bin/quixo -p opt-analyze -l 3`: prints to `stdout` some aggregate statistics about the optimal results on a 3X3 board.
     - `./bin/quixo -p opt-analyze -l 4`: prints to `stdout` some aggregate statistics about the optimal results on a 4X4 board.
