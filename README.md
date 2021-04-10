@@ -69,16 +69,16 @@
 - Apr 1, 2021: More speed profiling for 4X4 optimal computation.
   - Locks still seem slow, tried implementing reader-writer lock using [Raynal's method](https://en.wikipedia.org/wiki/Readers%E2%80%93writer_lock); speed decreased significantly (from 3:24.49 to 4:46.10), so code was reverted to the simple lock. I suppose the overhead of using two locks per lock is too high...
 - Apr 6, 2021: 5X5 Quixo finished computing!
-- Apr 9, 2021: Some data and tables are already [here](https://docs.google.com/spreadsheets/d/1QHTtbHnen4D5Z1y54Qb_VpXX2rnCNzyErshk_EfAKto/edit).
+- Apr 9, 2021:
+  - Some data and tables are already [here](https://docs.google.com/spreadsheets/d/1QHTtbHnen4D5Z1y54Qb_VpXX2rnCNzyErshk_EfAKto/edit).
+  - Looking at distribution of game lengths to determine '-n' (for both q-learn against opt and mcts against opt), it seems that '-n 100' should be quite sufficient...
 
 ## To Do / Next Steps
 1. **Analysis/improvement of MCTS/Q-learning.**
-   - Sanity check that MCTS/Q-learning is doing the right thing. Use them on another game and seeing whether it works (e.g. tic tac toe).
+   - Check how often states are reused for MCTS. Do some trials.
    - Get other features/heuristics.
-   - Look at distribution of game lengths to determine '-n'.
-   - Getting Q-learning to learn by playing against MCTS/optimal.
    - Test Q-learning and MCTS on positions that are a couple moves in, so that Q-learning needs to only train once at `initState=0b0` and then evaluated from different positions.
-   - Check how often states are reused for MCTS.
+   - Getting Q-learning to learn by playing against MCTS/optimal.
 2. **Evaluate the playing agents.** Against optimal player primarily.
 3. **Evaluate depth in Quixo.** Referencing '[Depth in Strategic Games](https://www.semanticscholar.org/paper/Depth-in-Strategic-Games-Lantz-Isaksen/4dedc67aa2191731bf8cf1822d42cea290e73073)', compare the learning rates of non-optimal playing agents between 3X3, 4X4, and 5X5 Quixo. Graph where x-axis is training time or number of training iterations, and y-axis is number of steps to lose OR how much randomization needs to be injected to optimal to make it lose OR percentage of correct moves.
 4. _(Stretch)_ **Extensions of Quixo.** As mentioned in '[Quixo Is Solved](https://arxiv.org/abs/2007.15895)', there are extensions of Quixo (such as winning length being different from board length). These can be investigated if time permits.

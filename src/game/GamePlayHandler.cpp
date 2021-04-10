@@ -95,6 +95,7 @@ winner_t GamePlayHandler::playNTurns(int nTurns, int& nTurnsPlayed) {
     }
   }
   displayGameState();
+  nTurnsPlayed = nTurns;
   return WINNER_UNKNOWN;
 }
 
