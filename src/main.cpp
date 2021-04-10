@@ -211,7 +211,8 @@ int main(int argc, char* argv[]) {
 
     else if (prog == "opt-analyze") {
       auto optAnalyzer = new OptAnalyzer(gameStateHandler);
-      optAnalyzer->analyzeNumWinLossDrawStates();
+      optAnalyzer->analyzeNumWinLossDrawStates(); // full counts of win, loss, and draw states
+      // optAnalyzer->analyzeNumWinLossDrawStates(true); // counts of win, loss, and draw states for adjacent numbers of Xs and Os (what the paper does)
       delete optAnalyzer;
     }
 

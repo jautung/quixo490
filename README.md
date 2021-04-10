@@ -31,9 +31,9 @@
     - `./bin/quixo -p opt-check -l 4 -g 800`: checks a one state on a 4X4 board.
     - `./bin/quixo -p opt-check -l 4 -g 800`: checks a one state on a 5X5 board.
   - Aggregate statistics for optimal:
-    - `./bin/quixo -p opt-analyze -l 3`: prints some aggregate statistics about the optimal results on a 3X3 board.
-    - `./bin/quixo -p opt-analyze -l 4`: prints some aggregate statistics about the optimal results on a 4X4 board.
-    - `./bin/quixo -p opt-analyze -l 5`: prints some aggregate statistics about the optimal results on a 5X5 board.
+    - `./bin/quixo -p opt-analyze -l 3`: prints to `stdout` some aggregate statistics about the optimal results on a 3X3 board.
+    - `./bin/quixo -p opt-analyze -l 4`: prints to `stdout` some aggregate statistics about the optimal results on a 4X4 board.
+    - `./bin/quixo -p opt-analyze -l 5`: prints to `stdout` some aggregate statistics about the optimal results on a 5X5 board.
   - Single games (default):
     - `./bin/quixo -g 800 -X interact`: play interactively as X against a random player O (default) on a 5X5 board (default).
     - `./bin/quixo -g 800 -l 3 -X interact`: play interactively as X against a random player O (default) on a 3X3 board.
@@ -68,6 +68,8 @@
   - I think the takeaway here is that the locks are far too coarse-grained; waiting for locks takes far too long. We need finer locks.
 - Apr 1, 2021: More speed profiling for 4X4 optimal computation.
   - Locks still seem slow, tried implementing reader-writer lock using [Raynal's method](https://en.wikipedia.org/wiki/Readers%E2%80%93writer_lock); speed decreased significantly (from 3:24.49 to 4:46.10), so code was reverted to the simple lock. I suppose the overhead of using two locks per lock is too high...
+- Apr 6, 2021: 5X5 Quixo finished computing!
+- Apr 9, 2021: Some data and tables are already [here](https://docs.google.com/spreadsheets/d/1QHTtbHnen4D5Z1y54Qb_VpXX2rnCNzyErshk_EfAKto/edit).
 
 ## To Do / Next Steps
 1. **Analysis/improvement of MCTS/Q-learning.**
