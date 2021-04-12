@@ -46,7 +46,8 @@
     - `./bin/quixo -p test -l 3 -N 1000 -O opt`: test optimal player O against random player X (default) for 1000 games on a 3X3 board.
     - `./bin/quixo -p test -l 4 -N 1000 -X opt -n 1000`: test optimal player X against random player O (default) for 1000 games on a 4X4 board, with a turn limit of 1000 per game.
     - `./bin/quixo -p test -l 4 -N 100 -X heuris-simple -O opt -n 1000`: test simple heuristic player X against optimal player O for 1000 games on a 4X4 board, with a turn limit of 1000 per game.
-    - `./bin/quixo -p test -l 4 -N 100 -X mcts0,200 -O opt -n 1000`: test MCTS player X with 0 initial training iterations and 200 training iterations per move against optimal player O for 100 games on a 4X4 board, with a turn limit of 1000 per game.
+    - `./bin/quixo -p test -l 4 -N 100 -X mcts0,200 -O opt -n 1000`: test MCTS player X with 0 initial training iterations and 200 training iterations per move against optimal player O for 100 games on a 4X4 board, with a turn limit of 1000 per game; `export MCTS_CACHE_HIT_CHECK=1` if desired.
+    - `./bin/quixo -p test -l 4 -N 100 -X mcts-cache-persist0,200 -O opt -n 1000`: test MCTS player X with 0 initial training iterations and 200 training iterations per move (and with cache persisting) against optimal player O for 100 games on a 4X4 board, with a turn limit of 1000 per game; `export MCTS_CACHE_HIT_CHECK=1` if desired.
     - `./bin/quixo -p test -l 4 -N 100 -X q-learn200,0 -O opt -n 1000`: test Q-learning player X with 200 initial training iterations and 0 training iterations per move against optimal player O for 100 games on a 4X4 board, with a turn limit of 1000 per game.
     - `./bin/quixo -p test -l 5 -N 100 -X opt -O opt -n 1000`: test optimal players against each other for 1000 games on a 5X5 board, with a turn limit of 1000 per game.
     - `./bin/quixo -p test -l 5 -N 100 -X random -O opt -n 1000`: test optimal player O against random player X for 1000 games on a 5X5 board, with a turn limit of 1000 per game.
@@ -77,7 +78,8 @@
   - Ran `export MCTS_CACHE_HIT_CHECK=1 ; make && ./bin/quixo -l 5 -X mcts0,1000 -O opt -n 50`.
     - It appears that the cache hit percentage is less than 1% throughout the first 18 moves, but may increase to 5% to 10% for remaining moves (or it may stay around 1-2%). Overall, seems low.
     - Final cache size is approximately 650,000 to 750,000 to 950,000, which may be quite large (compared to the cache size for one move which is around 50,000.
-    - Will probably go with MCTS that does not persist cache through the moves.
+  - MCTS that does not persist cache through the moves now called `mcts`; and the persisting version now called `mcts-cache-persist`.
+    - `export MCTS_CACHE_HIT_CHECK=1 ; make && ./bin/quixo -l 5 -X mcts0,1000 -O opt -n 5` passes sanity checks, i.e. 0 cache hits and cache sizes are small.
 
 ## To Do / Next Steps
 1. **Analysis/improvement of Q-learning.**

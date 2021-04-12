@@ -59,7 +59,7 @@ class HeuristicSimplePlayer : public Player {
 
 class MCTSPlayer : public Player {
   public:
-    MCTSPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler = NULL, int initInitIters = 0, int initPerMoveIters = 0);
+    MCTSPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler = NULL, int initInitIters = 0, int initPerMoveIters = 0, bool initPersistCacheQ = false);
     ~MCTSPlayer();
     move_t selectMove(state_t state, colormode_t colorMode) override;
     void clearCache() override;
@@ -70,6 +70,7 @@ class MCTSPlayer : public Player {
   private:
     int initIters;
     int perMoveIters;
+    bool persistCacheQ;
     std::unordered_map<state_t, std::tuple<int, int>> cache; // map from state to (2 * number of visits, 2 * number of X wins + 1 * number of draws)
     void runIter(state_t state);
     void backPropagate(result_t result, std::vector<state_t> &traversedStates);

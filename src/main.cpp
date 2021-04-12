@@ -24,14 +24,20 @@ Player* getPlayer(std::string playerType, GameStateHandler* gameStateHandler, Cl
   } else if (playerType == "heuris-simple") {
     return new HeuristicSimplePlayer(gameStateHandler);
   } else if (playerType.find("mcts", 0) == 0) { // string starts with mcts prefix
-    auto cliParams = cliHandler->readCliParams(playerType.substr(std::string("mcts").length()));
+    std::string prefix = "mcts";
+    bool persistCacheQ = false;
+    if (playerType.find("mcts-cache-persist", 0) == 0) { // string starts with mcts-cache-persist prefix
+      prefix = "mcts-cache-persist";
+      persistCacheQ = true;
+    }
+    auto cliParams = cliHandler->readCliParams(playerType.substr(std::string(prefix).length()));
     if (cliParams.size() != 2) {
       std::cerr << "error: " << "incorrect number of params for mcts player type (expected 2; got " << cliParams.size() << ")\n";
       exit(1);
     }
     auto initIters = cliHandler->readNonNegIntCliParam(cliParams[0], "mcts player init iters");
     auto perMoveIters = cliHandler->readNonNegIntCliParam(cliParams[1], "mcts player per move iters");
-    return new MCTSPlayer(gameStateHandler, graphicsHandler, initIters, perMoveIters);
+    return new MCTSPlayer(gameStateHandler, graphicsHandler, initIters, perMoveIters, persistCacheQ);
   } else if (playerType.find("q-learn", 0) == 0) { // string starts with q-learn prefix
     auto cliParams = cliHandler->readCliParams(playerType.substr(std::string("q-learn").length()));
     if (cliParams.size() != 2) {
@@ -67,8 +73,8 @@ int main(int argc, char* argv[]) {
 
     TCLAP::ValueArg<std::string> progArg("p", "program", "Program to run (`play`, `test`, `opt-compute*`, `opt-check`, or `opt-analyze`)", false, "play", "string", cmd);
     TCLAP::ValueArg<int> lenArg("l", "len", "For `play`, `test`, `opt-compute`, `opt-check` or `opt-analyze` program: number of tiles per side", false, 5, "integer", cmd);
-    TCLAP::ValueArg<std::string> playerXTypeArg("X", "playerX", "For `play` or `test` program: player X type (`random`, `interact`, `opt`, `heuris-simple`, `mcts*,*`, or `q-learn*,*`)", false, "random", "string", cmd);
-    TCLAP::ValueArg<std::string> playerOTypeArg("O", "playerO", "For `play` or `test` program: player O type (`random`, `interact`, `opt`, `heuris-simple`, `mcts*,*`, or `q-learn*,*`)", false, "random", "string", cmd);
+    TCLAP::ValueArg<std::string> playerXTypeArg("X", "playerX", "For `play` or `test` program: player X type (`random`, `interact`, `opt`, `heuris-simple`, `mcts*,*`, `mcts-cache-persist*,*`, or `q-learn*,*`)", false, "random", "string", cmd);
+    TCLAP::ValueArg<std::string> playerOTypeArg("O", "playerO", "For `play` or `test` program: player O type (`random`, `interact`, `opt`, `heuris-simple`, `mcts*,*`, `mcts-cache-persist*,*`, or `q-learn*,*`)", false, "random", "string", cmd);
     TCLAP::ValueArg<int> nTurnsArg("n", "numturns", "For `play` or `test` program: turn limit per game (<=0: till the end)", false, 0, "integer", cmd);
     TCLAP::SwitchArg initStateArg("i", "initstate", "For `play` program: whether to set an initial state of the game board", cmd);
     TCLAP::ValueArg<int> timePauseMsArg("t", "timepause", "For `play` program: time (in milliseconds) to pause between steps", false, 0, "integer", cmd);

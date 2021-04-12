@@ -18,14 +18,16 @@ namespace {
   long unsigned int maxDepth = 1000;
 }
 
-MCTSPlayer::MCTSPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler, int initInitIters, int initPerMoveIters) : Player(initGameStateHandler, initGraphicsHandler) {
+MCTSPlayer::MCTSPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler, int initInitIters, int initPerMoveIters, bool initPersistCacheQ) : Player(initGameStateHandler, initGraphicsHandler) {
   initIters = initInitIters;
   perMoveIters = initPerMoveIters;
+  persistCacheQ = initPersistCacheQ;
 }
 
 MCTSPlayer::~MCTSPlayer() {}
 
 move_t MCTSPlayer::selectMove(state_t state, colormode_t colorMode) {
+  if (!persistCacheQ) cache.clear();
   #if MCTS_CACHE_HIT_CHECK == 1
     prevCacheFrozen.clear();
     for (auto stateInfo : cache) prevCacheFrozen.insert(stateInfo.first);
