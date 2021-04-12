@@ -107,6 +107,13 @@ winner_t GamePlayHandler::playTillEnd(int& nTurnsPlayed) {
       return winner;
     }
   }
+  nTurnsPlayed = INT_MAX;
+  while (true) {
+    auto winner = playTurn();
+    if (winner == WINNER_X || winner == WINNER_O) {
+      return winner;
+    }
+  }
 }
 
 void GamePlayHandler::displayGameState() {
