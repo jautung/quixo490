@@ -33,11 +33,11 @@ void GamePlayHandler::startGame(state_t initState) {
   initTimeO += endTimeO - startTimeO;
 }
 
-winner_t GamePlayHandler::playTurn() {
+winner_t GamePlayHandler::playTurn(int turnNum) {
   displayGameState();
 
   auto startTimeX = std::chrono::high_resolution_clock::now();
-  auto move = playerX->selectMove(state);
+  auto move = playerX->selectMove(state, turnNum);
   auto endTimeX = std::chrono::high_resolution_clock::now();
   runTimeX += endTimeX - startTimeX;
   if (!dynamic_cast<InteractivePlayer*>(playerX)) { // pause for all except interactive player
@@ -61,7 +61,7 @@ winner_t GamePlayHandler::playTurn() {
 
   state = gameStateHandler->swapPlayers(state);
   auto startTimeO = std::chrono::high_resolution_clock::now();
-  move = playerO->selectMove(state, COLOR_FLIP);
+  move = playerO->selectMove(state, turnNum, COLOR_FLIP);
   auto endTimeO = std::chrono::high_resolution_clock::now();
   runTimeO += endTimeO - startTimeO
   ;
@@ -87,10 +87,10 @@ winner_t GamePlayHandler::playTurn() {
 }
 
 winner_t GamePlayHandler::playNTurns(int nTurns, int& nTurnsPlayed) {
-  for (int i = 0; i < nTurns; i++) {
-    auto winner = playTurn();
+  for (int turnNum = 0; turnNum < nTurns; turnNum++) {
+    auto winner = playTurn(turnNum);
     if (winner == WINNER_X || winner == WINNER_O) {
-      nTurnsPlayed = i;
+      nTurnsPlayed = turnNum;
       return winner;
     }
   }
@@ -100,16 +100,16 @@ winner_t GamePlayHandler::playNTurns(int nTurns, int& nTurnsPlayed) {
 }
 
 winner_t GamePlayHandler::playTillEnd(int& nTurnsPlayed) {
-  for (int i = 0; i < INT_MAX; i++) {
-    auto winner = playTurn();
+  for (int turnNum = 0; turnNum < INT_MAX; turnNum++) {
+    auto winner = playTurn(turnNum);
     if (winner == WINNER_X || winner == WINNER_O) {
-      nTurnsPlayed = i;
+      nTurnsPlayed = turnNum;
       return winner;
     }
   }
   nTurnsPlayed = INT_MAX;
   while (true) {
-    auto winner = playTurn();
+    auto winner = playTurn(INT_MAX);
     if (winner == WINNER_X || winner == WINNER_O) {
       return winner;
     }

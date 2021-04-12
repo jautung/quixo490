@@ -29,7 +29,7 @@ QLearningPlayer::QLearningPlayer(GameStateHandler* initGameStateHandler, Graphic
 
 QLearningPlayer::~QLearningPlayer() {}
 
-move_t QLearningPlayer::selectMove(state_t state, colormode_t colorMode) {
+move_t QLearningPlayer::selectMove(state_t state, int turnNum, colormode_t colorMode) {
   for (int i = 0; i < perMoveIters; i++) {
     runIter(state);
     learningRate *= learningRateDecRatio;

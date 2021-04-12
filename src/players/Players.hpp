@@ -17,7 +17,7 @@ class Player {
       graphicsHandler = initGraphicsHandler;
     }
     virtual ~Player() {}
-    virtual move_t selectMove(state_t state, colormode_t colorMode = COLOR_NORM) {
+    virtual move_t selectMove(state_t state, int turnNum, colormode_t colorMode = COLOR_NORM) {
       return gameStateHandler->moveHandler->create(DIR_UNDEFINED, 0, 0);
     }
     virtual void clearCache() {}
@@ -30,20 +30,20 @@ class Player {
 class RandomPlayer : public Player {
   using Player::Player;
   public:
-    move_t selectMove(state_t state, colormode_t colorMode) override;
+    move_t selectMove(state_t state, int turnNum, colormode_t colorMode) override;
 };
 
 class InteractivePlayer : public Player {
   using Player::Player;
   public:
-    move_t selectMove(state_t state, colormode_t colorMode) override;
+    move_t selectMove(state_t state, int turnNum, colormode_t colorMode) override;
 };
 
 class OptimalPlayer : public Player {
   public:
     OptimalPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler = NULL);
     ~OptimalPlayer();
-    move_t selectMove(state_t state, colormode_t colorMode) override;
+    move_t selectMove(state_t state, int turnNum, colormode_t colorMode) override;
     result_t evalState(state_t state);
   private:
     OptComputer* optComputer;
@@ -53,14 +53,14 @@ class OptimalPlayer : public Player {
 class HeuristicSimplePlayer : public Player {
   using Player::Player;
   public:
-    move_t selectMove(state_t state, colormode_t colorMode) override;
+    move_t selectMove(state_t state, int turnNum, colormode_t colorMode) override;
 };
 
 class MCTSPlayer : public Player {
   public:
     MCTSPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler = NULL, int initInitIters = 0, int initPerMoveIters = 0);
     ~MCTSPlayer();
-    move_t selectMove(state_t state, colormode_t colorMode) override;
+    move_t selectMove(state_t state, int turnNum, colormode_t colorMode) override;
     void clearCache() override;
     void initLearn() override;
   private:
@@ -82,7 +82,7 @@ class QLearningPlayer : public Player {
   public:
     QLearningPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler = NULL, int initInitIters = 0, int initPerMoveIters = 0);
     ~QLearningPlayer();
-    move_t selectMove(state_t state, colormode_t colorMode) override;
+    move_t selectMove(state_t state, int turnNum, colormode_t colorMode) override;
     void clearCache() override;
     void initLearn() override;
   private:

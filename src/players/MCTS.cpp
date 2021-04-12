@@ -23,7 +23,7 @@ MCTSPlayer::MCTSPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* 
 
 MCTSPlayer::~MCTSPlayer() {}
 
-move_t MCTSPlayer::selectMove(state_t state, colormode_t colorMode) {
+move_t MCTSPlayer::selectMove(state_t state, int turnNum, colormode_t colorMode) {
   for (int i = 0; i < perMoveIters; i++) {
     runIter(state);
   }

@@ -3,7 +3,7 @@
 #include "Players.hpp"
 #include <iostream>
 
-move_t InteractivePlayer::selectMove(state_t state, colormode_t colorMode) {
+move_t InteractivePlayer::selectMove(state_t state, int turnNum, colormode_t colorMode) {
   if (!graphicsHandler) {
     auto moves = gameStateHandler->allMoves(state);
     std::cout << "Choose one of:\n";
