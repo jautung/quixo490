@@ -33,3 +33,22 @@ int CliHandler::readNonNegIntCliParam(std::string str, std::string descrip) {
     exit(1);
   }
 }
+
+double CliHandler::readFracDoubleCliParam(std::string str, std::string descrip) {
+  try {
+    size_t stodIndex;
+    auto ret = std::stod(str, &stodIndex);
+    if (stodIndex != str.length()) {
+      std::cerr << "error: " << "non-double " << descrip << ": " << str << "\n";
+      exit(1);
+    }
+    if (ret < 0.0 || ret > 1.0) {
+      std::cerr << "error: " << "non-fractional (i.e. between 0 to 1) " << descrip << ": " << str << "\n";
+      exit(1);
+    }
+    return ret;
+  } catch (std::exception const &e) {
+    std::cerr << "error: " << "non-double " << descrip << ": " << str << "\n";
+    exit(1);
+  }
+}

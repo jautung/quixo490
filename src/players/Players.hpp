@@ -42,11 +42,12 @@ class InteractivePlayer : public Player {
 
 class OptimalPlayer : public Player {
   public:
-    OptimalPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler = NULL);
+    OptimalPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler = NULL, double initErrorRate = 0.0);
     ~OptimalPlayer();
     move_t selectMove(state_t state, colormode_t colorMode) override;
     result_t evalState(state_t state);
   private:
+    double errorRate;
     OptComputer* optComputer;
     DataHandler* dataHandler;
 };

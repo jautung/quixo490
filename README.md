@@ -52,6 +52,7 @@
     - `./bin/quixo -p test -l 5 -N 100 -X opt -O opt -n 1000`: test optimal players against each other for 1000 games on a 5X5 board, with a turn limit of 1000 per game.
     - `./bin/quixo -p test -l 5 -N 100 -X random -O opt -n 1000`: test optimal player O against random player X for 1000 games on a 5X5 board, with a turn limit of 1000 per game.
     - `./bin/quixo -p test -l 5 -N 100 -X opt -O random -n 1000`: test optimal player X against random player O for 1000 games on a 5X5 board, with a turn limit of 1000 per game.
+    - `./bin/quixo -p test -l 5 -N 100 -X opt0.5 -O mcts0,200 -n 100`: test optimal player X with 50% random moves against MCTS player O with 0 initial training iterations and 200 training iterations per move for 1000 games on a 5X5 board, with a turn limit of 100 per game.
 
 ## References
 - [Quixo Is Solved](https://arxiv.org/abs/2007.15895).
@@ -80,6 +81,7 @@
     - Final cache size is approximately 650,000 to 750,000 to 950,000, which may be quite large (compared to the cache size for one move which is around 50,000.
   - MCTS that does not persist cache through the moves now called `mcts`; and the persisting version now called `mcts-cache-persist`.
     - `export MCTS_CACHE_HIT_CHECK=1 ; make && ./bin/quixo -l 5 -X mcts0,1000 -O opt -n 5` passes sanity checks, i.e. 0 cache hits and cache sizes are small.
+  - Added the `opt*` option to make the optimal player make errors at the `*` rate (a double).
 
 ## To Do / Next Steps
 1. **Analysis/improvement of Q-learning.**

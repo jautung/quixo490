@@ -8,7 +8,8 @@
 
 extern std::mt19937 rng;
 
-OptimalPlayer::OptimalPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler) : Player(initGameStateHandler, initGraphicsHandler) {
+OptimalPlayer::OptimalPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler, double initErrorRate) : Player(initGameStateHandler, initGraphicsHandler) {
+  errorRate = initErrorRate;
   auto len = gameStateHandler->len;
   optComputer = new OptComputer(gameStateHandler);
   dataHandler = new DataHandler();
@@ -21,6 +22,12 @@ OptimalPlayer::~OptimalPlayer() {
 
 move_t OptimalPlayer::selectMove(state_t state, colormode_t colorMode) {
   auto moves = gameStateHandler->allMoves(state);
+  std::uniform_real_distribution<> errorDist(0, 1);
+  if (errorDist(rng) < errorRate) { // optimal makes an error with probability errorRate
+    std::uniform_int_distribution<int> dist(0, moves.size() - 1);
+    return moves[dist(rng)];
+  }
+
   auto result = evalState(state);
 
   if (result == RESULT_LOSS) { // make a random move since loss anyway
