@@ -33,11 +33,11 @@ void GamePlayHandler::startGame(state_t initState) {
   initTimeO += endTimeO - startTimeO;
 }
 
-winner_t GamePlayHandler::playTurn(int turnNum) {
+winner_t GamePlayHandler::playTurn() {
   displayGameState();
 
   auto startTimeX = std::chrono::high_resolution_clock::now();
-  auto move = playerX->selectMove(state, turnNum);
+  auto move = playerX->selectMove(state);
   auto endTimeX = std::chrono::high_resolution_clock::now();
   runTimeX += endTimeX - startTimeX;
   if (!dynamic_cast<InteractivePlayer*>(playerX)) { // pause for all except interactive player
@@ -61,7 +61,7 @@ winner_t GamePlayHandler::playTurn(int turnNum) {
 
   state = gameStateHandler->swapPlayers(state);
   auto startTimeO = std::chrono::high_resolution_clock::now();
-  move = playerO->selectMove(state, turnNum, COLOR_FLIP);
+  move = playerO->selectMove(state, COLOR_FLIP);
   auto endTimeO = std::chrono::high_resolution_clock::now();
   runTimeO += endTimeO - startTimeO
   ;
@@ -88,7 +88,7 @@ winner_t GamePlayHandler::playTurn(int turnNum) {
 
 winner_t GamePlayHandler::playNTurns(int nTurns, int& nTurnsPlayed) {
   for (int turnNum = 0; turnNum < nTurns; turnNum++) {
-    auto winner = playTurn(turnNum);
+    auto winner = playTurn();
     if (winner == WINNER_X || winner == WINNER_O) {
       nTurnsPlayed = turnNum;
       return winner;
@@ -101,7 +101,7 @@ winner_t GamePlayHandler::playNTurns(int nTurns, int& nTurnsPlayed) {
 
 winner_t GamePlayHandler::playTillEnd(int& nTurnsPlayed) {
   for (int turnNum = 0; turnNum < INT_MAX; turnNum++) {
-    auto winner = playTurn(turnNum);
+    auto winner = playTurn();
     if (winner == WINNER_X || winner == WINNER_O) {
       nTurnsPlayed = turnNum;
       return winner;
@@ -109,7 +109,7 @@ winner_t GamePlayHandler::playTillEnd(int& nTurnsPlayed) {
   }
   nTurnsPlayed = INT_MAX;
   while (true) {
-    auto winner = playTurn(INT_MAX);
+    auto winner = playTurn();
     if (winner == WINNER_X || winner == WINNER_O) {
       return winner;
     }

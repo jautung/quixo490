@@ -15,7 +15,7 @@
   - For MacOS, this can be downloaded from the above link, and the `*/Eigen` folder can be copied to `./include` (which is `.gitignore`-ed).
 
 ### Usage
-- Initializing: `export OPT_COMPUTE_ERROR_CHECKING=0 ; export OPT_COMPUTE_SPEED_CHECKING=0 ; export OPT_COMPUTE_MEMORY_CHECKING=0 ; make`.
+- Initializing: `export OPT_COMPUTE_ERROR_CHECKING=0 ; export OPT_COMPUTE_SPEED_CHECKING=0 ; export OPT_COMPUTE_MEMORY_CHECKING=0 ; export MCTS_CACHE_HIT_CHECK=0 ; make`.
 - `./bin/quixo -h` brings up the possible usages.
 - Some common usages are included in `./scripts/`.
 - Some other usages:
@@ -72,13 +72,17 @@
 - Apr 9, 2021:
   - Some data and tables are already [here](https://docs.google.com/spreadsheets/d/1QHTtbHnen4D5Z1y54Qb_VpXX2rnCNzyErshk_EfAKto/edit).
   - Looking at distribution of game lengths to determine '-n' (for both q-learn against opt and mcts against opt), it seems that '-n 100' should be quite sufficient...
+- Apr 12, 2021:
+  - Checking how often states are reused for MCTS.
+  - Ran `export MCTS_CACHE_HIT_CHECK=1 ; make && ./bin/quixo -l 5 -X mcts0,1000 -O opt -n 50`.
+    - It appears that the cache hit percentage is less than 1% throughout the first 18 moves, but may increase to 5% to 10% for remaining moves (or it may stay around 1-2%). Overall, seems low.
+    - Final cache size is approximately 650,000 to 750,000 to 950,000, which may be quite large (compared to the cache size for one move which is around 50,000.
+    - Will probably go with MCTS that does not persist cache through the moves.
 
 ## To Do / Next Steps
-1. **Analysis/improvement of MCTS/Q-learning.**
-   - Check how often states are reused for MCTS. Do some trials.
-   - Get other features/heuristics.
+1. **Analysis/improvement of Q-learning.**
+   - Get other features/heuristics for Q-learning.
    - Test Q-learning and MCTS on positions that are a couple moves in, so that Q-learning needs to only train once at `initState=0b0` and then evaluated from different positions.
    - Getting Q-learning to learn by playing against MCTS/optimal.
-2. **Evaluate the playing agents.** Against optimal player primarily.
-3. **Evaluate depth in Quixo.** Referencing '[Depth in Strategic Games](https://www.semanticscholar.org/paper/Depth-in-Strategic-Games-Lantz-Isaksen/4dedc67aa2191731bf8cf1822d42cea290e73073)', compare the learning rates of non-optimal playing agents between 3X3, 4X4, and 5X5 Quixo. Graph where x-axis is training time or number of training iterations, and y-axis is number of steps to lose OR how much randomization needs to be injected to optimal to make it lose OR percentage of correct moves.
-4. _(Stretch)_ **Extensions of Quixo.** As mentioned in '[Quixo Is Solved](https://arxiv.org/abs/2007.15895)', there are extensions of Quixo (such as winning length being different from board length). These can be investigated if time permits.
+2. **Evaluate the playing agents / depth in Quixo.** Referencing '[Depth in Strategic Games](https://www.semanticscholar.org/paper/Depth-in-Strategic-Games-Lantz-Isaksen/4dedc67aa2191731bf8cf1822d42cea290e73073)', compare the learning rates of non-optimal playing agents between 3X3, 4X4, and 5X5 Quixo. Graph where x-axis is training time or number of training iterations, and y-axis is number of steps to lose OR how much randomization needs to be injected to optimal to make it lose OR percentage of correct moves.
+3. _(Stretch)_ **Extensions of Quixo.** As mentioned in '[Quixo Is Solved](https://arxiv.org/abs/2007.15895)', there are extensions of Quixo (such as winning length being different from board length). These can be investigated if time permits.

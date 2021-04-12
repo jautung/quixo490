@@ -3,6 +3,8 @@
 #include "../utils/DataHandler.hpp"
 #include "Players.hpp"
 #include <cmath>
+#include <iomanip>
+#include <iostream>
 #include <random>
 #include <tuple>
 #include <unordered_map>
@@ -23,15 +25,28 @@ MCTSPlayer::MCTSPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* 
 
 MCTSPlayer::~MCTSPlayer() {}
 
-move_t MCTSPlayer::selectMove(state_t state, int turnNum, colormode_t colorMode) {
+move_t MCTSPlayer::selectMove(state_t state, colormode_t colorMode) {
+  #if MCTS_CACHE_HIT_CHECK == 1
+    prevCacheFrozen.clear();
+    for (auto stateInfo : cache) prevCacheFrozen.insert(stateInfo.first);
+    prevCacheHits.clear();
+  #endif
   for (int i = 0; i < perMoveIters; i++) {
     runIter(state);
   }
+  #if MCTS_CACHE_HIT_CHECK == 1
+    cacheHits.push_back(prevCacheHits.size());
+    cacheSizes.push_back(cache.size());
+  #endif
   return selectBestMove(state);
 }
 
 void MCTSPlayer::clearCache() {
   cache.clear();
+  #if MCTS_CACHE_HIT_CHECK == 1
+    cacheHits.clear();
+    cacheSizes.clear();
+  #endif
 }
 
 void MCTSPlayer::initLearn() {
@@ -72,6 +87,9 @@ void MCTSPlayer::runIter(state_t state) {
 void MCTSPlayer::backPropagate(result_t result, std::vector<state_t> &traversedStates) {
   for (auto rIter = traversedStates.rbegin(); rIter != traversedStates.rend(); rIter++) {
     auto traversedState = *rIter;
+    #if MCTS_CACHE_HIT_CHECK == 1
+      if (prevCacheFrozen.find(traversedState) != prevCacheFrozen.end()) prevCacheHits.insert(traversedState);
+    #endif
     if (result == RESULT_WIN) {
       cache[traversedState] = addTuples(cache[traversedState], std::make_tuple(2, 2));
       result = RESULT_LOSS;
@@ -185,3 +203,18 @@ bool MCTSPlayer::worseInfo(const std::tuple<int, int> &infoA, const std::tuple<i
   auto numWinsB = std::get<1>(infoB);
   return numWinsA * numVisitsB < numWinsB * numVisitsA; // numWinsA / numVisitsA < numWinsB / numVisitsB
 }
+
+#if MCTS_CACHE_HIT_CHECK == 1
+void MCTSPlayer::printCacheStats(std::string playerName) {
+  std::cout << "\n--- MCTS player " << playerName << " cache hit statistics ---\n";
+  std::cout << "Turn Num\tCache Size\tCache Hits\tCache Hit Percentage\n";
+  for (int turnNum = 0; turnNum < cacheHits.size(); turnNum++) {
+    int cacheHit = cacheHits[turnNum];
+    int cacheAdded = cacheSizes[turnNum] - (turnNum > 0 ? cacheSizes[turnNum-1] : 0) + cacheHit;
+    std::cout << std::setw(8) << turnNum << "\t"
+              << std::setw(10) << cacheSizes[turnNum] << "\t"
+              << std::setw(10) << cacheHit << "\t"
+              << std::setw(20) << std::setiosflags(std::ios::fixed) << std::setprecision(3) << 100.0 * cacheHit / cacheAdded << "\n";
+  }
+}
+#endif

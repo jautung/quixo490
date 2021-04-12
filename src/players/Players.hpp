@@ -5,6 +5,7 @@
 #include "../utils/DataHandler.hpp"
 #include <Eigen/Core>
 #include <random>
+#include <string>
 #include <tuple>
 #include <unordered_map>
 #include <unordered_set>
@@ -17,7 +18,7 @@ class Player {
       graphicsHandler = initGraphicsHandler;
     }
     virtual ~Player() {}
-    virtual move_t selectMove(state_t state, int turnNum, colormode_t colorMode = COLOR_NORM) {
+    virtual move_t selectMove(state_t state, colormode_t colorMode = COLOR_NORM) {
       return gameStateHandler->moveHandler->create(DIR_UNDEFINED, 0, 0);
     }
     virtual void clearCache() {}
@@ -30,20 +31,20 @@ class Player {
 class RandomPlayer : public Player {
   using Player::Player;
   public:
-    move_t selectMove(state_t state, int turnNum, colormode_t colorMode) override;
+    move_t selectMove(state_t state, colormode_t colorMode) override;
 };
 
 class InteractivePlayer : public Player {
   using Player::Player;
   public:
-    move_t selectMove(state_t state, int turnNum, colormode_t colorMode) override;
+    move_t selectMove(state_t state, colormode_t colorMode) override;
 };
 
 class OptimalPlayer : public Player {
   public:
     OptimalPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler = NULL);
     ~OptimalPlayer();
-    move_t selectMove(state_t state, int turnNum, colormode_t colorMode) override;
+    move_t selectMove(state_t state, colormode_t colorMode) override;
     result_t evalState(state_t state);
   private:
     OptComputer* optComputer;
@@ -53,16 +54,19 @@ class OptimalPlayer : public Player {
 class HeuristicSimplePlayer : public Player {
   using Player::Player;
   public:
-    move_t selectMove(state_t state, int turnNum, colormode_t colorMode) override;
+    move_t selectMove(state_t state, colormode_t colorMode) override;
 };
 
 class MCTSPlayer : public Player {
   public:
     MCTSPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler = NULL, int initInitIters = 0, int initPerMoveIters = 0);
     ~MCTSPlayer();
-    move_t selectMove(state_t state, int turnNum, colormode_t colorMode) override;
+    move_t selectMove(state_t state, colormode_t colorMode) override;
     void clearCache() override;
     void initLearn() override;
+    #if MCTS_CACHE_HIT_CHECK == 1
+      void printCacheStats(std::string playerName);
+    #endif
   private:
     int initIters;
     int perMoveIters;
@@ -76,13 +80,19 @@ class MCTSPlayer : public Player {
     std::tuple<int, int> addTuples(const std::tuple<int, int> &tupleA, const std::tuple<int, int> &tupleB);
     bool equalInfo(const std::tuple<int, int> &infoA, const std::tuple<int, int> &infoB);
     bool worseInfo(const std::tuple<int, int> &infoA, const std::tuple<int, int> &infoB);
+    #if MCTS_CACHE_HIT_CHECK == 1
+      std::unordered_set<state_t> prevCacheFrozen; // copy of states that were in the previous turn's cache
+      std::unordered_set<state_t> prevCacheHits; // states that are updated during the current turn and were also in the previous turn's cache
+      std::vector<int> cacheHits; // number of states updated DURING the current turnNum that were also in the previous turn's cache (i.e. the benefit to maintaining cache across moves)
+      std::vector<int> cacheSizes; // total number of states in the cache AFTER each turnNum
+    #endif
 };
 
 class QLearningPlayer : public Player {
   public:
     QLearningPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler = NULL, int initInitIters = 0, int initPerMoveIters = 0);
     ~QLearningPlayer();
-    move_t selectMove(state_t state, int turnNum, colormode_t colorMode) override;
+    move_t selectMove(state_t state, colormode_t colorMode) override;
     void clearCache() override;
     void initLearn() override;
   private:

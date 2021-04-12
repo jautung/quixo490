@@ -19,7 +19,7 @@ OptimalPlayer::~OptimalPlayer() {
   delete dataHandler;
 }
 
-move_t OptimalPlayer::selectMove(state_t state, int turnNum, colormode_t colorMode) {
+move_t OptimalPlayer::selectMove(state_t state, colormode_t colorMode) {
   auto moves = gameStateHandler->allMoves(state);
   auto result = evalState(state);
 

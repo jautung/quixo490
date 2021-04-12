@@ -125,6 +125,10 @@ int main(int argc, char* argv[]) {
       } else if (winner == WINNER_UNKNOWN) {
         std::cout << "No Winner Yet (after " << nTurnsPlayed << " turns).\n";
       }
+      #if MCTS_CACHE_HIT_CHECK == 1
+        if (playerXType.find("mcts", 0) == 0) static_cast<MCTSPlayer*>(playerX)->printCacheStats("X");
+        if (playerOType.find("mcts", 0) == 0) static_cast<MCTSPlayer*>(playerO)->printCacheStats("O");
+      #endif
       delete cliHandler;
       delete graphicsHandler;
       delete playerX;
