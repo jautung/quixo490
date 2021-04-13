@@ -2,8 +2,8 @@
 DATE=$(date +'%Y-%m-%d-%H%M%S')
 LOGFILE="${DATE}-error-rate-tests.log"
 
-N_GAMES_EACH=1000
-TURN_LIMIT=300
+N_GAMES_EACH=100
+TURN_LIMIT=200
 FLAGS_BASE='-p test -N '$N_GAMES_EACH' -n '$TURN_LIMIT' -v error-rate-tests'
 
 export OPT_COMPUTE_ERROR_CHECKING=0
