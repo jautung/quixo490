@@ -7,10 +7,12 @@
 #include "utils/CliHandler.hpp"
 #include <chrono>
 #include <iostream>
+#include <numeric>
 #include <omp.h>
 #include <random>
 #include <string>
 #include <tclap/CmdLine.h>
+#include <vector>
 
 std::mt19937 rng(time(0));
 
@@ -110,7 +112,7 @@ int main(int argc, char* argv[]) {
       int xWins = 0;
       int oWins = 0;
       int draws = 0;
-      int totalNumTurns = 0;
+      std::vector<int> numTurns;
       for (int i = 0; i < numGames; i++) {
         gamePlayHandler->startGame();
         int nTurnsPlayed;
@@ -125,8 +127,9 @@ int main(int argc, char* argv[]) {
           draws += 1;
           if (verbosity == "all" || verbosity == "default") std::cout << i << ": Draw (after " << nTurnsPlayed << " turns)!\n";
         }
-        totalNumTurns += nTurnsPlayed;
+        numTurns.push_back(nTurnsPlayed);
       }
+      int totalNumTurns = std::accumulate(numTurns.begin(), numTurns.end(), 0);
       if (verbosity == "all" || verbosity == "default") {
         std::cout << "\nResult summary for Player X (" << playerXType << ") vs. Player O (" << playerOType << ") on " << len << "X" << len << " Quixo\n";
         std::cout << "--------------------------------------------------------------------------------\n";
@@ -141,8 +144,14 @@ int main(int argc, char* argv[]) {
                   << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0/totalNumTurns << "\t"
                   << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0/totalNumTurns << "\n";
       } else if (verbosity == "game-length-tests") {
+        double aveNumTurns = 1.0*totalNumTurns/numGames;
+        double stdevAccum = 0.0;
+        std::for_each(numTurns.begin(), numTurns.end(), [&](const double numTurn) {
+          stdevAccum += (numTurn - aveNumTurns) * (numTurn - aveNumTurns);
+        });
+        double stdevNumTurns = sqrt(stdevAccum/(numGames-1));
         std::cout << len << "\t" << playerXType << "\t" << playerOType << "\t"
-                  << 1.0*totalNumTurns/numGames << "\t" << draws << "\t"
+                  << aveNumTurns << "\t" << stdevNumTurns << "\t" << draws << "\t"
                   << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0/totalNumTurns << "\t"
                   << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0/totalNumTurns << "\n";
       }

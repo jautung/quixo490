@@ -23,72 +23,46 @@ echo '=== START ==='
 echo 'N_GAMES_EACH:' $N_GAMES_EACH >> logs/$LOGFILE
 echo 'TURN_LIMIT:' $TURN_LIMIT >> logs/$LOGFILE
 echo '' >> logs/$LOGFILE
-echo 'len	xType	oType	aveNumTurns	numDraws	xTurnTime	oTurnTime' >> logs/$LOGFILE
+echo 'len	xType	oType	aveNumTurns	stdevNumTurns	numDraws	xTurnTime	oTurnTime' >> logs/$LOGFILE
 
 # -l 3
-echo '-l 3 -X opt0.0 -O random' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.0 -O random >> logs/$LOGFILE
-echo '-l 3 -X opt0.0 -O heuris-simple' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.0 -O heuris-simple >> logs/$LOGFILE
-echo '-l 3 -X opt0.0 -O mcts0,100' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.0 -O mcts0,100 >> logs/$LOGFILE
-echo '-l 3 -X opt0.0 -O mcts0,200' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.0 -O mcts0,200 >> logs/$LOGFILE
-echo '-l 3 -X opt0.0 -O mcts0,500' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.0 -O mcts0,500 >> logs/$LOGFILE
-echo '-l 3 -X opt0.0 -O mcts0,1000' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.0 -O mcts0,1000 >> logs/$LOGFILE
-echo '-l 3 -X opt0.0 -O opt0.0' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.0 -O opt0.0 >> logs/$LOGFILE
-echo
-echo '-l 3 -O opt0.0 -X random' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.0 -X random >> logs/$LOGFILE
-echo '-l 3 -O opt0.0 -X heuris-simple' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.0 -X heuris-simple >> logs/$LOGFILE
-echo '-l 3 -O opt0.0 -X mcts0,100' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.0 -X mcts0,100 >> logs/$LOGFILE
-echo '-l 3 -O opt0.0 -X mcts0,200' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.0 -X mcts0,200 >> logs/$LOGFILE
-echo '-l 3 -O opt0.0 -X mcts0,500' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.0 -X mcts0,500 >> logs/$LOGFILE
-echo '-l 3 -O opt0.0 -X mcts0,1000' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.0 -X mcts0,1000 >> logs/$LOGFILE
+echo '-l 3 -X opt -O random' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt -O random >> logs/$LOGFILE
+echo '-l 3 -X opt -O heuris-simple' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt -O heuris-simple >> logs/$LOGFILE
+echo '-l 3 -X opt -O mcts0,100' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt -O mcts0,100 >> logs/$LOGFILE
+echo '-l 3 -X opt -O mcts0,200' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt -O mcts0,200 >> logs/$LOGFILE
+echo '-l 3 -X opt -O mcts0,500' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt -O mcts0,500 >> logs/$LOGFILE
+echo '-l 3 -X opt -O mcts0,1000' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt -O mcts0,1000 >> logs/$LOGFILE
+echo '-l 3 -X opt -O opt' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt -O opt >> logs/$LOGFILE
 echo
 echo
 
 # -l 4
-echo '-l 4 -X opt0.0 -O random' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O random >> logs/$LOGFILE
-echo '-l 4 -X opt0.0 -O heuris-simple' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O heuris-simple >> logs/$LOGFILE
-echo '-l 4 -X opt0.0 -O mcts0,100' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O mcts0,100 >> logs/$LOGFILE
-echo '-l 4 -X opt0.0 -O mcts0,200' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O mcts0,200 >> logs/$LOGFILE
-echo '-l 4 -X opt0.0 -O mcts0,500' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O mcts0,500 >> logs/$LOGFILE
-echo '-l 4 -X opt0.0 -O mcts0,1000' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O mcts0,1000 >> logs/$LOGFILE
-echo '-l 4 -X opt0.0 -O opt0.0' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O opt0.0 >> logs/$LOGFILE
-echo
-echo '-l 4 -O opt0.0 -X random' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X random >> logs/$LOGFILE
-echo '-l 4 -O opt0.0 -X heuris-simple' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X heuris-simple >> logs/$LOGFILE
-echo '-l 4 -O opt0.0 -X mcts0,100' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X mcts0,100 >> logs/$LOGFILE
-echo '-l 4 -O opt0.0 -X mcts0,200' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X mcts0,200 >> logs/$LOGFILE
-echo '-l 4 -O opt0.0 -X mcts0,500' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X mcts0,500 >> logs/$LOGFILE
-echo '-l 4 -O opt0.0 -X mcts0,1000' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X mcts0,1000 >> logs/$LOGFILE
+echo '-l 4 -X opt -O random' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt -O random >> logs/$LOGFILE
+echo '-l 4 -X opt -O heuris-simple' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt -O heuris-simple >> logs/$LOGFILE
+echo '-l 4 -X opt -O mcts0,100' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt -O mcts0,100 >> logs/$LOGFILE
+echo '-l 4 -X opt -O mcts0,200' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt -O mcts0,200 >> logs/$LOGFILE
+echo '-l 4 -X opt -O mcts0,500' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt -O mcts0,500 >> logs/$LOGFILE
+echo '-l 4 -X opt -O mcts0,1000' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt -O mcts0,1000 >> logs/$LOGFILE
+echo '-l 4 -X opt -O opt' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt -O opt >> logs/$LOGFILE
 echo
 echo
 
 # -l 5
-echo '-l 5 -X opt0.0 -O random' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O random >> logs/$LOGFILE
-echo '-l 5 -X opt0.0 -O heuris-simple' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O heuris-simple >> logs/$LOGFILE
-echo '-l 5 -X opt0.0 -O mcts0,100' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O mcts0,100 >> logs/$LOGFILE
-echo '-l 5 -X opt0.0 -O mcts0,200' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O mcts0,200 >> logs/$LOGFILE
-echo '-l 5 -X opt0.0 -O mcts0,500' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O mcts0,500 >> logs/$LOGFILE
-echo '-l 5 -X opt0.0 -O mcts0,1000' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O mcts0,1000 >> logs/$LOGFILE
-echo '-l 5 -X opt0.0 -O opt0.0' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O opt0.0 >> logs/$LOGFILE
-echo
-echo '-l 5 -O opt0.0 -X random' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X random >> logs/$LOGFILE
-echo '-l 5 -O opt0.0 -X heuris-simple' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X heuris-simple >> logs/$LOGFILE
-echo '-l 5 -O opt0.0 -X mcts0,100' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X mcts0,100 >> logs/$LOGFILE
-echo '-l 5 -O opt0.0 -X mcts0,200' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X mcts0,200 >> logs/$LOGFILE
-echo '-l 5 -O opt0.0 -X mcts0,500' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X mcts0,500 >> logs/$LOGFILE
-echo '-l 5 -O opt0.0 -X mcts0,1000' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X mcts0,1000 >> logs/$LOGFILE
+echo '-l 5 -X opt -O random' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt -O random >> logs/$LOGFILE
+echo '-l 5 -X opt -O heuris-simple' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt -O heuris-simple >> logs/$LOGFILE
+echo '-l 5 -X opt -O mcts0,100' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt -O mcts0,100 >> logs/$LOGFILE
+echo '-l 5 -X opt -O mcts0,200' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt -O mcts0,200 >> logs/$LOGFILE
+echo '-l 5 -X opt -O mcts0,500' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt -O mcts0,500 >> logs/$LOGFILE
+echo '-l 5 -X opt -O mcts0,1000' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt -O mcts0,1000 >> logs/$LOGFILE
+echo '-l 5 -X opt -O opt' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt -O opt >> logs/$LOGFILE
 echo
 echo
 
 # -l 5 cache persist
-echo '-l 5 -X opt0.0 -O mcts-cache-persist0,100' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O mcts-cache-persist0,100 >> logs/$LOGFILE
-echo '-l 5 -X opt0.0 -O mcts-cache-persist0,200' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O mcts-cache-persist0,200 >> logs/$LOGFILE
-echo '-l 5 -X opt0.0 -O mcts-cache-persist0,500' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O mcts-cache-persist0,500 >> logs/$LOGFILE
-echo '-l 5 -X opt0.0 -O mcts-cache-persist0,1000' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O mcts-cache-persist0,1000 >> logs/$LOGFILE
-echo
-echo '-l 5 -O opt0.0 -X mcts-cache-persist0,100' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X mcts-cache-persist0,100 >> logs/$LOGFILE
-echo '-l 5 -O opt0.0 -X mcts-cache-persist0,200' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X mcts-cache-persist0,200 >> logs/$LOGFILE
-echo '-l 5 -O opt0.0 -X mcts-cache-persist0,500' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X mcts-cache-persist0,500 >> logs/$LOGFILE
-echo '-l 5 -O opt0.0 -X mcts-cache-persist0,1000' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X mcts-cache-persist0,1000 >> logs/$LOGFILE
+echo '-l 5 -X opt -O mcts-cache-persist0,100' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt -O mcts-cache-persist0,100 >> logs/$LOGFILE
+echo '-l 5 -X opt -O mcts-cache-persist0,200' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt -O mcts-cache-persist0,200 >> logs/$LOGFILE
+echo '-l 5 -X opt -O mcts-cache-persist0,500' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt -O mcts-cache-persist0,500 >> logs/$LOGFILE
+echo '-l 5 -X opt -O mcts-cache-persist0,1000' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt -O mcts-cache-persist0,1000 >> logs/$LOGFILE
 echo
 echo
 
