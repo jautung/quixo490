@@ -2,7 +2,7 @@
 DATE=$(date +'%Y-%m-%d-%H%M%S')
 LOGFILE="${DATE}-game-length-tests.log"
 
-N_GAMES_EACH=100
+N_GAMES_EACH=200
 TURN_LIMIT=200
 FLAGS_BASE='-p test -N '$N_GAMES_EACH' -n '$TURN_LIMIT' -v game-length-tests'
 
@@ -42,6 +42,7 @@ echo '-l 3 -X opt -O mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt -O mcts0,
 echo '-l 3 -X opt -O mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt -O mcts0,1600 >> logs/$LOGFILE
 echo '-l 3 -X opt -O mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt -O mcts0,1800 >> logs/$LOGFILE
 echo '-l 3 -X opt -O mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt -O mcts0,2000 >> logs/$LOGFILE
+echo '-l 3 -X opt -O opt' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt -O opt >> logs/$LOGFILE
 echo
 echo
 
@@ -62,6 +63,7 @@ echo '-l 4 -X opt -O mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt -O mcts0,
 echo '-l 4 -X opt -O mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt -O mcts0,1600 >> logs/$LOGFILE
 echo '-l 4 -X opt -O mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt -O mcts0,1800 >> logs/$LOGFILE
 echo '-l 4 -X opt -O mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt -O mcts0,2000 >> logs/$LOGFILE
+echo '-l 4 -X opt -O opt' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt -O opt >> logs/$LOGFILE
 echo
 echo
 
@@ -82,6 +84,7 @@ echo '-l 5 -X opt -O mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt -O mcts0,
 echo '-l 5 -X opt -O mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt -O mcts0,1600 >> logs/$LOGFILE
 echo '-l 5 -X opt -O mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt -O mcts0,1800 >> logs/$LOGFILE
 echo '-l 5 -X opt -O mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt -O mcts0,2000 >> logs/$LOGFILE
+echo '-l 5 -X opt -O opt' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt -O opt >> logs/$LOGFILE
 echo
 echo
 
