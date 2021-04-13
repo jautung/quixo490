@@ -83,15 +83,17 @@
   - MCTS that does not persist cache through the moves now called `mcts`; and the persisting version now called `mcts-cache-persist`.
     - `export MCTS_CACHE_HIT_CHECK=1 ; make && ./bin/quixo -l 5 -X mcts0,1000 -O opt -n 5` passes sanity checks, i.e. 0 cache hits and cache sizes are small.
   - Added the `opt*` option to make the optimal player make errors at the `*` rate (a double).
+- Apr 13, 2021:
+  - Added benchmarking suite for MCTS:
+    - `runErrorRateTests*.sh`: error rate tests (i.e. making optimal make randomized errors and checking win-rates of MCTS against this handicapped optimal).
+    - `runGameLengthTests*.sh`: game length tests (i.e. checking for average game length of MCTS against complete optimal).
+    - `runCorrectMoveTests*.sh`: correct move tests (i.e. checking for whether MCTS makes correct moves for random initial board states).
+  - Various trials are being run on the Zoo and all results are [here](https://docs.google.com/spreadsheets/d/1QHTtbHnen4D5Z1y54Qb_VpXX2rnCNzyErshk_EfAKto/edit).
+  - To be completed (each trial takes several hours).
 
 ## To Do / Next Steps
-0. **Do proper runs for MCTS.**
-   - Error rate tests (i.e. making optimal make randomized errors and checking win-rates against optimal).
-   - Game length tests (i.e. checking for average game length against complete optimal).
-   - Correct move tests (i.e. checking for whether MCTS makes correct moves for random initial positions and boards).
 1. **Improvement/analysis of Q-learning.**
    - Get other features/heuristics for Q-learning.
    - Getting Q-learning to learn by playing against MCTS/optimal.
    - Test Q-learning and MCTS on positions that are a couple moves in, so that Q-learning needs to only train once at `initState=0b0` and then evaluated from different positions.
-2. **Evaluate the playing agents / depth in Quixo.** Referencing '[Depth in Strategic Games](https://www.semanticscholar.org/paper/Depth-in-Strategic-Games-Lantz-Isaksen/4dedc67aa2191731bf8cf1822d42cea290e73073)', compare the learning rates of non-optimal playing agents between 3X3, 4X4, and 5X5 Quixo. Graph where x-axis is training time or number of training iterations, and y-axis is number of steps to lose OR how much randomization needs to be injected to optimal to make it lose OR percentage of correct moves.
-3. _(Stretch)_ **Extensions of Quixo.** As mentioned in '[Quixo Is Solved](https://arxiv.org/abs/2007.15895)', there are extensions of Quixo (such as winning length being different from board length). These can be investigated if time permits.
+2. _(Stretch)_ **Extensions of Quixo.** As mentioned in '[Quixo Is Solved](https://arxiv.org/abs/2007.15895)', there are extensions of Quixo (such as winning length being different from board length). These can be investigated if time permits.
