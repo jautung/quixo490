@@ -169,7 +169,7 @@ int main(int argc, char* argv[]) {
       auto cliHandler = new CliHandler();
       auto playerX = getPlayer(playerXType, gameStateHandler, cliHandler);
       auto optimalPlayer = new OptimalPlayer(gameStateHandler);
-      int numCorrectMoves = 0;
+      int numCorrectMovesFromLossState = 0, numCorrectMovesFromDrawState = 0, numCorrectMovesFromWinState = 0, numLossStates = 0, numDrawStates = 0, numWinStates = 0;
       for (int i = 0; i < numGames; i++) {
         playerX->clearCache();
         playerX->initLearn();
@@ -180,19 +180,22 @@ int main(int argc, char* argv[]) {
         auto nextResult = optimalPlayer->evalState(nextState);
         std::string toPrint;
         if (result == RESULT_LOSS) {
+          numLossStates += 1;
           toPrint = "Correct move for LOSS state";
-          numCorrectMoves += 1;
+          numCorrectMovesFromLossState += 1;
         } else if (result == RESULT_DRAW) {
+          numDrawStates += 1;
           if (nextResult == RESULT_DRAW) {
             toPrint = "Correct move for DRAW state";
-            numCorrectMoves += 1;
+            numCorrectMovesFromDrawState += 1;
           } else {
             toPrint = "Incorrect move for DRAW state";
           }
         } else if (result == RESULT_WIN) {
+          numWinStates += 1;
           if (nextResult == RESULT_LOSS) {
             toPrint = "Correct move for WIN state";
-            numCorrectMoves += 1;
+            numCorrectMovesFromWinState += 1;
           } else {
             toPrint = "Incorrect move for WIN state";
           }
@@ -205,14 +208,19 @@ int main(int argc, char* argv[]) {
         if (verbosity == "all" || verbosity == "default") std::cout << toPrint << "\n";
         if (verbosity == "all") std::cout << "\n";
       }
+      int numCorrectMoves = numCorrectMovesFromLossState + numCorrectMovesFromDrawState + numCorrectMovesFromWinState;
       if (verbosity == "all" || verbosity == "default") {
         std::cout << "\nResult summary for Player X (" << playerXType << ") on " << len << "X" << len << " Quixo\n";
         std::cout << "--------------------------------------------------------------------------------\n";
-        std::cout << "Number of states attempted: " << numGames << "\n";
-        std::cout << "Number of correct moves: " << numCorrectMoves << "\n";
-        std::cout << "Correct move percentage: " << 100.0*numCorrectMoves/numGames << "%\n";
+        std::cout << "Number of states attempted: " << numGames << " (" << numLossStates << " L / " << numDrawStates << " D / " << numWinStates << " W)\n";
+        std::cout << "Number of correct moves: " << numCorrectMoves << " (" << numCorrectMovesFromLossState << " L / " << numCorrectMovesFromDrawState << " D / " << numCorrectMovesFromWinState << " W)\n";
+        std::cout << "Correct move percentage: " << 100.0*numCorrectMoves/numGames << "% (" << 100.0*numCorrectMovesFromLossState/numLossStates << "% L / " << 100.0*numCorrectMovesFromDrawState/numDrawStates << "% D / " << 100.0*numCorrectMovesFromWinState/numWinStates << "% W)\n";
       } else if (verbosity == "correct-move-tests") {
-        std::cout << len << "\t" << playerXType << "\t" << 1.0*numCorrectMoves/numGames << "\n";
+        std::cout << len << "\t" << playerXType << "\t"
+                  << 1.0*numCorrectMoves/numGames << "\t"
+                  << 1.0*numCorrectMovesFromLossState/numLossStates << "\t"
+                  << 1.0*numCorrectMovesFromDrawState/numDrawStates << "\t"
+                  << 1.0*numCorrectMovesFromWinState/numWinStates << "\n";
       }
       delete cliHandler;
       delete playerX;
