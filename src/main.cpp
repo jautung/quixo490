@@ -14,67 +14,8 @@
 
 std::mt19937 rng(time(0));
 
-Player* getPlayer(std::string playerType, GameStateHandler* gameStateHandler, CliHandler* cliHandler, GraphicsHandler* graphicsHandler = NULL) {
-  if (playerType == "random") {
-    return new RandomPlayer(gameStateHandler);
-  } else if (playerType == "interact") {
-    return new InteractivePlayer(gameStateHandler, graphicsHandler);
-  } else if (playerType.find("opt", 0) == 0) {
-    auto cliParams = cliHandler->readCliParams(playerType.substr(std::string("opt").length()));
-    if (cliParams.size() != 0 && cliParams.size() != 1) {
-      std::cerr << "error: " << "incorrect number of params for opt player type (expected 0 or 1; got " << cliParams.size() << ")\n";
-      exit(1);
-    }
-    double initErrorRate = 0.0;
-    if (cliParams.size() == 1 && cliParams[0] != "") {
-      initErrorRate = cliHandler->readFracDoubleCliParam(cliParams[0], "opt initErrorRate");
-    }
-    return new OptimalPlayer(gameStateHandler, graphicsHandler, initErrorRate);
-  } else if (playerType == "heuris-simple") {
-    return new HeuristicSimplePlayer(gameStateHandler);
-  } else if (playerType.find("mcts", 0) == 0) { // string starts with mcts prefix
-    std::string prefix = "mcts";
-    bool persistCacheQ = false;
-    if (playerType.find("mcts-cache-persist", 0) == 0) { // string starts with mcts-cache-persist prefix
-      prefix = "mcts-cache-persist";
-      persistCacheQ = true;
-    }
-    auto cliParams = cliHandler->readCliParams(playerType.substr(std::string(prefix).length()));
-    if (cliParams.size() != 2) {
-      std::cerr << "error: " << "incorrect number of params for mcts player type (expected 2; got " << cliParams.size() << ")\n";
-      exit(1);
-    }
-    auto initIters = cliHandler->readNonNegIntCliParam(cliParams[0], "mcts player init iters");
-    auto perMoveIters = cliHandler->readNonNegIntCliParam(cliParams[1], "mcts player per move iters");
-    return new MCTSPlayer(gameStateHandler, graphicsHandler, initIters, perMoveIters, persistCacheQ);
-  } else if (playerType.find("q-learn", 0) == 0) { // string starts with q-learn prefix
-    auto cliParams = cliHandler->readCliParams(playerType.substr(std::string("q-learn").length()));
-    if (cliParams.size() != 2) {
-      std::cerr << "error: " << "incorrect number of params for q-learning player type (expected 2; got " << cliParams.size() << ")\n";
-      exit(1);
-    }
-    auto initIters = cliHandler->readNonNegIntCliParam(cliParams[0], "q-learning player init iters");
-    auto perMoveIters = cliHandler->readNonNegIntCliParam(cliParams[1], "q-learning player per move iters");
-    return new QLearningPlayer(gameStateHandler, graphicsHandler, initIters, perMoveIters);
-  } else {
-    std::cerr << "error: " << "unknown player type: " << playerType << "\n";
-    exit(1);
-  }
-}
-
-state_t getStateInteractive(GraphicsHandler* graphicsHandler) {
-  if (graphicsHandler) {
-    std::cout << "Remember to hit Enter to confirm your selection\n";
-    auto state = graphicsHandler->drawBaseBoardGetState();
-    return state;
-  } else {
-    state_t state;
-    std::cerr << "warning: " << "running optimal checker without a graphics handler is EXTREMELY unadvised; proceed only if you know EXACTLY how states are indexed\n";
-    std::cout << "Choose a state index (no error checking; proceed at your own peril): ";
-    std::cin >> state;
-    return state;
-  }
-}
+Player* getPlayer(std::string playerType, GameStateHandler* gameStateHandler, CliHandler* cliHandler, GraphicsHandler* graphicsHandler = NULL);
+state_t getStateInteractive(GraphicsHandler* graphicsHandler);
 
 int main(int argc, char* argv[]) {
   try {
@@ -91,6 +32,7 @@ int main(int argc, char* argv[]) {
     TCLAP::ValueArg<int> numGamesArg("N", "Ngames", "For `test` program: number of game iterations to run", false, 1, "integer", cmd);
     TCLAP::ValueArg<int> numThreadsArg("T", "Threads", "For `opt-compute` program: number of Threads to use", false, 1, "integer", cmd);
     TCLAP::ValueArg<int> numLocksPerArrArg("L", "Locksperarray", "For `opt-compute` program: number of Locks to use per result array", false, 1, "integer", cmd);
+    TCLAP::ValueArg<std::string> verbosityArg("v", "verbosity", "For `play` or `test` program: verbosity of logging (`all`, `default`, `error-rate-tests`, `silent`)", false, "default", "string", cmd);
     cmd.parse(argc, argv);
 
     auto prog = progArg.getValue();
@@ -121,6 +63,11 @@ int main(int argc, char* argv[]) {
       std::cerr << "warning: " << "number of locks per array requested (" << numLocksPerArr << ") is not positive; automatically reverting to default of 1 lock per array\n";
       numLocksPerArr = 1;
     }
+    auto verbosity = verbosityArg.getValue();
+    if (verbosity != "all" && verbosity != "default" && verbosity != "error-rate-tests" && verbosity != "silent") {
+      std::cerr << "error: " << "unknown verbosity: " << verbosity << "\n";
+      exit(1);
+    }
 
     auto gameStateHandler = new GameStateHandler(len);
 
@@ -129,16 +76,16 @@ int main(int argc, char* argv[]) {
       auto graphicsHandler = graphicsRes > 0 ? new GraphicsHandler(gameStateHandler, graphicsRes) : NULL;
       auto playerX = getPlayer(playerXType, gameStateHandler, cliHandler, graphicsHandler);
       auto playerO = getPlayer(playerOType, gameStateHandler, cliHandler, graphicsHandler);
-      auto gamePlayHandler = new GamePlayHandler(playerX, playerO, timePauseMs, gameStateHandler, graphicsHandler);
+      auto gamePlayHandler = new GamePlayHandler(playerX, playerO, timePauseMs, gameStateHandler, graphicsHandler, verbosity);
       gamePlayHandler->startGame(initState ? getStateInteractive(graphicsHandler) : 0b0);
       int nTurnsPlayed;
       auto winner = nTurns <= 0 ? gamePlayHandler->playTillEnd(nTurnsPlayed) : gamePlayHandler->playNTurns(nTurns, nTurnsPlayed);
       if (winner == WINNER_X) {
-        std::cout << "X Wins (after " << nTurnsPlayed << " turns)!\n";
+        if (verbosity == "all" || verbosity == "default") std::cout << "X Wins (after " << nTurnsPlayed << " turns)!\n";
       } else if (winner == WINNER_O) {
-        std::cout << "O Wins (after " << nTurnsPlayed << " turns)!\n";
+        if (verbosity == "all" || verbosity == "default") std::cout << "O Wins (after " << nTurnsPlayed << " turns)!\n";
       } else if (winner == WINNER_UNKNOWN) {
-        std::cout << "No Winner Yet (after " << nTurnsPlayed << " turns).\n";
+        if (verbosity == "all" || verbosity == "default") std::cout << "No Winner Yet (after " << nTurnsPlayed << " turns).\n";
       }
       #if MCTS_CACHE_HIT_CHECK == 1
         if (playerXType.find("mcts", 0) == 0) static_cast<MCTSPlayer*>(playerX)->printCacheStats("X");
@@ -159,32 +106,41 @@ int main(int argc, char* argv[]) {
       auto cliHandler = new CliHandler();
       auto playerX = getPlayer(playerXType, gameStateHandler, cliHandler);
       auto playerO = getPlayer(playerOType, gameStateHandler, cliHandler);
-      auto gamePlayHandler = new GamePlayHandler(playerX, playerO, 0, gameStateHandler, NULL, true);
+      auto gamePlayHandler = new GamePlayHandler(playerX, playerO, 0, gameStateHandler, NULL, verbosity);
       int xWins = 0;
       int oWins = 0;
       int draws = 0;
+      int totalNumTurns = 0;
       for (int i = 0; i < numGames; i++) {
         gamePlayHandler->startGame();
         int nTurnsPlayed;
         auto winner = nTurns <= 0 ? gamePlayHandler->playTillEnd(nTurnsPlayed) : gamePlayHandler->playNTurns(nTurns, nTurnsPlayed);
         if (winner == WINNER_X) {
           xWins += 1;
-          std::cout << i << ": X Wins (after " << nTurnsPlayed << " turns)!\n";
+          if (verbosity == "all" || verbosity == "default") std::cout << i << ": X Wins (after " << nTurnsPlayed << " turns)!\n";
         } else if (winner == WINNER_O) {
           oWins += 1;
-          std::cout << i << ": O Wins (after " << nTurnsPlayed << " turns)!\n";
+          if (verbosity == "all" || verbosity == "default") std::cout << i << ": O Wins (after " << nTurnsPlayed << " turns)!\n";
         } else if (winner == WINNER_UNKNOWN) {
           draws += 1;
-          std::cout << i << ": Draw (after " << nTurnsPlayed << " turns)!\n";
+          if (verbosity == "all" || verbosity == "default") std::cout << i << ": Draw (after " << nTurnsPlayed << " turns)!\n";
         }
+        totalNumTurns += nTurnsPlayed;
       }
-      std::cout << "\nResult summary for Player X (" << playerXType << ") vs. Player O (" << playerOType << ") on " << len << "X" << len << " Quixo\n";
-      std::cout << "--------------------------------------------------------------------------------\n";
-      if (playerXType.find("opt", 0) != 0) std::cout << "Player X init compute time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->initTimeX).count()/1000.0 << " (" << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->initTimeX).count()/1000.0/numGames << " average per game)\n";
-      if (playerOType.find("opt", 0) != 0) std::cout << "Player O init compute time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->initTimeO).count()/1000.0 << " (" << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->initTimeO).count()/1000.0/numGames << " average per game)\n";
-      std::cout << "Player X running compute time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0 << " (" << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0/numGames << " average per game)\n";
-      std::cout << "Player O running compute time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0 << " (" << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0/numGames << " average per game)\n";
-      std::cout << "Winners (X-O-D): " << xWins << "-" << oWins << "-" << draws << "\n";
+      if (verbosity == "all" || verbosity == "default") {
+        std::cout << "\nResult summary for Player X (" << playerXType << ") vs. Player O (" << playerOType << ") on " << len << "X" << len << " Quixo\n";
+        std::cout << "--------------------------------------------------------------------------------\n";
+        if (playerXType.find("opt", 0) != 0) std::cout << "Player X init compute time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->initTimeX).count()/1000.0 << " (" << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->initTimeX).count()/1000.0/numGames << " average per game)\n";
+        if (playerOType.find("opt", 0) != 0) std::cout << "Player O init compute time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->initTimeO).count()/1000.0 << " (" << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->initTimeO).count()/1000.0/numGames << " average per game)\n";
+        std::cout << "Player X running compute time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0 << " (" << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0/numGames << " average per game; " << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0/totalNumTurns << " average per turn)\n";
+        std::cout << "Player O running compute time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0 << " (" << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0/numGames << " average per game; " << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0/totalNumTurns << " average per turn)\n";
+        std::cout << "Winners (X-O-D): " << xWins << "-" << oWins << "-" << draws << "\n";
+      } else if (verbosity == "error-rate-tests") {
+        std::cout << len << "\t" << playerXType << "\t" << playerOType << "\t"
+                  << xWins << "\t" << oWins << "\t" << draws << "\t"
+                  << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0/totalNumTurns << "\t"
+                  << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0/totalNumTurns << "\n";
+      }
       delete cliHandler;
       delete playerX;
       delete playerO;
@@ -248,4 +204,66 @@ int main(int argc, char* argv[]) {
   }
 
   return 0;
+}
+
+Player* getPlayer(std::string playerType, GameStateHandler* gameStateHandler, CliHandler* cliHandler, GraphicsHandler* graphicsHandler) {
+  if (playerType == "random") {
+    return new RandomPlayer(gameStateHandler);
+  } else if (playerType == "interact") {
+    return new InteractivePlayer(gameStateHandler, graphicsHandler);
+  } else if (playerType.find("opt", 0) == 0) {
+    auto cliParams = cliHandler->readCliParams(playerType.substr(std::string("opt").length()));
+    if (cliParams.size() != 0 && cliParams.size() != 1) {
+      std::cerr << "error: " << "incorrect number of params for opt player type (expected 0 or 1; got " << cliParams.size() << ")\n";
+      exit(1);
+    }
+    double initErrorRate = 0.0;
+    if (cliParams.size() == 1 && cliParams[0] != "") {
+      initErrorRate = cliHandler->readFracDoubleCliParam(cliParams[0], "opt initErrorRate");
+    }
+    return new OptimalPlayer(gameStateHandler, graphicsHandler, initErrorRate);
+  } else if (playerType == "heuris-simple") {
+    return new HeuristicSimplePlayer(gameStateHandler);
+  } else if (playerType.find("mcts", 0) == 0) { // string starts with mcts prefix
+    std::string prefix = "mcts";
+    bool persistCacheQ = false;
+    if (playerType.find("mcts-cache-persist", 0) == 0) { // string starts with mcts-cache-persist prefix
+      prefix = "mcts-cache-persist";
+      persistCacheQ = true;
+    }
+    auto cliParams = cliHandler->readCliParams(playerType.substr(std::string(prefix).length()));
+    if (cliParams.size() != 2) {
+      std::cerr << "error: " << "incorrect number of params for mcts player type (expected 2; got " << cliParams.size() << ")\n";
+      exit(1);
+    }
+    auto initIters = cliHandler->readNonNegIntCliParam(cliParams[0], "mcts player init iters");
+    auto perMoveIters = cliHandler->readNonNegIntCliParam(cliParams[1], "mcts player per move iters");
+    return new MCTSPlayer(gameStateHandler, graphicsHandler, initIters, perMoveIters, persistCacheQ);
+  } else if (playerType.find("q-learn", 0) == 0) { // string starts with q-learn prefix
+    auto cliParams = cliHandler->readCliParams(playerType.substr(std::string("q-learn").length()));
+    if (cliParams.size() != 2) {
+      std::cerr << "error: " << "incorrect number of params for q-learning player type (expected 2; got " << cliParams.size() << ")\n";
+      exit(1);
+    }
+    auto initIters = cliHandler->readNonNegIntCliParam(cliParams[0], "q-learning player init iters");
+    auto perMoveIters = cliHandler->readNonNegIntCliParam(cliParams[1], "q-learning player per move iters");
+    return new QLearningPlayer(gameStateHandler, graphicsHandler, initIters, perMoveIters);
+  } else {
+    std::cerr << "error: " << "unknown player type: " << playerType << "\n";
+    exit(1);
+  }
+}
+
+state_t getStateInteractive(GraphicsHandler* graphicsHandler) {
+  if (graphicsHandler) {
+    std::cout << "Remember to hit Enter to confirm your selection\n";
+    auto state = graphicsHandler->drawBaseBoardGetState();
+    return state;
+  } else {
+    state_t state;
+    std::cerr << "warning: " << "running optimal checker without a graphics handler is EXTREMELY unadvised; proceed only if you know EXACTLY how states are indexed\n";
+    std::cout << "Choose a state index (no error checking; proceed at your own peril): ";
+    std::cin >> state;
+    return state;
+  }
 }

@@ -84,9 +84,13 @@
   - Added the `opt*` option to make the optimal player make errors at the `*` rate (a double).
 
 ## To Do / Next Steps
-1. **Analysis/improvement of Q-learning.**
+0. **Do proper runs for MCTS.**
+   - Error rate tests (i.e. making optimal make randomized errors and checking win-rates against optimal).
+   - Game length tests (i.e. checking for average game length against complete optimal).
+   - Correct move tests (i.e. checking for whether MCTS makes correct moves for random initial positions and boards).
+1. **Improvement/analysis of Q-learning.**
    - Get other features/heuristics for Q-learning.
-   - Test Q-learning and MCTS on positions that are a couple moves in, so that Q-learning needs to only train once at `initState=0b0` and then evaluated from different positions.
    - Getting Q-learning to learn by playing against MCTS/optimal.
+   - Test Q-learning and MCTS on positions that are a couple moves in, so that Q-learning needs to only train once at `initState=0b0` and then evaluated from different positions.
 2. **Evaluate the playing agents / depth in Quixo.** Referencing '[Depth in Strategic Games](https://www.semanticscholar.org/paper/Depth-in-Strategic-Games-Lantz-Isaksen/4dedc67aa2191731bf8cf1822d42cea290e73073)', compare the learning rates of non-optimal playing agents between 3X3, 4X4, and 5X5 Quixo. Graph where x-axis is training time or number of training iterations, and y-axis is number of steps to lose OR how much randomization needs to be injected to optimal to make it lose OR percentage of correct moves.
 3. _(Stretch)_ **Extensions of Quixo.** As mentioned in '[Quixo Is Solved](https://arxiv.org/abs/2007.15895)', there are extensions of Quixo (such as winning length being different from board length). These can be investigated if time permits.

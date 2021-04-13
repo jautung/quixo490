@@ -2,15 +2,16 @@
 #include "GraphicsHandler.hpp"
 #include <chrono>
 #include <iostream>
+#include <string>
 #include <thread>
 
-GamePlayHandler::GamePlayHandler(Player* initPlayerX, Player* initPlayerO, int initTimePauseMs, GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler, bool initSilent) {
+GamePlayHandler::GamePlayHandler(Player* initPlayerX, Player* initPlayerO, int initTimePauseMs, GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler, std::string initVerbosity) {
   playerX = initPlayerX;
   playerO = initPlayerO;
   timePauseMs = initTimePauseMs;
   gameStateHandler = initGameStateHandler;
   graphicsHandler = initGraphicsHandler;
-  silent = initSilent;
+  verbosity = initVerbosity;
   initTimeX = std::chrono::high_resolution_clock::duration::zero();
   initTimeO = std::chrono::high_resolution_clock::duration::zero();
   runTimeX = std::chrono::high_resolution_clock::duration::zero();
@@ -43,7 +44,7 @@ winner_t GamePlayHandler::playTurn() {
   if (!dynamic_cast<InteractivePlayer*>(playerX)) { // pause for all except interactive player
     std::this_thread::sleep_for(std::chrono::milliseconds(timePauseMs));
   }
-  if (!silent) {
+  if (verbosity == "all") {
     std::cout << "X's Move: ";
     gameStateHandler->moveHandler->print(move);
   }
@@ -68,7 +69,7 @@ winner_t GamePlayHandler::playTurn() {
   if (!dynamic_cast<InteractivePlayer*>(playerO)) { // pause for all except interactive player
     std::this_thread::sleep_for(std::chrono::milliseconds(timePauseMs));
   }
-  if (!silent) {
+  if (verbosity == "all") {
     std::cout << "O's Move: ";
     gameStateHandler->moveHandler->print(move);
   }
@@ -117,10 +118,12 @@ winner_t GamePlayHandler::playTillEnd(int& nTurnsPlayed) {
 }
 
 void GamePlayHandler::displayGameState() {
-  if (!silent) {
-    if (!graphicsHandler) {
+  if (!graphicsHandler) {
+    if (verbosity == "all") {
       gameStateHandler->print(state);
-    } else {
+    }
+  } else {
+    if (verbosity == "all" || verbosity == "default") {
       graphicsHandler->drawBoard(state);
     }
   }

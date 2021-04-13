@@ -4,6 +4,7 @@
 #include "GraphicsHandler.hpp"
 #include <chrono>
 #include <cstdint>
+#include <string>
 
 enum winner_t : uint8_t {
   WINNER_X,
@@ -13,7 +14,7 @@ enum winner_t : uint8_t {
 
 class GamePlayHandler {
   public:
-    GamePlayHandler(Player* initPlayerX, Player* initPlayerO, int initTimePauseMs, GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler = NULL, bool initSilent = false);
+    GamePlayHandler(Player* initPlayerX, Player* initPlayerO, int initTimePauseMs, GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler = NULL, std::string initVerbosity = "default");
     void startGame(state_t initState = 0b0);
     winner_t playTurn();
     winner_t playNTurns(int nTurns, int& nTurnsPlayed);
@@ -28,7 +29,7 @@ class GamePlayHandler {
     int timePauseMs;
     GameStateHandler* gameStateHandler;
     GraphicsHandler* graphicsHandler;
-    bool silent;
+    std::string verbosity;
     state_t state;
     void displayGameState();
 };
