@@ -21,8 +21,8 @@ int main(int argc, char* argv[]) {
   try {
     TCLAP::CmdLine cmd("Quixo Project");
 
-    TCLAP::ValueArg<std::string> progArg("p", "program", "Program to run (`play`, `test`, `opt-compute*`, `opt-check`, or `opt-analyze`)", false, "play", "string", cmd);
-    TCLAP::ValueArg<int> lenArg("l", "len", "For `play`, `test`, `opt-compute`, `opt-check` or `opt-analyze` program: number of tiles per side", false, 5, "integer", cmd);
+    TCLAP::ValueArg<std::string> progArg("p", "program", "Program to run (`play`, `test`, `opt-compute*`, `opt-check`, `opt-analyze`, or `opt-analyze-adj`)", false, "play", "string", cmd);
+    TCLAP::ValueArg<int> lenArg("l", "len", "For `play`, `test`, `opt-compute`, `opt-check`, `opt-analyze` or `opt-analyze-adj` program: number of tiles per side", false, 5, "integer", cmd);
     TCLAP::ValueArg<std::string> playerXTypeArg("X", "playerX", "For `play` or `test` program: player X type (`random`, `interact`, `opt*`, `heuris-simple`, `mcts*,*`, `mcts-cache-persist*,*`, or `q-learn*,*`)", false, "random", "string", cmd);
     TCLAP::ValueArg<std::string> playerOTypeArg("O", "playerO", "For `play` or `test` program: player O type (`random`, `interact`, `opt*`, `heuris-simple`, `mcts*,*`, `mcts-cache-persist*,*`, or `q-learn*,*`)", false, "random", "string", cmd);
     TCLAP::ValueArg<int> nTurnsArg("n", "numturns", "For `play` or `test` program: turn limit per game (<=0: till the end)", false, 0, "integer", cmd);
@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
     TCLAP::ValueArg<int> numGamesArg("N", "Ngames", "For `test` program: number of game iterations to run", false, 1, "integer", cmd);
     TCLAP::ValueArg<int> numThreadsArg("T", "Threads", "For `opt-compute` program: number of Threads to use", false, 1, "integer", cmd);
     TCLAP::ValueArg<int> numLocksPerArrArg("L", "Locksperarray", "For `opt-compute` program: number of Locks to use per result array", false, 1, "integer", cmd);
-    TCLAP::ValueArg<std::string> verbosityArg("v", "verbosity", "For `play` or `test` program: verbosity of logging (`all`, `default`, `error-rate-tests`, `silent`)", false, "default", "string", cmd);
+    TCLAP::ValueArg<std::string> verbosityArg("v", "verbosity", "For `play` or `test` program: verbosity of logging (`all`, `default`, `error-rate-tests`, `game-length-tests`, or `silent`)", false, "default", "string", cmd);
     cmd.parse(argc, argv);
 
     auto prog = progArg.getValue();
@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
       numLocksPerArr = 1;
     }
     auto verbosity = verbosityArg.getValue();
-    if (verbosity != "all" && verbosity != "default" && verbosity != "error-rate-tests" && verbosity != "silent") {
+    if (verbosity != "all" && verbosity != "default" && verbosity != "error-rate-tests" && verbosity != "game-length-tests" && verbosity != "silent") {
       std::cerr << "error: " << "unknown verbosity: " << verbosity << "\n";
       exit(1);
     }
@@ -140,6 +140,11 @@ int main(int argc, char* argv[]) {
                   << xWins << "\t" << oWins << "\t" << draws << "\t"
                   << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0/totalNumTurns << "\t"
                   << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0/totalNumTurns << "\n";
+      } else if (verbosity == "game-length-tests") {
+        std::cout << len << "\t" << playerXType << "\t" << playerOType << "\t"
+                  << 1.0*totalNumTurns/numGames << "\t" << draws << "\t"
+                  << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0/totalNumTurns << "\t"
+                  << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0/totalNumTurns << "\n";
       }
       delete cliHandler;
       delete playerX;
@@ -189,7 +194,12 @@ int main(int argc, char* argv[]) {
     else if (prog == "opt-analyze") {
       auto optAnalyzer = new OptAnalyzer(gameStateHandler);
       optAnalyzer->analyzeNumWinLossDrawStates(); // full counts of win, loss, and draw states
-      // optAnalyzer->analyzeNumWinLossDrawStates(true); // counts of win, loss, and draw states for adjacent numbers of Xs and Os (what the paper does)
+      delete optAnalyzer;
+    }
+
+    else if (prog == "opt-analyze-adj") {
+      auto optAnalyzer = new OptAnalyzer(gameStateHandler);
+      optAnalyzer->analyzeNumWinLossDrawStates(true); // counts of win, loss, and draw states for adjacent numbers of Xs and Os (what the paper does)
       delete optAnalyzer;
     }
 

@@ -23,7 +23,7 @@ echo '=== START ==='
 echo 'N_GAMES_EACH:' $N_GAMES_EACH >> logs/$LOGFILE
 echo 'TURN_LIMIT:' $TURN_LIMIT >> logs/$LOGFILE
 echo '' >> logs/$LOGFILE
-echo 'len   xType   oType   xWins   oWins   draws   xTurnTime   oTurnTime' >> logs/$LOGFILE
+echo 'len	xType	oType	xWins	oWins	draws	xTurnTime	oTurnTime' >> logs/$LOGFILE
 
 # X opt O mcts
 echo '-l 5 -X opt0.0 -O mcts0,0' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O mcts0,0 >> logs/$LOGFILE
