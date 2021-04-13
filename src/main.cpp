@@ -23,18 +23,18 @@ int main(int argc, char* argv[]) {
   try {
     TCLAP::CmdLine cmd("Quixo Project");
 
-    TCLAP::ValueArg<std::string> progArg("p", "program", "Program to run (`play`, `test`, `opt-compute*`, `opt-check`, `opt-analyze`, or `opt-analyze-adj`)", false, "play", "string", cmd);
-    TCLAP::ValueArg<int> lenArg("l", "len", "For `play`, `test`, `opt-compute`, `opt-check`, `opt-analyze` or `opt-analyze-adj` program: number of tiles per side", false, 5, "integer", cmd);
-    TCLAP::ValueArg<std::string> playerXTypeArg("X", "playerX", "For `play` or `test` program: player X type (`random`, `interact`, `opt*`, `heuris-simple`, `mcts*,*`, `mcts-cache-persist*,*`, or `q-learn*,*`)", false, "random", "string", cmd);
+    TCLAP::ValueArg<std::string> progArg("p", "program", "Program to run (`play`, `test`, `test-move-correctness`, `opt-compute*`, `opt-check`, `opt-analyze`, or `opt-analyze-adj`)", false, "play", "string", cmd);
+    TCLAP::ValueArg<int> lenArg("l", "len", "For `play`, `test`, `test-move-correctness`, `opt-compute`, `opt-check`, `opt-analyze` or `opt-analyze-adj` program: number of tiles per side", false, 5, "integer", cmd);
+    TCLAP::ValueArg<std::string> playerXTypeArg("X", "playerX", "For `play`, `test` or `test-move-correctness` program: player X type (`random`, `interact`, `opt*`, `heuris-simple`, `mcts*,*`, `mcts-cache-persist*,*`, or `q-learn*,*`)", false, "random", "string", cmd);
     TCLAP::ValueArg<std::string> playerOTypeArg("O", "playerO", "For `play` or `test` program: player O type (`random`, `interact`, `opt*`, `heuris-simple`, `mcts*,*`, `mcts-cache-persist*,*`, or `q-learn*,*`)", false, "random", "string", cmd);
     TCLAP::ValueArg<int> nTurnsArg("n", "numturns", "For `play` or `test` program: turn limit per game (<=0: till the end)", false, 0, "integer", cmd);
     TCLAP::SwitchArg initStateArg("i", "initstate", "For `play` program: whether to set an initial state of the game board", cmd);
     TCLAP::ValueArg<int> timePauseMsArg("t", "timepause", "For `play` program: time (in milliseconds) to pause between steps", false, 0, "integer", cmd);
     TCLAP::ValueArg<int> graphicsResArg("g", "graphicsres", "For `play` or `opt-check` program: graphical output screen resolution (<0: no graphics)", false, 0, "integer", cmd);
-    TCLAP::ValueArg<int> numGamesArg("N", "Ngames", "For `test` program: number of game iterations to run", false, 1, "integer", cmd);
+    TCLAP::ValueArg<int> numGamesArg("N", "Ngames", "For `test` or `test-move-correctness` program: number of game iterations or game states (respectively) to run", false, 1, "integer", cmd);
     TCLAP::ValueArg<int> numThreadsArg("T", "Threads", "For `opt-compute` program: number of Threads to use", false, 1, "integer", cmd);
     TCLAP::ValueArg<int> numLocksPerArrArg("L", "Locksperarray", "For `opt-compute` program: number of Locks to use per result array", false, 1, "integer", cmd);
-    TCLAP::ValueArg<std::string> verbosityArg("v", "verbosity", "For `play` or `test` program: verbosity of logging (`all`, `default`, `error-rate-tests`, `game-length-tests`, or `silent`)", false, "default", "string", cmd);
+    TCLAP::ValueArg<std::string> verbosityArg("v", "verbosity", "For `play`, `test` or `test-move-correctness` program: verbosity of logging (`all`, `default`, `error-rate-tests`, `game-length-tests`, `correct-move-tests`, or `silent`)", false, "default", "string", cmd);
     cmd.parse(argc, argv);
 
     auto prog = progArg.getValue();
@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
       numLocksPerArr = 1;
     }
     auto verbosity = verbosityArg.getValue();
-    if (verbosity != "all" && verbosity != "default" && verbosity != "error-rate-tests" && verbosity != "game-length-tests" && verbosity != "silent") {
+    if (verbosity != "all" && verbosity != "default" && verbosity != "error-rate-tests" && verbosity != "game-length-tests" && verbosity != "correct-move-tests" && verbosity != "silent") {
       std::cerr << "error: " << "unknown verbosity: " << verbosity << "\n";
       exit(1);
     }
@@ -159,6 +159,64 @@ int main(int argc, char* argv[]) {
       delete playerX;
       delete playerO;
       delete gamePlayHandler;
+    }
+
+    else if (prog == "test-move-correctness") {
+      if (playerXType == "interact") {
+        std::cerr << "warning: " << "using an interactive player for testing move correctness is not a good idea; aborting\n";
+        exit(1);
+      }
+      auto cliHandler = new CliHandler();
+      auto playerX = getPlayer(playerXType, gameStateHandler, cliHandler);
+      auto optimalPlayer = new OptimalPlayer(gameStateHandler);
+      int numCorrectMoves = 0;
+      for (int i = 0; i < numGames; i++) {
+        playerX->clearCache();
+        playerX->initLearn();
+        auto state = gameStateHandler->genRandomState();
+        auto result = optimalPlayer->evalState(state);
+        auto move = playerX->selectMove(state);
+        auto nextState = gameStateHandler->swapPlayers(gameStateHandler->makeMove(state, move));
+        auto nextResult = optimalPlayer->evalState(nextState);
+        std::string toPrint;
+        if (result == RESULT_LOSS) {
+          toPrint = "Correct move for LOSS state";
+          numCorrectMoves += 1;
+        } else if (result == RESULT_DRAW) {
+          if (nextResult == RESULT_DRAW) {
+            toPrint = "Correct move for DRAW state";
+            numCorrectMoves += 1;
+          } else {
+            toPrint = "Incorrect move for DRAW state";
+          }
+        } else if (result == RESULT_WIN) {
+          if (nextResult == RESULT_LOSS) {
+            toPrint = "Correct move for WIN state";
+            numCorrectMoves += 1;
+          } else {
+            toPrint = "Incorrect move for WIN state";
+          }
+        }
+        if (verbosity == "all" || verbosity == "default") std::cout << "Game state " << i << ": ";
+        if (verbosity == "all") {
+          std::cout << "\n";
+          gameStateHandler->print(state);
+        }
+        if (verbosity == "all" || verbosity == "default") std::cout << toPrint << "\n";
+        if (verbosity == "all") std::cout << "\n";
+      }
+      if (verbosity == "all" || verbosity == "default") {
+        std::cout << "\nResult summary for Player X (" << playerXType << ") on " << len << "X" << len << " Quixo\n";
+        std::cout << "--------------------------------------------------------------------------------\n";
+        std::cout << "Number of states attempted: " << numGames << "\n";
+        std::cout << "Number of correct moves: " << numCorrectMoves << "\n";
+        std::cout << "Correct move percentage: " << 100.0*numCorrectMoves/numGames << "%\n";
+      } else if (verbosity == "correct-move-tests") {
+        std::cout << len << "\t" << playerXType << "\t" << 1.0*numCorrectMoves/numGames << "\n";
+      }
+      delete cliHandler;
+      delete playerX;
+      delete optimalPlayer;
     }
 
     else if (prog.find("opt-compute", 0) == 0) { // string starts with opt-compute prefix

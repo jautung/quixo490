@@ -88,6 +88,7 @@ class GameStateHandler {
     bindex_t numInDiag1(state_t state, tile_t tileType);
     bindex_t numInDiag2(state_t state, tile_t tileType);
     void print(state_t state);
+    state_t genRandomState();
   private:
     state_t rowMaskFull;
     state_t colMaskFull;

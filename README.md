@@ -53,6 +53,7 @@
     - `./bin/quixo -p test -l 5 -N 100 -X random -O opt -n 1000`: test optimal player O against random player X for 1000 games on a 5X5 board, with a turn limit of 1000 per game.
     - `./bin/quixo -p test -l 5 -N 100 -X opt -O random -n 1000`: test optimal player X against random player O for 1000 games on a 5X5 board, with a turn limit of 1000 per game.
     - `./bin/quixo -p test -l 5 -N 100 -X opt0.5 -O mcts0,200 -n 100`: test optimal player X with 50% random moves against MCTS player O with 0 initial training iterations and 200 training iterations per move for 1000 games on a 5X5 board, with a turn limit of 100 per game.
+    - `./bin/quixo -p test-move-correctness -l 5 -N 100 -X mcts0,100`: test MCTS player with 0 initial training iterations and 100 training iterations per move for 100 random states on a 5X5 board.
 
 ## References
 - [Quixo Is Solved](https://arxiv.org/abs/2007.15895).

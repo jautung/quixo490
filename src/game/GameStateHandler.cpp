@@ -1,9 +1,12 @@
 #include "GameStateHandler.hpp"
 #include <iostream>
+#include <random>
 #include <tuple>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+
+extern std::mt19937 rng;
 
 namespace {
   nbit_t stateNBits = 64;
@@ -351,4 +354,25 @@ void GameStateHandler::print(state_t state) {
     }
     std::cout << "\n";
   }
+}
+
+state_t GameStateHandler::genRandomState() {
+  state_t randomState = 0b0;
+  for (bindex_t i = 0; i < len; i++) {
+    for (bindex_t j = 0; j < len; j++) {
+      std::uniform_int_distribution<int> dist(0, 2);
+      switch (dist(rng)) {
+        case 0:
+          randomState = setTile(randomState, i, j, TILE_X);
+          break;
+        case 1:
+          randomState = setTile(randomState, i, j, TILE_O);
+          break;
+        case 2:
+          randomState = setTile(randomState, i, j, TILE_EMPTY);
+          break;
+      }
+    }
+  }
+  return randomState;
 }
