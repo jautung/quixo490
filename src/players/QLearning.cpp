@@ -93,7 +93,7 @@ int QLearningPlayer::selectQMoveIndex(state_t state) {
   if (epsilonDistri(rng)) { // epsilon ...
     auto movesIndices = gameStateHandler->allMovesIndices(state);
     std::uniform_int_distribution<int> dist(0, movesIndices.size() - 1);
-    return movesIndices[dist(rng)];
+    return *std::next(movesIndices.begin(), dist(rng));
   } else { // ... greedy
     return selectBestMoveIndex(state);
   }
@@ -102,16 +102,15 @@ int QLearningPlayer::selectQMoveIndex(state_t state) {
 int QLearningPlayer::selectBestMoveIndex(state_t state) {
   Eigen::VectorXd qs = weights * getFeatures(state);
   auto movesIndices = gameStateHandler->allMovesIndices(state); // legal moves
-  int j = 0;
-  for (int i = 0; i < qs.size(); i++) { // overwrite qs(i) by -INFINITY for each i not in movesIndices (i.e. illegal moves)
-    if (movesIndices[j] == i) {
-      j++;
+  int moveIndexBest; // find index of best move among legal moves
+  while (true) {
+    qs.maxCoeff(&moveIndexBest);
+    if (movesIndices.find(moveIndexBest) == movesIndices.end()) { // not a legal move
+      qs(moveIndexBest) = -INFINITY;
     } else {
-      qs(i) = -INFINITY;
+      break;
     }
   }
-  int moveIndexBest; // find index of best move among legal moves
-  qs.maxCoeff(&moveIndexBest);
   return moveIndexBest;
 }
 
