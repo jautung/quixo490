@@ -2,7 +2,7 @@
 DATE=$(date +'%Y-%m-%d-%H%M%S')
 LOGFILE="${DATE}-correct-move-tests.log"
 
-N_STATES_EACH=10000
+N_STATES_EACH=1000
 FLAGS_BASE='-p test-move-correctness -N '$N_STATES_EACH' -v correct-move-tests'
 
 export OPT_COMPUTE_ERROR_CHECKING=0
