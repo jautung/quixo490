@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
     TCLAP::ValueArg<int> numGamesArg("N", "Ngames", "For `test` or `test-move-correctness` program: number of game iterations or game states (respectively) to run", false, 1, "integer", cmd);
     TCLAP::ValueArg<int> numThreadsArg("T", "Threads", "For `opt-compute` program: number of Threads to use", false, 1, "integer", cmd);
     TCLAP::ValueArg<int> numLocksPerArrArg("L", "Locksperarray", "For `opt-compute` program: number of Locks to use per result array", false, 1, "integer", cmd);
-    TCLAP::ValueArg<std::string> verbosityArg("v", "verbosity", "For `play`, `test` or `test-move-correctness` program: verbosity of logging (`all`, `default`, `error-rate-tests`, `game-length-tests`, `correct-move-tests`, or `silent`)", false, "default", "string", cmd);
+    TCLAP::ValueArg<std::string> verbosityArg("v", "verbosity", "For `play`, `test` or `test-move-correctness` program: verbosity of logging (`all`, `default`, `error-rate-tests-*`, `game-length-tests-*`, `correct-move-tests`, or `silent`)", false, "default", "string", cmd);
     cmd.parse(argc, argv);
 
     auto prog = progArg.getValue();
@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
       numLocksPerArr = 1;
     }
     auto verbosity = verbosityArg.getValue();
-    if (verbosity != "all" && verbosity != "default" && verbosity != "error-rate-tests" && verbosity != "game-length-tests" && verbosity != "correct-move-tests" && verbosity != "silent") {
+    if (verbosity != "all" && verbosity != "default" && verbosity != "error-rate-tests-mcts" && verbosity != "error-rate-tests-q-learn" && verbosity != "game-length-tests-mcts" && verbosity != "game-length-tests-q-learn" && verbosity != "correct-move-tests" && verbosity != "silent") {
       std::cerr << "error: " << "unknown verbosity: " << verbosity << "\n";
       exit(1);
     }
@@ -138,12 +138,17 @@ int main(int argc, char* argv[]) {
         std::cout << "Player X running compute time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0 << " (" << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0/numGames << " average per game; " << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0/totalNumTurns << " average per turn)\n";
         std::cout << "Player O running compute time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0 << " (" << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0/numGames << " average per game; " << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0/totalNumTurns << " average per turn)\n";
         std::cout << "Winners (X-O-D): " << xWins << "-" << oWins << "-" << draws << "\n";
-      } else if (verbosity == "error-rate-tests") {
+      } else if (verbosity == "error-rate-tests-mcts" || verbosity == "error-rate-tests-q-learn") {
         std::cout << len << "\t" << playerXType << "\t" << playerOType << "\t"
-                  << xWins << "\t" << oWins << "\t" << draws << "\t"
-                  << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0/totalNumTurns << "\t"
-                  << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0/totalNumTurns << "\n";
-      } else if (verbosity == "game-length-tests") {
+                  << xWins << "\t" << oWins << "\t" << draws << "\t";
+        if (verbosity == "error-rate-tests-mcts") {
+          std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0/totalNumTurns << "\t"
+                    << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0/totalNumTurns << "\n";
+        } else if (verbosity == "error-rate-tests-q-learn") {
+          std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0/numGames << "\t"
+                    << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0/numGames << "\n";
+        }
+      } else if (verbosity == "game-length-tests-mcts" || verbosity == "game-length-tests-q-learn") {
         double aveNumTurns = 1.0*totalNumTurns/numGames;
         double stdevAccum = 0.0;
         std::for_each(numTurns.begin(), numTurns.end(), [&](const double numTurn) {
@@ -151,9 +156,14 @@ int main(int argc, char* argv[]) {
         });
         double stdevNumTurns = sqrt(stdevAccum/(numGames-1));
         std::cout << len << "\t" << playerXType << "\t" << playerOType << "\t"
-                  << aveNumTurns << "\t" << stdevNumTurns << "\t" << draws << "\t"
-                  << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0/totalNumTurns << "\t"
-                  << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0/totalNumTurns << "\n";
+                  << aveNumTurns << "\t" << stdevNumTurns << "\t" << draws << "\t";
+        if (verbosity == "game-length-tests-mcts") {
+          std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0/totalNumTurns << "\t"
+                    << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0/totalNumTurns << "\n";
+        } else if (verbosity == "game-length-tests-q-learn") {
+          std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0/numGames << "\t"
+                    << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0/numGames << "\n";
+        }
       }
       delete cliHandler;
       delete playerX;

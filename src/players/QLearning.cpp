@@ -77,7 +77,7 @@ void QLearningPlayer::updateWeights(std::vector<std::tuple<state_t, int>> &state
       optFutureVal = 1;
     } else {
       Eigen::VectorXd nextQs = weights * getFeatures(nextState);
-      optFutureVal = -nextQs.minCoeff();
+      optFutureVal = -nextQs.maxCoeff(); // next player still maximizes q, but current player tries to minimize this maximum q
     }
     Eigen::VectorXd currFeatures = getFeatures(currState);
     auto currQs = weights * currFeatures;

@@ -4,7 +4,7 @@ LOGFILE="${DATE}-error-rate-tests.log"
 
 N_GAMES_EACH=100
 TURN_LIMIT=200
-FLAGS_BASE='-p test -N '$N_GAMES_EACH' -n '$TURN_LIMIT' -v error-rate-tests'
+FLAGS_BASE='-p test -N '$N_GAMES_EACH' -n '$TURN_LIMIT' -v error-rate-tests-mcts'
 
 export OPT_COMPUTE_ERROR_CHECKING=0
 export OPT_COMPUTE_SPEED_CHECKING=0
