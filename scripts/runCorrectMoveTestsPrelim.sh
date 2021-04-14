@@ -24,43 +24,43 @@ echo '' >> logs/$LOGFILE
 echo 'len	xType	fracCorrect	fracCorrectFromLoss	fracCorrectFromDraw	fracCorrectFromWin' >> logs/$LOGFILE
 
 # -l 3
-echo '-l 3 -X random' ; ./bin/quixo $FLAGS_BASE -l 3 -X random >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 3 -X random >> logs/$LOGFILE ; done
-echo '-l 3 -X heuris-simple' ; ./bin/quixo $FLAGS_BASE -l 3 -X heuris-simple >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 3 -X heuris-simple >> logs/$LOGFILE ; done
-echo '-l 3 -X mcts0,100' ; ./bin/quixo $FLAGS_BASE -l 3 -X mcts0,100 >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 3 -X mcts0,100 >> logs/$LOGFILE ; done
-echo '-l 3 -X mcts0,200' ; ./bin/quixo $FLAGS_BASE -l 3 -X mcts0,200 >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 3 -X mcts0,200 >> logs/$LOGFILE ; done
-echo '-l 3 -X mcts0,500' ; ./bin/quixo $FLAGS_BASE -l 3 -X mcts0,500 >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 3 -X mcts0,500 >> logs/$LOGFILE ; done
-echo '-l 3 -X mcts0,1000' ; ./bin/quixo $FLAGS_BASE -l 3 -X mcts0,1000 >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 3 -X mcts0,1000 >> logs/$LOGFILE ; done
-echo '-l 3 -X opt' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 3 -X opt >> logs/$LOGFILE ; done
+echo '-l 3 -X random' ; ./bin/quixo $FLAGS_BASE -l 3 -X random >> logs/$LOGFILE
+echo '-l 3 -X heuris-simple' ; ./bin/quixo $FLAGS_BASE -l 3 -X heuris-simple >> logs/$LOGFILE
+echo '-l 3 -X mcts0,100' ; ./bin/quixo $FLAGS_BASE -l 3 -X mcts0,100 >> logs/$LOGFILE
+echo '-l 3 -X mcts0,200' ; ./bin/quixo $FLAGS_BASE -l 3 -X mcts0,200 >> logs/$LOGFILE
+echo '-l 3 -X mcts0,500' ; ./bin/quixo $FLAGS_BASE -l 3 -X mcts0,500 >> logs/$LOGFILE
+echo '-l 3 -X mcts0,1000' ; ./bin/quixo $FLAGS_BASE -l 3 -X mcts0,1000 >> logs/$LOGFILE
+echo '-l 3 -X opt' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt >> logs/$LOGFILE
 echo
 echo
 
 # -l 4
-echo '-l 4 -X random' ; ./bin/quixo $FLAGS_BASE -l 4 -X random >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 4 -X random >> logs/$LOGFILE ; done
-echo '-l 4 -X heuris-simple' ; ./bin/quixo $FLAGS_BASE -l 4 -X heuris-simple >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 4 -X heuris-simple >> logs/$LOGFILE ; done
-echo '-l 4 -X mcts0,100' ; ./bin/quixo $FLAGS_BASE -l 4 -X mcts0,100 >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 4 -X mcts0,100 >> logs/$LOGFILE ; done
-echo '-l 4 -X mcts0,200' ; ./bin/quixo $FLAGS_BASE -l 4 -X mcts0,200 >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 4 -X mcts0,200 >> logs/$LOGFILE ; done
-echo '-l 4 -X mcts0,500' ; ./bin/quixo $FLAGS_BASE -l 4 -X mcts0,500 >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 4 -X mcts0,500 >> logs/$LOGFILE ; done
-echo '-l 4 -X mcts0,1000' ; ./bin/quixo $FLAGS_BASE -l 4 -X mcts0,1000 >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 4 -X mcts0,1000 >> logs/$LOGFILE ; done
-echo '-l 4 -X opt' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 4 -X opt >> logs/$LOGFILE ; done
+echo '-l 4 -X random' ; ./bin/quixo $FLAGS_BASE -l 4 -X random >> logs/$LOGFILE
+echo '-l 4 -X heuris-simple' ; ./bin/quixo $FLAGS_BASE -l 4 -X heuris-simple >> logs/$LOGFILE
+echo '-l 4 -X mcts0,100' ; ./bin/quixo $FLAGS_BASE -l 4 -X mcts0,100 >> logs/$LOGFILE
+echo '-l 4 -X mcts0,200' ; ./bin/quixo $FLAGS_BASE -l 4 -X mcts0,200 >> logs/$LOGFILE
+echo '-l 4 -X mcts0,500' ; ./bin/quixo $FLAGS_BASE -l 4 -X mcts0,500 >> logs/$LOGFILE
+echo '-l 4 -X mcts0,1000' ; ./bin/quixo $FLAGS_BASE -l 4 -X mcts0,1000 >> logs/$LOGFILE
+echo '-l 4 -X opt' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt >> logs/$LOGFILE
 echo
 echo
 
 # -l 5
-echo '-l 5 -X random' ; ./bin/quixo $FLAGS_BASE -l 5 -X random >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 5 -X random >> logs/$LOGFILE ; done
-echo '-l 5 -X heuris-simple' ; ./bin/quixo $FLAGS_BASE -l 5 -X heuris-simple >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 5 -X heuris-simple >> logs/$LOGFILE ; done
-echo '-l 5 -X mcts0,100' ; ./bin/quixo $FLAGS_BASE -l 5 -X mcts0,100 >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 5 -X mcts0,100 >> logs/$LOGFILE ; done
-echo '-l 5 -X mcts0,200' ; ./bin/quixo $FLAGS_BASE -l 5 -X mcts0,200 >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 5 -X mcts0,200 >> logs/$LOGFILE ; done
-echo '-l 5 -X mcts0,500' ; ./bin/quixo $FLAGS_BASE -l 5 -X mcts0,500 >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 5 -X mcts0,500 >> logs/$LOGFILE ; done
-echo '-l 5 -X mcts0,1000' ; ./bin/quixo $FLAGS_BASE -l 5 -X mcts0,1000 >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 5 -X mcts0,1000 >> logs/$LOGFILE ; done
-echo '-l 5 -X opt' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 5 -X opt >> logs/$LOGFILE ; done
+echo '-l 5 -X random' ; ./bin/quixo $FLAGS_BASE -l 5 -X random >> logs/$LOGFILE
+echo '-l 5 -X heuris-simple' ; ./bin/quixo $FLAGS_BASE -l 5 -X heuris-simple >> logs/$LOGFILE
+echo '-l 5 -X mcts0,100' ; ./bin/quixo $FLAGS_BASE -l 5 -X mcts0,100 >> logs/$LOGFILE
+echo '-l 5 -X mcts0,200' ; ./bin/quixo $FLAGS_BASE -l 5 -X mcts0,200 >> logs/$LOGFILE
+echo '-l 5 -X mcts0,500' ; ./bin/quixo $FLAGS_BASE -l 5 -X mcts0,500 >> logs/$LOGFILE
+echo '-l 5 -X mcts0,1000' ; ./bin/quixo $FLAGS_BASE -l 5 -X mcts0,1000 >> logs/$LOGFILE
+echo '-l 5 -X opt' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt >> logs/$LOGFILE
 echo
 echo
 
 # -l 5 cache persist
-echo '-l 5 -X mcts-cache-persist0,100' ; ./bin/quixo $FLAGS_BASE -l 5 -X mcts-cache-persist0,100 >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 5 -X mcts-cache-persist0,100 >> logs/$LOGFILE ; done
-echo '-l 5 -X mcts-cache-persist0,200' ; ./bin/quixo $FLAGS_BASE -l 5 -X mcts-cache-persist0,200 >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 5 -X mcts-cache-persist0,200 >> logs/$LOGFILE ; done
-echo '-l 5 -X mcts-cache-persist0,500' ; ./bin/quixo $FLAGS_BASE -l 5 -X mcts-cache-persist0,500 >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 5 -X mcts-cache-persist0,500 >> logs/$LOGFILE ; done
-echo '-l 5 -X mcts-cache-persist0,1000' ; ./bin/quixo $FLAGS_BASE -l 5 -X mcts-cache-persist0,1000 >> logs/$LOGFILE ; while [ $? -ne 0 ] ; do ./bin/quixo $FLAGS_BASE -l 5 -X mcts-cache-persist0,1000 >> logs/$LOGFILE ; done
+echo '-l 5 -X mcts-cache-persist0,100' ; ./bin/quixo $FLAGS_BASE -l 5 -X mcts-cache-persist0,100 >> logs/$LOGFILE
+echo '-l 5 -X mcts-cache-persist0,200' ; ./bin/quixo $FLAGS_BASE -l 5 -X mcts-cache-persist0,200 >> logs/$LOGFILE
+echo '-l 5 -X mcts-cache-persist0,500' ; ./bin/quixo $FLAGS_BASE -l 5 -X mcts-cache-persist0,500 >> logs/$LOGFILE
+echo '-l 5 -X mcts-cache-persist0,1000' ; ./bin/quixo $FLAGS_BASE -l 5 -X mcts-cache-persist0,1000 >> logs/$LOGFILE
 echo
 echo
 
