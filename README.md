@@ -85,9 +85,9 @@
   - Added the `opt*` option to make the optimal player make errors at the `*` rate (a double).
 - Apr 13, 2021:
   - Added benchmarking suite for MCTS:
-    - `runErrorRateTests*.sh`: error rate tests (i.e. making optimal make randomized errors and checking win-rates of MCTS against this handicapped optimal).
-    - `runGameLengthTests*.sh`: game length tests (i.e. checking for average game length of MCTS against complete optimal).
-    - `runCorrectMoveTests*.sh`: correct move tests (i.e. checking for whether MCTS makes correct moves for random initial board states).
+    - `runMctsErrorRateTests*.sh`: error rate tests (i.e. making optimal make randomized errors and checking win-rates of MCTS against this handicapped optimal).
+    - `runMctsGameLengthTests*.sh`: game length tests (i.e. checking for average game length of MCTS against complete optimal).
+    - `runMctsCorrectMoveTests*.sh`: correct move tests (i.e. checking for whether MCTS makes correct moves for random initial board states).
   - Various trials are being run on the Zoo and all results are [here](https://docs.google.com/spreadsheets/d/1QHTtbHnen4D5Z1y54Qb_VpXX2rnCNzyErshk_EfAKto/edit).
   - To be completed (each trial takes several hours).
 
