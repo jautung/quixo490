@@ -173,7 +173,7 @@ int main(int argc, char* argv[]) {
       for (int i = 0; i < numGames; i++) {
         playerX->clearCache();
         playerX->initLearn();
-        auto state = gameStateHandler->genRandomState();
+        auto state = gameStateHandler->genRandomNonTerminalState();
         auto result = optimalPlayer->evalState(state);
         auto move = playerX->selectMove(state);
         auto nextState = gameStateHandler->swapPlayers(gameStateHandler->makeMove(state, move));

@@ -356,23 +356,26 @@ void GameStateHandler::print(state_t state) {
   }
 }
 
-state_t GameStateHandler::genRandomState() {
-  state_t randomState = 0b0;
-  for (bindex_t i = 0; i < len; i++) {
-    for (bindex_t j = 0; j < len; j++) {
-      std::uniform_int_distribution<int> dist(0, 2);
-      switch (dist(rng)) {
-        case 0:
-          randomState = setTile(randomState, i, j, TILE_X);
-          break;
-        case 1:
-          randomState = setTile(randomState, i, j, TILE_O);
-          break;
-        case 2:
-          randomState = setTile(randomState, i, j, TILE_EMPTY);
-          break;
+state_t GameStateHandler::genRandomNonTerminalState() {
+  state_t state;
+  do {
+    state = 0b0;
+    for (bindex_t i = 0; i < len; i++) {
+      for (bindex_t j = 0; j < len; j++) {
+        std::uniform_int_distribution<int> dist(0, 2);
+        switch (dist(rng)) {
+          case 0:
+            state = setTile(state, i, j, TILE_X);
+            break;
+          case 1:
+            state = setTile(state, i, j, TILE_O);
+            break;
+          case 2:
+            state = setTile(state, i, j, TILE_EMPTY);
+            break;
+        }
       }
     }
-  }
-  return randomState;
+  } while (containsLine(state, TILE_X) || containsLine(state, TILE_O));
+  return state;
 }
