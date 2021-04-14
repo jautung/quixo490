@@ -96,6 +96,6 @@ class GameStateHandler {
     state_t diag1MaskFull;
     state_t diag2MaskFull;
     std::unordered_map<move_t, std::tuple<state_t, state_t, state_t>> makeMoveCache; // map from move to (mask, newTile, oldTile)
-    void allMovesAux(state_t state, std::vector<move_t> &moves, std::vector<int> &movesIndices);
+    void allMovesAux(state_t state, std::vector<move_t> &moves, std::unordered_set<int> &movesIndices);
     std::vector<state_t> allParentsAux(state_t state, mkind_t kind);
 };
