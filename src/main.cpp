@@ -145,8 +145,8 @@ int main(int argc, char* argv[]) {
           std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0/totalNumTurns << "\t"
                     << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0/totalNumTurns << "\n";
         } else if (verbosity == "error-rate-tests-q-learn") {
-          std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0/numGames << "\t"
-                    << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0/numGames << "\n";
+          std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->initTimeX).count()/1000.0/numGames << "\t"
+                    << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->initTimeO).count()/1000.0/numGames << "\n";
         }
       } else if (verbosity == "game-length-tests-mcts" || verbosity == "game-length-tests-q-learn") {
         double aveNumTurns = 1.0*totalNumTurns/numGames;
@@ -161,8 +161,8 @@ int main(int argc, char* argv[]) {
           std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0/totalNumTurns << "\t"
                     << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0/totalNumTurns << "\n";
         } else if (verbosity == "game-length-tests-q-learn") {
-          std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeX).count()/1000.0/numGames << "\t"
-                    << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->runTimeO).count()/1000.0/numGames << "\n";
+          std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->initTimeX).count()/1000.0/numGames << "\t"
+                    << std::chrono::duration_cast<std::chrono::milliseconds>(gamePlayHandler->initTimeO).count()/1000.0/numGames << "\n";
         }
       }
       delete cliHandler;

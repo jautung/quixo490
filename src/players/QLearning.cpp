@@ -120,7 +120,7 @@ Eigen::VectorXd QLearningPlayer::getFeatures(state_t state) {
   int featureIndex = 0;
 
   // constant bias term
-  features[featureIndex++] = 1;
+  features[featureIndex++] = 1.0;
 
   // number of Xs and Os
   features[featureIndex++] = (double)(gameStateHandler->getNumX(state)) / ((double)len * (double)len);

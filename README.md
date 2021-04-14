@@ -89,7 +89,9 @@
     - `runMctsGameLengthTests*.sh`: game length tests (i.e. checking for average game length of MCTS against complete optimal).
     - `runMctsCorrectMoveTests*.sh`: correct move tests (i.e. checking for whether MCTS makes correct moves for random initial board states).
   - Various trials are being run on the Zoo and all results are [here](https://docs.google.com/spreadsheets/d/1QHTtbHnen4D5Z1y54Qb_VpXX2rnCNzyErshk_EfAKto/edit).
-  - To be completed (each trial takes several hours).
+  - To be completed (each trial takes several hours). Mostly completed.
+- Apr 14, 2021:
+  - Fixing bugs with Q-learning, and trying to speed it up perhaps? It was previously somehow _cheating_ and winning against optimal...
 
 ## To Do / Next Steps
 1. **Improvement/analysis of Q-learning.**
