@@ -11,7 +11,7 @@ extern std::mt19937 rng;
 
 namespace {
   state_t initState = 0b0;
-  long unsigned int maxDepth = 10000;   // prevents infinite loops when playing out each iteration
+  long unsigned int maxDepth = 1000;    // prevents infinite loops when playing out each iteration
   double initWeight = 0.0;              // initial weights in the weight matrix ...
   double initWeightNoise = 0.0;         // ... perturbed by a uniform distribution of [-initWeightNoise, initWeightNoise]
   double learningRateInit = 0.1;        // initial learning rate
@@ -46,7 +46,8 @@ void QLearningPlayer::clearCache() {
 void QLearningPlayer::initLearn() {
   learningRate = learningRateInit;
   for (int i = 0; i < initIters; i++) {
-    runIter(initState);
+    auto state = gameStateHandler->genRandomNonTerminalState(); // no reason to start from initState since q-learner is supposed to generalize across states
+    runIter(state);
     learningRate *= learningRateDecRatio;
   }
 }
@@ -70,11 +71,11 @@ void QLearningPlayer::updateWeights(std::vector<std::tuple<state_t, int>> &state
   for (auto rIter = stateMoveStack.rbegin(); rIter != stateMoveStack.rend(); rIter++) {
     auto currState = std::get<0>(*rIter);
     auto moveIndex = std::get<1>(*rIter);
-    double optFutureVal;
+    double optFutureVal = 0.0;
     if (gameStateHandler->containsLine(nextState, TILE_X)) { // next state is terminal winning (i.e. losing for current player)
-      optFutureVal = -1;
+      optFutureVal = -1.0;
     } else if (gameStateHandler->containsLine(nextState, TILE_O)) { // next state is terminal losing (i.e. winning for current player)
-      optFutureVal = 1;
+      optFutureVal = 1.0;
     } else {
       Eigen::VectorXd nextQs = weights * getFeatures(nextState);
       optFutureVal = -nextQs.maxCoeff(); // next player still maximizes q, but current player tries to minimize this maximum q
@@ -83,7 +84,7 @@ void QLearningPlayer::updateWeights(std::vector<std::tuple<state_t, int>> &state
     auto currQs = weights * currFeatures;
     auto currVal = currQs(moveIndex);
     Eigen::VectorXd weightsForMove = weights(moveIndex, Eigen::all); // one row of the weights matrix
-    weightsForMove = weightsForMove + learningRate * discountRate * (optFutureVal - currVal) * currFeatures;
+    weightsForMove = weightsForMove + learningRate * (discountRate * optFutureVal - currVal) * currFeatures;
     weights.row(moveIndex) = weightsForMove.transpose(); // replacing row of the weights matrix
     nextState = currState;
   }

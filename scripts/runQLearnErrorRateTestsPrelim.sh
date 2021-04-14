@@ -44,39 +44,39 @@ echo
 echo
 
 # -l 4
-# echo '-l 4 -X opt0.0 -O random' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O random >> logs/$LOGFILE
-# echo '-l 4 -X opt0.0 -O heuris-simple' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O heuris-simple >> logs/$LOGFILE
-# echo '-l 4 -X opt0.0 -O q-learn100,0' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O q-learn100,0 >> logs/$LOGFILE
-# echo '-l 4 -X opt0.0 -O q-learn200,0' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O q-learn200,0 >> logs/$LOGFILE
-# echo '-l 4 -X opt0.0 -O q-learn500,0' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O q-learn500,0 >> logs/$LOGFILE
-# echo '-l 4 -X opt0.0 -O q-learn1000,0' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O q-learn1000,0 >> logs/$LOGFILE
-# echo '-l 4 -X opt0.0 -O opt0.0' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O opt0.0 >> logs/$LOGFILE
-# echo
-# echo '-l 4 -O opt0.0 -X random' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X random >> logs/$LOGFILE
-# echo '-l 4 -O opt0.0 -X heuris-simple' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X heuris-simple >> logs/$LOGFILE
-# echo '-l 4 -O opt0.0 -X q-learn100,0' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X q-learn100,0 >> logs/$LOGFILE
-# echo '-l 4 -O opt0.0 -X q-learn200,0' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X q-learn200,0 >> logs/$LOGFILE
-# echo '-l 4 -O opt0.0 -X q-learn500,0' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X q-learn500,0 >> logs/$LOGFILE
-# echo '-l 4 -O opt0.0 -X q-learn1000,0' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X q-learn1000,0 >> logs/$LOGFILE
-# echo
-# echo
+echo '-l 4 -X opt0.0 -O random' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O random >> logs/$LOGFILE
+echo '-l 4 -X opt0.0 -O heuris-simple' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O heuris-simple >> logs/$LOGFILE
+echo '-l 4 -X opt0.0 -O q-learn100,0' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O q-learn100,0 >> logs/$LOGFILE
+echo '-l 4 -X opt0.0 -O q-learn200,0' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O q-learn200,0 >> logs/$LOGFILE
+echo '-l 4 -X opt0.0 -O q-learn500,0' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O q-learn500,0 >> logs/$LOGFILE
+echo '-l 4 -X opt0.0 -O q-learn1000,0' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O q-learn1000,0 >> logs/$LOGFILE
+echo '-l 4 -X opt0.0 -O opt0.0' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O opt0.0 >> logs/$LOGFILE
+echo
+echo '-l 4 -O opt0.0 -X random' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X random >> logs/$LOGFILE
+echo '-l 4 -O opt0.0 -X heuris-simple' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X heuris-simple >> logs/$LOGFILE
+echo '-l 4 -O opt0.0 -X q-learn100,0' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X q-learn100,0 >> logs/$LOGFILE
+echo '-l 4 -O opt0.0 -X q-learn200,0' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X q-learn200,0 >> logs/$LOGFILE
+echo '-l 4 -O opt0.0 -X q-learn500,0' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X q-learn500,0 >> logs/$LOGFILE
+echo '-l 4 -O opt0.0 -X q-learn1000,0' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X q-learn1000,0 >> logs/$LOGFILE
+echo
+echo
 
 # -l 5
-# echo '-l 5 -X opt0.0 -O random' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O random >> logs/$LOGFILE
-# echo '-l 5 -X opt0.0 -O heuris-simple' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O heuris-simple >> logs/$LOGFILE
-# echo '-l 5 -X opt0.0 -O q-learn100,0' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O q-learn100,0 >> logs/$LOGFILE
-# echo '-l 5 -X opt0.0 -O q-learn200,0' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O q-learn200,0 >> logs/$LOGFILE
-# echo '-l 5 -X opt0.0 -O q-learn500,0' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O q-learn500,0 >> logs/$LOGFILE
-# echo '-l 5 -X opt0.0 -O q-learn1000,0' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O q-learn1000,0 >> logs/$LOGFILE
-# echo '-l 5 -X opt0.0 -O opt0.0' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O opt0.0 >> logs/$LOGFILE
-# echo
-# echo '-l 5 -O opt0.0 -X random' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X random >> logs/$LOGFILE
-# echo '-l 5 -O opt0.0 -X heuris-simple' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X heuris-simple >> logs/$LOGFILE
-# echo '-l 5 -O opt0.0 -X q-learn100,0' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X q-learn100,0 >> logs/$LOGFILE
-# echo '-l 5 -O opt0.0 -X q-learn200,0' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X q-learn200,0 >> logs/$LOGFILE
-# echo '-l 5 -O opt0.0 -X q-learn500,0' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X q-learn500,0 >> logs/$LOGFILE
-# echo '-l 5 -O opt0.0 -X q-learn1000,0' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X q-learn1000,0 >> logs/$LOGFILE
-# echo
-# echo
+echo '-l 5 -X opt0.0 -O random' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O random >> logs/$LOGFILE
+echo '-l 5 -X opt0.0 -O heuris-simple' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O heuris-simple >> logs/$LOGFILE
+echo '-l 5 -X opt0.0 -O q-learn100,0' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O q-learn100,0 >> logs/$LOGFILE
+echo '-l 5 -X opt0.0 -O q-learn200,0' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O q-learn200,0 >> logs/$LOGFILE
+echo '-l 5 -X opt0.0 -O q-learn500,0' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O q-learn500,0 >> logs/$LOGFILE
+echo '-l 5 -X opt0.0 -O q-learn1000,0' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O q-learn1000,0 >> logs/$LOGFILE
+echo '-l 5 -X opt0.0 -O opt0.0' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O opt0.0 >> logs/$LOGFILE
+echo
+echo '-l 5 -O opt0.0 -X random' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X random >> logs/$LOGFILE
+echo '-l 5 -O opt0.0 -X heuris-simple' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X heuris-simple >> logs/$LOGFILE
+echo '-l 5 -O opt0.0 -X q-learn100,0' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X q-learn100,0 >> logs/$LOGFILE
+echo '-l 5 -O opt0.0 -X q-learn200,0' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X q-learn200,0 >> logs/$LOGFILE
+echo '-l 5 -O opt0.0 -X q-learn500,0' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X q-learn500,0 >> logs/$LOGFILE
+echo '-l 5 -O opt0.0 -X q-learn1000,0' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X q-learn1000,0 >> logs/$LOGFILE
+echo
+echo
 
 echo '=== DONE ==='
