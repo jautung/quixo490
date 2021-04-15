@@ -11,13 +11,13 @@ extern std::mt19937 rng;
 
 namespace {
   state_t initState = 0b0;
-  long unsigned int maxDepth = 1000;    // prevents infinite loops when playing out each iteration
+  long unsigned int maxDepth = 500;     // prevents infinite loops when playing out each iteration
   double initWeight = 0.0;              // initial weights in the weight matrix ...
-  double initWeightNoise = 0.0;         // ... perturbed by a uniform distribution of [-initWeightNoise, initWeightNoise]
-  double learningRateInit = 0.1;        // initial learning rate
-  double learningRateDecRatio = 0.999;  // factor for learning rate to decrease per iteration
-  double discountRate = 0.999;          // temporal discount factor
-  double epsilon = 0.001;               // epsilon in epsilon-greedy play out of each iteration
+  double initWeightNoise = 0.000001;    // ... perturbed by a uniform distribution of [-initWeightNoise, initWeightNoise]
+  double learningRateInit = 0.5;        // initial learning rate
+  double learningRateDecRatio = 0.9995; // factor for learning rate to decrease per iteration
+  double discountRate = 0.99999;        // temporal discount factor
+  double epsilon = 0.01;                // epsilon in epsilon-greedy play out of each iteration
 }
 
 QLearningPlayer::QLearningPlayer(GameStateHandler* initGameStateHandler, GraphicsHandler* initGraphicsHandler, int initInitIters, int initPerMoveIters) : Player(initGameStateHandler, initGraphicsHandler) {
@@ -53,11 +53,16 @@ void QLearningPlayer::initLearn() {
 }
 
 void QLearningPlayer::runIter(state_t state) {
+  state_t startState = state;
   std::vector<std::tuple<state_t, int>> stateMoveStack;
   while (true) {
-    if (gameStateHandler->containsLine(state, TILE_X) || gameStateHandler->containsLine(state, TILE_O) || stateMoveStack.size() == maxDepth) {
+    if (gameStateHandler->containsLine(state, TILE_X) || gameStateHandler->containsLine(state, TILE_O)) {
       updateWeights(stateMoveStack, state);
       break;
+    }
+    if (stateMoveStack.size() == maxDepth) { // restart, since this particular iteration wasn't useful
+      state = startState;
+      stateMoveStack.clear();
     }
     auto moveIndex = selectQMoveIndex(state);
     stateMoveStack.push_back(std::make_tuple(state, moveIndex));
@@ -117,7 +122,8 @@ int QLearningPlayer::selectBestMoveIndex(state_t state) {
 
 Eigen::VectorXd QLearningPlayer::getFeatures(state_t state) {
   auto len = gameStateHandler->len;
-  Eigen::VectorXd features(1 + 2 + 4*len + 4);
+  int numFeatures = 1 + 2 + 4*len + 4;
+  Eigen::VectorXd features(numFeatures); // each features normalized to be between [0, 1]
   int featureIndex = 0;
 
   // constant bias term
@@ -141,5 +147,5 @@ Eigen::VectorXd QLearningPlayer::getFeatures(state_t state) {
   features[featureIndex++] = (double)(gameStateHandler->numInDiag2(state, TILE_X)) / (double)len;
   features[featureIndex++] = (double)(gameStateHandler->numInDiag2(state, TILE_O)) / (double)len;
 
-  return features;
+  return features / numFeatures; // to normalize such that each entry of weights * features will be in [-1, 1]
 }
