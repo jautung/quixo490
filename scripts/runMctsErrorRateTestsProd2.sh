@@ -28,149 +28,89 @@ echo 'len	xType	oType	xWins	oWins	draws	xTurnTime	oTurnTime' >> logs/$LOGFILE
 ################################################################################
 ################################################################################
 # X opt O mcts
-echo '-l 5 -X opt0.0 -O mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O mcts0,1100 >> logs/$LOGFILE
 echo '-l 5 -X opt0.0 -O mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O mcts0,1200 >> logs/$LOGFILE
-echo '-l 5 -X opt0.0 -O mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O mcts0,1300 >> logs/$LOGFILE
 echo '-l 5 -X opt0.0 -O mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O mcts0,1400 >> logs/$LOGFILE
-echo '-l 5 -X opt0.0 -O mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O mcts0,1500 >> logs/$LOGFILE
 echo '-l 5 -X opt0.0 -O mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O mcts0,1600 >> logs/$LOGFILE
-echo '-l 5 -X opt0.0 -O mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O mcts0,1700 >> logs/$LOGFILE
 echo '-l 5 -X opt0.0 -O mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O mcts0,1800 >> logs/$LOGFILE
-echo '-l 5 -X opt0.0 -O mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O mcts0,1900 >> logs/$LOGFILE
 echo '-l 5 -X opt0.0 -O mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 5 -X opt0.01 -O mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.01 -O mcts0,1100 >> logs/$LOGFILE
 echo '-l 5 -X opt0.01 -O mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.01 -O mcts0,1200 >> logs/$LOGFILE
-echo '-l 5 -X opt0.01 -O mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.01 -O mcts0,1300 >> logs/$LOGFILE
 echo '-l 5 -X opt0.01 -O mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.01 -O mcts0,1400 >> logs/$LOGFILE
-echo '-l 5 -X opt0.01 -O mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.01 -O mcts0,1500 >> logs/$LOGFILE
 echo '-l 5 -X opt0.01 -O mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.01 -O mcts0,1600 >> logs/$LOGFILE
-echo '-l 5 -X opt0.01 -O mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.01 -O mcts0,1700 >> logs/$LOGFILE
 echo '-l 5 -X opt0.01 -O mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.01 -O mcts0,1800 >> logs/$LOGFILE
-echo '-l 5 -X opt0.01 -O mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.01 -O mcts0,1900 >> logs/$LOGFILE
 echo '-l 5 -X opt0.01 -O mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.01 -O mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 5 -X opt0.05 -O mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.05 -O mcts0,1100 >> logs/$LOGFILE
 echo '-l 5 -X opt0.05 -O mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.05 -O mcts0,1200 >> logs/$LOGFILE
-echo '-l 5 -X opt0.05 -O mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.05 -O mcts0,1300 >> logs/$LOGFILE
 echo '-l 5 -X opt0.05 -O mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.05 -O mcts0,1400 >> logs/$LOGFILE
-echo '-l 5 -X opt0.05 -O mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.05 -O mcts0,1500 >> logs/$LOGFILE
 echo '-l 5 -X opt0.05 -O mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.05 -O mcts0,1600 >> logs/$LOGFILE
-echo '-l 5 -X opt0.05 -O mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.05 -O mcts0,1700 >> logs/$LOGFILE
 echo '-l 5 -X opt0.05 -O mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.05 -O mcts0,1800 >> logs/$LOGFILE
-echo '-l 5 -X opt0.05 -O mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.05 -O mcts0,1900 >> logs/$LOGFILE
 echo '-l 5 -X opt0.05 -O mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.05 -O mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 5 -X opt0.1 -O mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.1 -O mcts0,1100 >> logs/$LOGFILE
 echo '-l 5 -X opt0.1 -O mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.1 -O mcts0,1200 >> logs/$LOGFILE
-echo '-l 5 -X opt0.1 -O mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.1 -O mcts0,1300 >> logs/$LOGFILE
 echo '-l 5 -X opt0.1 -O mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.1 -O mcts0,1400 >> logs/$LOGFILE
-echo '-l 5 -X opt0.1 -O mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.1 -O mcts0,1500 >> logs/$LOGFILE
 echo '-l 5 -X opt0.1 -O mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.1 -O mcts0,1600 >> logs/$LOGFILE
-echo '-l 5 -X opt0.1 -O mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.1 -O mcts0,1700 >> logs/$LOGFILE
 echo '-l 5 -X opt0.1 -O mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.1 -O mcts0,1800 >> logs/$LOGFILE
-echo '-l 5 -X opt0.1 -O mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.1 -O mcts0,1900 >> logs/$LOGFILE
 echo '-l 5 -X opt0.1 -O mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.1 -O mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 5 -X opt0.2 -O mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.2 -O mcts0,1100 >> logs/$LOGFILE
 echo '-l 5 -X opt0.2 -O mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.2 -O mcts0,1200 >> logs/$LOGFILE
-echo '-l 5 -X opt0.2 -O mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.2 -O mcts0,1300 >> logs/$LOGFILE
 echo '-l 5 -X opt0.2 -O mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.2 -O mcts0,1400 >> logs/$LOGFILE
-echo '-l 5 -X opt0.2 -O mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.2 -O mcts0,1500 >> logs/$LOGFILE
 echo '-l 5 -X opt0.2 -O mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.2 -O mcts0,1600 >> logs/$LOGFILE
-echo '-l 5 -X opt0.2 -O mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.2 -O mcts0,1700 >> logs/$LOGFILE
 echo '-l 5 -X opt0.2 -O mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.2 -O mcts0,1800 >> logs/$LOGFILE
-echo '-l 5 -X opt0.2 -O mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.2 -O mcts0,1900 >> logs/$LOGFILE
 echo '-l 5 -X opt0.2 -O mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.2 -O mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 5 -X opt0.5 -O mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.5 -O mcts0,1100 >> logs/$LOGFILE
 echo '-l 5 -X opt0.5 -O mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.5 -O mcts0,1200 >> logs/$LOGFILE
-echo '-l 5 -X opt0.5 -O mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.5 -O mcts0,1300 >> logs/$LOGFILE
 echo '-l 5 -X opt0.5 -O mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.5 -O mcts0,1400 >> logs/$LOGFILE
-echo '-l 5 -X opt0.5 -O mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.5 -O mcts0,1500 >> logs/$LOGFILE
 echo '-l 5 -X opt0.5 -O mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.5 -O mcts0,1600 >> logs/$LOGFILE
-echo '-l 5 -X opt0.5 -O mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.5 -O mcts0,1700 >> logs/$LOGFILE
 echo '-l 5 -X opt0.5 -O mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.5 -O mcts0,1800 >> logs/$LOGFILE
-echo '-l 5 -X opt0.5 -O mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.5 -O mcts0,1900 >> logs/$LOGFILE
 echo '-l 5 -X opt0.5 -O mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.5 -O mcts0,2000 >> logs/$LOGFILE
 echo
 echo
 
 # O opt X mcts
-echo '-l 5 -O opt0.0 -X mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X mcts0,1100 >> logs/$LOGFILE
 echo '-l 5 -O opt0.0 -X mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X mcts0,1200 >> logs/$LOGFILE
-echo '-l 5 -O opt0.0 -X mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X mcts0,1300 >> logs/$LOGFILE
 echo '-l 5 -O opt0.0 -X mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X mcts0,1400 >> logs/$LOGFILE
-echo '-l 5 -O opt0.0 -X mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X mcts0,1500 >> logs/$LOGFILE
 echo '-l 5 -O opt0.0 -X mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X mcts0,1600 >> logs/$LOGFILE
-echo '-l 5 -O opt0.0 -X mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X mcts0,1700 >> logs/$LOGFILE
 echo '-l 5 -O opt0.0 -X mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X mcts0,1800 >> logs/$LOGFILE
-echo '-l 5 -O opt0.0 -X mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X mcts0,1900 >> logs/$LOGFILE
 echo '-l 5 -O opt0.0 -X mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 5 -O opt0.01 -X mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.01 -X mcts0,1100 >> logs/$LOGFILE
 echo '-l 5 -O opt0.01 -X mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.01 -X mcts0,1200 >> logs/$LOGFILE
-echo '-l 5 -O opt0.01 -X mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.01 -X mcts0,1300 >> logs/$LOGFILE
 echo '-l 5 -O opt0.01 -X mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.01 -X mcts0,1400 >> logs/$LOGFILE
-echo '-l 5 -O opt0.01 -X mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.01 -X mcts0,1500 >> logs/$LOGFILE
 echo '-l 5 -O opt0.01 -X mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.01 -X mcts0,1600 >> logs/$LOGFILE
-echo '-l 5 -O opt0.01 -X mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.01 -X mcts0,1700 >> logs/$LOGFILE
 echo '-l 5 -O opt0.01 -X mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.01 -X mcts0,1800 >> logs/$LOGFILE
-echo '-l 5 -O opt0.01 -X mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.01 -X mcts0,1900 >> logs/$LOGFILE
 echo '-l 5 -O opt0.01 -X mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.01 -X mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 5 -O opt0.05 -X mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.05 -X mcts0,1100 >> logs/$LOGFILE
 echo '-l 5 -O opt0.05 -X mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.05 -X mcts0,1200 >> logs/$LOGFILE
-echo '-l 5 -O opt0.05 -X mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.05 -X mcts0,1300 >> logs/$LOGFILE
 echo '-l 5 -O opt0.05 -X mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.05 -X mcts0,1400 >> logs/$LOGFILE
-echo '-l 5 -O opt0.05 -X mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.05 -X mcts0,1500 >> logs/$LOGFILE
 echo '-l 5 -O opt0.05 -X mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.05 -X mcts0,1600 >> logs/$LOGFILE
-echo '-l 5 -O opt0.05 -X mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.05 -X mcts0,1700 >> logs/$LOGFILE
 echo '-l 5 -O opt0.05 -X mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.05 -X mcts0,1800 >> logs/$LOGFILE
-echo '-l 5 -O opt0.05 -X mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.05 -X mcts0,1900 >> logs/$LOGFILE
 echo '-l 5 -O opt0.05 -X mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.05 -X mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 5 -O opt0.1 -X mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.1 -X mcts0,1100 >> logs/$LOGFILE
 echo '-l 5 -O opt0.1 -X mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.1 -X mcts0,1200 >> logs/$LOGFILE
-echo '-l 5 -O opt0.1 -X mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.1 -X mcts0,1300 >> logs/$LOGFILE
 echo '-l 5 -O opt0.1 -X mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.1 -X mcts0,1400 >> logs/$LOGFILE
-echo '-l 5 -O opt0.1 -X mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.1 -X mcts0,1500 >> logs/$LOGFILE
 echo '-l 5 -O opt0.1 -X mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.1 -X mcts0,1600 >> logs/$LOGFILE
-echo '-l 5 -O opt0.1 -X mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.1 -X mcts0,1700 >> logs/$LOGFILE
 echo '-l 5 -O opt0.1 -X mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.1 -X mcts0,1800 >> logs/$LOGFILE
-echo '-l 5 -O opt0.1 -X mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.1 -X mcts0,1900 >> logs/$LOGFILE
 echo '-l 5 -O opt0.1 -X mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.1 -X mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 5 -O opt0.2 -X mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.2 -X mcts0,1100 >> logs/$LOGFILE
 echo '-l 5 -O opt0.2 -X mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.2 -X mcts0,1200 >> logs/$LOGFILE
-echo '-l 5 -O opt0.2 -X mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.2 -X mcts0,1300 >> logs/$LOGFILE
 echo '-l 5 -O opt0.2 -X mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.2 -X mcts0,1400 >> logs/$LOGFILE
-echo '-l 5 -O opt0.2 -X mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.2 -X mcts0,1500 >> logs/$LOGFILE
 echo '-l 5 -O opt0.2 -X mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.2 -X mcts0,1600 >> logs/$LOGFILE
-echo '-l 5 -O opt0.2 -X mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.2 -X mcts0,1700 >> logs/$LOGFILE
 echo '-l 5 -O opt0.2 -X mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.2 -X mcts0,1800 >> logs/$LOGFILE
-echo '-l 5 -O opt0.2 -X mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.2 -X mcts0,1900 >> logs/$LOGFILE
 echo '-l 5 -O opt0.2 -X mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.2 -X mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 5 -O opt0.5 -X mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.5 -X mcts0,1100 >> logs/$LOGFILE
 echo '-l 5 -O opt0.5 -X mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.5 -X mcts0,1200 >> logs/$LOGFILE
-echo '-l 5 -O opt0.5 -X mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.5 -X mcts0,1300 >> logs/$LOGFILE
 echo '-l 5 -O opt0.5 -X mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.5 -X mcts0,1400 >> logs/$LOGFILE
-echo '-l 5 -O opt0.5 -X mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.5 -X mcts0,1500 >> logs/$LOGFILE
 echo '-l 5 -O opt0.5 -X mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.5 -X mcts0,1600 >> logs/$LOGFILE
-echo '-l 5 -O opt0.5 -X mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.5 -X mcts0,1700 >> logs/$LOGFILE
 echo '-l 5 -O opt0.5 -X mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.5 -X mcts0,1800 >> logs/$LOGFILE
-echo '-l 5 -O opt0.5 -X mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.5 -X mcts0,1900 >> logs/$LOGFILE
 echo '-l 5 -O opt0.5 -X mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.5 -X mcts0,2000 >> logs/$LOGFILE
 echo
 echo
@@ -178,149 +118,89 @@ echo
 ################################################################################
 ################################################################################
 # X opt O mcts
-echo '-l 4 -X opt0.0 -O mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O mcts0,1100 >> logs/$LOGFILE
 echo '-l 4 -X opt0.0 -O mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O mcts0,1200 >> logs/$LOGFILE
-echo '-l 4 -X opt0.0 -O mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O mcts0,1300 >> logs/$LOGFILE
 echo '-l 4 -X opt0.0 -O mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O mcts0,1400 >> logs/$LOGFILE
-echo '-l 4 -X opt0.0 -O mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O mcts0,1500 >> logs/$LOGFILE
 echo '-l 4 -X opt0.0 -O mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O mcts0,1600 >> logs/$LOGFILE
-echo '-l 4 -X opt0.0 -O mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O mcts0,1700 >> logs/$LOGFILE
 echo '-l 4 -X opt0.0 -O mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O mcts0,1800 >> logs/$LOGFILE
-echo '-l 4 -X opt0.0 -O mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O mcts0,1900 >> logs/$LOGFILE
 echo '-l 4 -X opt0.0 -O mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.0 -O mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 4 -X opt0.01 -O mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.01 -O mcts0,1100 >> logs/$LOGFILE
 echo '-l 4 -X opt0.01 -O mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.01 -O mcts0,1200 >> logs/$LOGFILE
-echo '-l 4 -X opt0.01 -O mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.01 -O mcts0,1300 >> logs/$LOGFILE
 echo '-l 4 -X opt0.01 -O mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.01 -O mcts0,1400 >> logs/$LOGFILE
-echo '-l 4 -X opt0.01 -O mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.01 -O mcts0,1500 >> logs/$LOGFILE
 echo '-l 4 -X opt0.01 -O mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.01 -O mcts0,1600 >> logs/$LOGFILE
-echo '-l 4 -X opt0.01 -O mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.01 -O mcts0,1700 >> logs/$LOGFILE
 echo '-l 4 -X opt0.01 -O mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.01 -O mcts0,1800 >> logs/$LOGFILE
-echo '-l 4 -X opt0.01 -O mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.01 -O mcts0,1900 >> logs/$LOGFILE
 echo '-l 4 -X opt0.01 -O mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.01 -O mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 4 -X opt0.05 -O mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.05 -O mcts0,1100 >> logs/$LOGFILE
 echo '-l 4 -X opt0.05 -O mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.05 -O mcts0,1200 >> logs/$LOGFILE
-echo '-l 4 -X opt0.05 -O mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.05 -O mcts0,1300 >> logs/$LOGFILE
 echo '-l 4 -X opt0.05 -O mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.05 -O mcts0,1400 >> logs/$LOGFILE
-echo '-l 4 -X opt0.05 -O mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.05 -O mcts0,1500 >> logs/$LOGFILE
 echo '-l 4 -X opt0.05 -O mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.05 -O mcts0,1600 >> logs/$LOGFILE
-echo '-l 4 -X opt0.05 -O mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.05 -O mcts0,1700 >> logs/$LOGFILE
 echo '-l 4 -X opt0.05 -O mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.05 -O mcts0,1800 >> logs/$LOGFILE
-echo '-l 4 -X opt0.05 -O mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.05 -O mcts0,1900 >> logs/$LOGFILE
 echo '-l 4 -X opt0.05 -O mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.05 -O mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 4 -X opt0.1 -O mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.1 -O mcts0,1100 >> logs/$LOGFILE
 echo '-l 4 -X opt0.1 -O mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.1 -O mcts0,1200 >> logs/$LOGFILE
-echo '-l 4 -X opt0.1 -O mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.1 -O mcts0,1300 >> logs/$LOGFILE
 echo '-l 4 -X opt0.1 -O mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.1 -O mcts0,1400 >> logs/$LOGFILE
-echo '-l 4 -X opt0.1 -O mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.1 -O mcts0,1500 >> logs/$LOGFILE
 echo '-l 4 -X opt0.1 -O mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.1 -O mcts0,1600 >> logs/$LOGFILE
-echo '-l 4 -X opt0.1 -O mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.1 -O mcts0,1700 >> logs/$LOGFILE
 echo '-l 4 -X opt0.1 -O mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.1 -O mcts0,1800 >> logs/$LOGFILE
-echo '-l 4 -X opt0.1 -O mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.1 -O mcts0,1900 >> logs/$LOGFILE
 echo '-l 4 -X opt0.1 -O mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.1 -O mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 4 -X opt0.2 -O mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.2 -O mcts0,1100 >> logs/$LOGFILE
 echo '-l 4 -X opt0.2 -O mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.2 -O mcts0,1200 >> logs/$LOGFILE
-echo '-l 4 -X opt0.2 -O mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.2 -O mcts0,1300 >> logs/$LOGFILE
 echo '-l 4 -X opt0.2 -O mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.2 -O mcts0,1400 >> logs/$LOGFILE
-echo '-l 4 -X opt0.2 -O mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.2 -O mcts0,1500 >> logs/$LOGFILE
 echo '-l 4 -X opt0.2 -O mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.2 -O mcts0,1600 >> logs/$LOGFILE
-echo '-l 4 -X opt0.2 -O mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.2 -O mcts0,1700 >> logs/$LOGFILE
 echo '-l 4 -X opt0.2 -O mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.2 -O mcts0,1800 >> logs/$LOGFILE
-echo '-l 4 -X opt0.2 -O mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.2 -O mcts0,1900 >> logs/$LOGFILE
 echo '-l 4 -X opt0.2 -O mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.2 -O mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 4 -X opt0.5 -O mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.5 -O mcts0,1100 >> logs/$LOGFILE
 echo '-l 4 -X opt0.5 -O mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.5 -O mcts0,1200 >> logs/$LOGFILE
-echo '-l 4 -X opt0.5 -O mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.5 -O mcts0,1300 >> logs/$LOGFILE
 echo '-l 4 -X opt0.5 -O mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.5 -O mcts0,1400 >> logs/$LOGFILE
-echo '-l 4 -X opt0.5 -O mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.5 -O mcts0,1500 >> logs/$LOGFILE
 echo '-l 4 -X opt0.5 -O mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.5 -O mcts0,1600 >> logs/$LOGFILE
-echo '-l 4 -X opt0.5 -O mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.5 -O mcts0,1700 >> logs/$LOGFILE
 echo '-l 4 -X opt0.5 -O mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.5 -O mcts0,1800 >> logs/$LOGFILE
-echo '-l 4 -X opt0.5 -O mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.5 -O mcts0,1900 >> logs/$LOGFILE
 echo '-l 4 -X opt0.5 -O mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 4 -X opt0.5 -O mcts0,2000 >> logs/$LOGFILE
 echo
 echo
 
 # O opt X mcts
-echo '-l 4 -O opt0.0 -X mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X mcts0,1100 >> logs/$LOGFILE
 echo '-l 4 -O opt0.0 -X mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X mcts0,1200 >> logs/$LOGFILE
-echo '-l 4 -O opt0.0 -X mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X mcts0,1300 >> logs/$LOGFILE
 echo '-l 4 -O opt0.0 -X mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X mcts0,1400 >> logs/$LOGFILE
-echo '-l 4 -O opt0.0 -X mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X mcts0,1500 >> logs/$LOGFILE
 echo '-l 4 -O opt0.0 -X mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X mcts0,1600 >> logs/$LOGFILE
-echo '-l 4 -O opt0.0 -X mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X mcts0,1700 >> logs/$LOGFILE
 echo '-l 4 -O opt0.0 -X mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X mcts0,1800 >> logs/$LOGFILE
-echo '-l 4 -O opt0.0 -X mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X mcts0,1900 >> logs/$LOGFILE
 echo '-l 4 -O opt0.0 -X mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.0 -X mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 4 -O opt0.01 -X mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.01 -X mcts0,1100 >> logs/$LOGFILE
 echo '-l 4 -O opt0.01 -X mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.01 -X mcts0,1200 >> logs/$LOGFILE
-echo '-l 4 -O opt0.01 -X mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.01 -X mcts0,1300 >> logs/$LOGFILE
 echo '-l 4 -O opt0.01 -X mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.01 -X mcts0,1400 >> logs/$LOGFILE
-echo '-l 4 -O opt0.01 -X mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.01 -X mcts0,1500 >> logs/$LOGFILE
 echo '-l 4 -O opt0.01 -X mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.01 -X mcts0,1600 >> logs/$LOGFILE
-echo '-l 4 -O opt0.01 -X mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.01 -X mcts0,1700 >> logs/$LOGFILE
 echo '-l 4 -O opt0.01 -X mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.01 -X mcts0,1800 >> logs/$LOGFILE
-echo '-l 4 -O opt0.01 -X mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.01 -X mcts0,1900 >> logs/$LOGFILE
 echo '-l 4 -O opt0.01 -X mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.01 -X mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 4 -O opt0.05 -X mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.05 -X mcts0,1100 >> logs/$LOGFILE
 echo '-l 4 -O opt0.05 -X mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.05 -X mcts0,1200 >> logs/$LOGFILE
-echo '-l 4 -O opt0.05 -X mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.05 -X mcts0,1300 >> logs/$LOGFILE
 echo '-l 4 -O opt0.05 -X mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.05 -X mcts0,1400 >> logs/$LOGFILE
-echo '-l 4 -O opt0.05 -X mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.05 -X mcts0,1500 >> logs/$LOGFILE
 echo '-l 4 -O opt0.05 -X mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.05 -X mcts0,1600 >> logs/$LOGFILE
-echo '-l 4 -O opt0.05 -X mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.05 -X mcts0,1700 >> logs/$LOGFILE
 echo '-l 4 -O opt0.05 -X mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.05 -X mcts0,1800 >> logs/$LOGFILE
-echo '-l 4 -O opt0.05 -X mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.05 -X mcts0,1900 >> logs/$LOGFILE
 echo '-l 4 -O opt0.05 -X mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.05 -X mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 4 -O opt0.1 -X mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.1 -X mcts0,1100 >> logs/$LOGFILE
 echo '-l 4 -O opt0.1 -X mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.1 -X mcts0,1200 >> logs/$LOGFILE
-echo '-l 4 -O opt0.1 -X mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.1 -X mcts0,1300 >> logs/$LOGFILE
 echo '-l 4 -O opt0.1 -X mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.1 -X mcts0,1400 >> logs/$LOGFILE
-echo '-l 4 -O opt0.1 -X mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.1 -X mcts0,1500 >> logs/$LOGFILE
 echo '-l 4 -O opt0.1 -X mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.1 -X mcts0,1600 >> logs/$LOGFILE
-echo '-l 4 -O opt0.1 -X mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.1 -X mcts0,1700 >> logs/$LOGFILE
 echo '-l 4 -O opt0.1 -X mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.1 -X mcts0,1800 >> logs/$LOGFILE
-echo '-l 4 -O opt0.1 -X mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.1 -X mcts0,1900 >> logs/$LOGFILE
 echo '-l 4 -O opt0.1 -X mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.1 -X mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 4 -O opt0.2 -X mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.2 -X mcts0,1100 >> logs/$LOGFILE
 echo '-l 4 -O opt0.2 -X mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.2 -X mcts0,1200 >> logs/$LOGFILE
-echo '-l 4 -O opt0.2 -X mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.2 -X mcts0,1300 >> logs/$LOGFILE
 echo '-l 4 -O opt0.2 -X mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.2 -X mcts0,1400 >> logs/$LOGFILE
-echo '-l 4 -O opt0.2 -X mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.2 -X mcts0,1500 >> logs/$LOGFILE
 echo '-l 4 -O opt0.2 -X mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.2 -X mcts0,1600 >> logs/$LOGFILE
-echo '-l 4 -O opt0.2 -X mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.2 -X mcts0,1700 >> logs/$LOGFILE
 echo '-l 4 -O opt0.2 -X mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.2 -X mcts0,1800 >> logs/$LOGFILE
-echo '-l 4 -O opt0.2 -X mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.2 -X mcts0,1900 >> logs/$LOGFILE
 echo '-l 4 -O opt0.2 -X mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.2 -X mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 4 -O opt0.5 -X mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.5 -X mcts0,1100 >> logs/$LOGFILE
 echo '-l 4 -O opt0.5 -X mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.5 -X mcts0,1200 >> logs/$LOGFILE
-echo '-l 4 -O opt0.5 -X mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.5 -X mcts0,1300 >> logs/$LOGFILE
 echo '-l 4 -O opt0.5 -X mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.5 -X mcts0,1400 >> logs/$LOGFILE
-echo '-l 4 -O opt0.5 -X mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.5 -X mcts0,1500 >> logs/$LOGFILE
 echo '-l 4 -O opt0.5 -X mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.5 -X mcts0,1600 >> logs/$LOGFILE
-echo '-l 4 -O opt0.5 -X mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.5 -X mcts0,1700 >> logs/$LOGFILE
 echo '-l 4 -O opt0.5 -X mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.5 -X mcts0,1800 >> logs/$LOGFILE
-echo '-l 4 -O opt0.5 -X mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.5 -X mcts0,1900 >> logs/$LOGFILE
 echo '-l 4 -O opt0.5 -X mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 4 -O opt0.5 -X mcts0,2000 >> logs/$LOGFILE
 echo
 echo
@@ -328,149 +208,89 @@ echo
 ################################################################################
 ################################################################################
 # X opt O mcts
-echo '-l 3 -X opt0.0 -O mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.0 -O mcts0,1100 >> logs/$LOGFILE
 echo '-l 3 -X opt0.0 -O mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.0 -O mcts0,1200 >> logs/$LOGFILE
-echo '-l 3 -X opt0.0 -O mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.0 -O mcts0,1300 >> logs/$LOGFILE
 echo '-l 3 -X opt0.0 -O mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.0 -O mcts0,1400 >> logs/$LOGFILE
-echo '-l 3 -X opt0.0 -O mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.0 -O mcts0,1500 >> logs/$LOGFILE
 echo '-l 3 -X opt0.0 -O mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.0 -O mcts0,1600 >> logs/$LOGFILE
-echo '-l 3 -X opt0.0 -O mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.0 -O mcts0,1700 >> logs/$LOGFILE
 echo '-l 3 -X opt0.0 -O mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.0 -O mcts0,1800 >> logs/$LOGFILE
-echo '-l 3 -X opt0.0 -O mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.0 -O mcts0,1900 >> logs/$LOGFILE
 echo '-l 3 -X opt0.0 -O mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.0 -O mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 3 -X opt0.01 -O mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.01 -O mcts0,1100 >> logs/$LOGFILE
 echo '-l 3 -X opt0.01 -O mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.01 -O mcts0,1200 >> logs/$LOGFILE
-echo '-l 3 -X opt0.01 -O mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.01 -O mcts0,1300 >> logs/$LOGFILE
 echo '-l 3 -X opt0.01 -O mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.01 -O mcts0,1400 >> logs/$LOGFILE
-echo '-l 3 -X opt0.01 -O mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.01 -O mcts0,1500 >> logs/$LOGFILE
 echo '-l 3 -X opt0.01 -O mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.01 -O mcts0,1600 >> logs/$LOGFILE
-echo '-l 3 -X opt0.01 -O mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.01 -O mcts0,1700 >> logs/$LOGFILE
 echo '-l 3 -X opt0.01 -O mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.01 -O mcts0,1800 >> logs/$LOGFILE
-echo '-l 3 -X opt0.01 -O mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.01 -O mcts0,1900 >> logs/$LOGFILE
 echo '-l 3 -X opt0.01 -O mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.01 -O mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 3 -X opt0.05 -O mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.05 -O mcts0,1100 >> logs/$LOGFILE
 echo '-l 3 -X opt0.05 -O mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.05 -O mcts0,1200 >> logs/$LOGFILE
-echo '-l 3 -X opt0.05 -O mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.05 -O mcts0,1300 >> logs/$LOGFILE
 echo '-l 3 -X opt0.05 -O mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.05 -O mcts0,1400 >> logs/$LOGFILE
-echo '-l 3 -X opt0.05 -O mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.05 -O mcts0,1500 >> logs/$LOGFILE
 echo '-l 3 -X opt0.05 -O mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.05 -O mcts0,1600 >> logs/$LOGFILE
-echo '-l 3 -X opt0.05 -O mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.05 -O mcts0,1700 >> logs/$LOGFILE
 echo '-l 3 -X opt0.05 -O mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.05 -O mcts0,1800 >> logs/$LOGFILE
-echo '-l 3 -X opt0.05 -O mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.05 -O mcts0,1900 >> logs/$LOGFILE
 echo '-l 3 -X opt0.05 -O mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.05 -O mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 3 -X opt0.1 -O mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.1 -O mcts0,1100 >> logs/$LOGFILE
 echo '-l 3 -X opt0.1 -O mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.1 -O mcts0,1200 >> logs/$LOGFILE
-echo '-l 3 -X opt0.1 -O mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.1 -O mcts0,1300 >> logs/$LOGFILE
 echo '-l 3 -X opt0.1 -O mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.1 -O mcts0,1400 >> logs/$LOGFILE
-echo '-l 3 -X opt0.1 -O mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.1 -O mcts0,1500 >> logs/$LOGFILE
 echo '-l 3 -X opt0.1 -O mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.1 -O mcts0,1600 >> logs/$LOGFILE
-echo '-l 3 -X opt0.1 -O mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.1 -O mcts0,1700 >> logs/$LOGFILE
 echo '-l 3 -X opt0.1 -O mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.1 -O mcts0,1800 >> logs/$LOGFILE
-echo '-l 3 -X opt0.1 -O mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.1 -O mcts0,1900 >> logs/$LOGFILE
 echo '-l 3 -X opt0.1 -O mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.1 -O mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 3 -X opt0.2 -O mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.2 -O mcts0,1100 >> logs/$LOGFILE
 echo '-l 3 -X opt0.2 -O mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.2 -O mcts0,1200 >> logs/$LOGFILE
-echo '-l 3 -X opt0.2 -O mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.2 -O mcts0,1300 >> logs/$LOGFILE
 echo '-l 3 -X opt0.2 -O mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.2 -O mcts0,1400 >> logs/$LOGFILE
-echo '-l 3 -X opt0.2 -O mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.2 -O mcts0,1500 >> logs/$LOGFILE
 echo '-l 3 -X opt0.2 -O mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.2 -O mcts0,1600 >> logs/$LOGFILE
-echo '-l 3 -X opt0.2 -O mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.2 -O mcts0,1700 >> logs/$LOGFILE
 echo '-l 3 -X opt0.2 -O mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.2 -O mcts0,1800 >> logs/$LOGFILE
-echo '-l 3 -X opt0.2 -O mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.2 -O mcts0,1900 >> logs/$LOGFILE
 echo '-l 3 -X opt0.2 -O mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.2 -O mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 3 -X opt0.5 -O mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.5 -O mcts0,1100 >> logs/$LOGFILE
 echo '-l 3 -X opt0.5 -O mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.5 -O mcts0,1200 >> logs/$LOGFILE
-echo '-l 3 -X opt0.5 -O mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.5 -O mcts0,1300 >> logs/$LOGFILE
 echo '-l 3 -X opt0.5 -O mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.5 -O mcts0,1400 >> logs/$LOGFILE
-echo '-l 3 -X opt0.5 -O mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.5 -O mcts0,1500 >> logs/$LOGFILE
 echo '-l 3 -X opt0.5 -O mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.5 -O mcts0,1600 >> logs/$LOGFILE
-echo '-l 3 -X opt0.5 -O mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.5 -O mcts0,1700 >> logs/$LOGFILE
 echo '-l 3 -X opt0.5 -O mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.5 -O mcts0,1800 >> logs/$LOGFILE
-echo '-l 3 -X opt0.5 -O mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.5 -O mcts0,1900 >> logs/$LOGFILE
 echo '-l 3 -X opt0.5 -O mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 3 -X opt0.5 -O mcts0,2000 >> logs/$LOGFILE
 echo
 echo
 
 # O opt X mcts
-echo '-l 3 -O opt0.0 -X mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.0 -X mcts0,1100 >> logs/$LOGFILE
 echo '-l 3 -O opt0.0 -X mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.0 -X mcts0,1200 >> logs/$LOGFILE
-echo '-l 3 -O opt0.0 -X mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.0 -X mcts0,1300 >> logs/$LOGFILE
 echo '-l 3 -O opt0.0 -X mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.0 -X mcts0,1400 >> logs/$LOGFILE
-echo '-l 3 -O opt0.0 -X mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.0 -X mcts0,1500 >> logs/$LOGFILE
 echo '-l 3 -O opt0.0 -X mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.0 -X mcts0,1600 >> logs/$LOGFILE
-echo '-l 3 -O opt0.0 -X mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.0 -X mcts0,1700 >> logs/$LOGFILE
 echo '-l 3 -O opt0.0 -X mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.0 -X mcts0,1800 >> logs/$LOGFILE
-echo '-l 3 -O opt0.0 -X mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.0 -X mcts0,1900 >> logs/$LOGFILE
 echo '-l 3 -O opt0.0 -X mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.0 -X mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 3 -O opt0.01 -X mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.01 -X mcts0,1100 >> logs/$LOGFILE
 echo '-l 3 -O opt0.01 -X mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.01 -X mcts0,1200 >> logs/$LOGFILE
-echo '-l 3 -O opt0.01 -X mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.01 -X mcts0,1300 >> logs/$LOGFILE
 echo '-l 3 -O opt0.01 -X mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.01 -X mcts0,1400 >> logs/$LOGFILE
-echo '-l 3 -O opt0.01 -X mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.01 -X mcts0,1500 >> logs/$LOGFILE
 echo '-l 3 -O opt0.01 -X mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.01 -X mcts0,1600 >> logs/$LOGFILE
-echo '-l 3 -O opt0.01 -X mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.01 -X mcts0,1700 >> logs/$LOGFILE
 echo '-l 3 -O opt0.01 -X mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.01 -X mcts0,1800 >> logs/$LOGFILE
-echo '-l 3 -O opt0.01 -X mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.01 -X mcts0,1900 >> logs/$LOGFILE
 echo '-l 3 -O opt0.01 -X mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.01 -X mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 3 -O opt0.05 -X mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.05 -X mcts0,1100 >> logs/$LOGFILE
 echo '-l 3 -O opt0.05 -X mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.05 -X mcts0,1200 >> logs/$LOGFILE
-echo '-l 3 -O opt0.05 -X mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.05 -X mcts0,1300 >> logs/$LOGFILE
 echo '-l 3 -O opt0.05 -X mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.05 -X mcts0,1400 >> logs/$LOGFILE
-echo '-l 3 -O opt0.05 -X mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.05 -X mcts0,1500 >> logs/$LOGFILE
 echo '-l 3 -O opt0.05 -X mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.05 -X mcts0,1600 >> logs/$LOGFILE
-echo '-l 3 -O opt0.05 -X mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.05 -X mcts0,1700 >> logs/$LOGFILE
 echo '-l 3 -O opt0.05 -X mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.05 -X mcts0,1800 >> logs/$LOGFILE
-echo '-l 3 -O opt0.05 -X mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.05 -X mcts0,1900 >> logs/$LOGFILE
 echo '-l 3 -O opt0.05 -X mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.05 -X mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 3 -O opt0.1 -X mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.1 -X mcts0,1100 >> logs/$LOGFILE
 echo '-l 3 -O opt0.1 -X mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.1 -X mcts0,1200 >> logs/$LOGFILE
-echo '-l 3 -O opt0.1 -X mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.1 -X mcts0,1300 >> logs/$LOGFILE
 echo '-l 3 -O opt0.1 -X mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.1 -X mcts0,1400 >> logs/$LOGFILE
-echo '-l 3 -O opt0.1 -X mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.1 -X mcts0,1500 >> logs/$LOGFILE
 echo '-l 3 -O opt0.1 -X mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.1 -X mcts0,1600 >> logs/$LOGFILE
-echo '-l 3 -O opt0.1 -X mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.1 -X mcts0,1700 >> logs/$LOGFILE
 echo '-l 3 -O opt0.1 -X mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.1 -X mcts0,1800 >> logs/$LOGFILE
-echo '-l 3 -O opt0.1 -X mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.1 -X mcts0,1900 >> logs/$LOGFILE
 echo '-l 3 -O opt0.1 -X mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.1 -X mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 3 -O opt0.2 -X mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.2 -X mcts0,1100 >> logs/$LOGFILE
 echo '-l 3 -O opt0.2 -X mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.2 -X mcts0,1200 >> logs/$LOGFILE
-echo '-l 3 -O opt0.2 -X mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.2 -X mcts0,1300 >> logs/$LOGFILE
 echo '-l 3 -O opt0.2 -X mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.2 -X mcts0,1400 >> logs/$LOGFILE
-echo '-l 3 -O opt0.2 -X mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.2 -X mcts0,1500 >> logs/$LOGFILE
 echo '-l 3 -O opt0.2 -X mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.2 -X mcts0,1600 >> logs/$LOGFILE
-echo '-l 3 -O opt0.2 -X mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.2 -X mcts0,1700 >> logs/$LOGFILE
 echo '-l 3 -O opt0.2 -X mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.2 -X mcts0,1800 >> logs/$LOGFILE
-echo '-l 3 -O opt0.2 -X mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.2 -X mcts0,1900 >> logs/$LOGFILE
 echo '-l 3 -O opt0.2 -X mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.2 -X mcts0,2000 >> logs/$LOGFILE
 echo
 
-echo '-l 3 -O opt0.5 -X mcts0,1100' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.5 -X mcts0,1100 >> logs/$LOGFILE
 echo '-l 3 -O opt0.5 -X mcts0,1200' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.5 -X mcts0,1200 >> logs/$LOGFILE
-echo '-l 3 -O opt0.5 -X mcts0,1300' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.5 -X mcts0,1300 >> logs/$LOGFILE
 echo '-l 3 -O opt0.5 -X mcts0,1400' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.5 -X mcts0,1400 >> logs/$LOGFILE
-echo '-l 3 -O opt0.5 -X mcts0,1500' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.5 -X mcts0,1500 >> logs/$LOGFILE
 echo '-l 3 -O opt0.5 -X mcts0,1600' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.5 -X mcts0,1600 >> logs/$LOGFILE
-echo '-l 3 -O opt0.5 -X mcts0,1700' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.5 -X mcts0,1700 >> logs/$LOGFILE
 echo '-l 3 -O opt0.5 -X mcts0,1800' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.5 -X mcts0,1800 >> logs/$LOGFILE
-echo '-l 3 -O opt0.5 -X mcts0,1900' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.5 -X mcts0,1900 >> logs/$LOGFILE
 echo '-l 3 -O opt0.5 -X mcts0,2000' ; ./bin/quixo $FLAGS_BASE -l 3 -O opt0.5 -X mcts0,2000 >> logs/$LOGFILE
 echo
 echo
