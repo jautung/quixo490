@@ -100,12 +100,12 @@ class QLearningPlayer : public Player {
   private:
     int initIters;
     int perMoveIters;
-    Eigen::MatrixXd weights;
+    Eigen::MatrixXf weights;
     double learningRate;
     std::bernoulli_distribution epsilonDistri;
     void runIter(state_t state);
     void updateWeights(std::vector<std::tuple<state_t, int>> &stateMoveStack, state_t finalState);
     int selectQMoveIndex(state_t state);
     int selectBestMoveIndex(state_t state);
-    Eigen::VectorXd getFeatures(state_t state);
+    Eigen::VectorXf getFeatures(state_t state);
 };
