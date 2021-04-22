@@ -94,8 +94,6 @@
   - Fixing bugs with Q-learning, and trying to speed it up perhaps? It was previously somehow _cheating_ and winning against optimal...
 
 ## To Do / Next Steps
-1. **Improvement/analysis of Q-learning.**
-   - Get other features/heuristics for Q-learning.
-   - Getting Q-learning to learn by playing against MCTS/optimal.
-   - Test Q-learning and MCTS on positions that are a couple moves in, so that Q-learning needs to only train once at `initState=0b0` and then evaluated from different positions.
-2. _(Stretch)_ **Extensions of Quixo.** As mentioned in '[Quixo Is Solved](https://arxiv.org/abs/2007.15895)', there are extensions of Quixo (such as winning length being different from board length). These can be investigated if time permits.
+1. Write the minimize-number-of-steps-to-win and maximize-number-of-steps-to-lose versions of optimal, and generate the cached data for 4X4 and 3X3 (only!).
+2. Run the game length tests for 3X3 and 4X4 with this optimal+ agent.
+3. Write up the report for CPSC490 and the presentation for mellon forum (a whole bunch of data analysis).
