@@ -29,24 +29,20 @@ echo 'len	xType	oType	xWins	oWins	draws	xTurnTime	oTurnTime' >> logs/$LOGFILE
 ################################################################################
 # X opt O mcts
 echo '-l 5 -X opt0.0 -O mcts0,20000' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O mcts0,20000 >> logs/$LOGFILE
-echo '-l 5 -X opt0.0 -O mcts0,50000' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O mcts0,50000 >> logs/$LOGFILE
-echo '-l 5 -X opt0.0 -O mcts0,100000' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O mcts0,100000 >> logs/$LOGFILE
+echo '-l 5 -X opt0.0 -O mcts0,30000' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.0 -O mcts0,30000 >> logs/$LOGFILE
 echo
 
 echo '-l 5 -X opt0.01 -O mcts0,20000' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.01 -O mcts0,20000 >> logs/$LOGFILE
-echo '-l 5 -X opt0.01 -O mcts0,50000' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.01 -O mcts0,50000 >> logs/$LOGFILE
-echo '-l 5 -X opt0.01 -O mcts0,100000' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.01 -O mcts0,100000 >> logs/$LOGFILE
+echo '-l 5 -X opt0.01 -O mcts0,30000' ; ./bin/quixo $FLAGS_BASE -l 5 -X opt0.01 -O mcts0,30000 >> logs/$LOGFILE
 echo
 
 # O opt X mcts
 echo '-l 5 -O opt0.0 -X mcts0,20000' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X mcts0,20000 >> logs/$LOGFILE
-echo '-l 5 -O opt0.0 -X mcts0,50000' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X mcts0,50000 >> logs/$LOGFILE
-echo '-l 5 -O opt0.0 -X mcts0,100000' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X mcts0,100000 >> logs/$LOGFILE
+echo '-l 5 -O opt0.0 -X mcts0,30000' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.0 -X mcts0,30000 >> logs/$LOGFILE
 echo
 
 echo '-l 5 -O opt0.01 -X mcts0,20000' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.01 -X mcts0,20000 >> logs/$LOGFILE
-echo '-l 5 -O opt0.01 -X mcts0,50000' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.01 -X mcts0,50000 >> logs/$LOGFILE
-echo '-l 5 -O opt0.01 -X mcts0,100000' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.01 -X mcts0,100000 >> logs/$LOGFILE
+echo '-l 5 -O opt0.01 -X mcts0,30000' ; ./bin/quixo $FLAGS_BASE -l 5 -O opt0.01 -X mcts0,30000 >> logs/$LOGFILE
 echo
 
 echo '=== DONE ==='
