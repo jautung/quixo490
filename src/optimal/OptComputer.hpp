@@ -35,6 +35,5 @@ class OptComputer {
     state_t indexToState(sindex_t stateIndex, nbit_t numX, nbit_t numO);
     state_t unfilterOState(state_t oFilteredState, state_t xState);
     state_t filterOState(state_t oState, state_t xState);
-    nsteps_t resultStepWinUpdate(nsteps_t incumResultStep, nsteps_t lossChildResultStep);
-    nsteps_t resultStepLossUpdate(nsteps_t incumResultStep, nsteps_t winChildResultStep);
+    void resultStepWinUpdate(std::vector<nsteps_t> &resultsSteps, sindex_t stateIndex, nsteps_t lossChildResultStep);
 };
