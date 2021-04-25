@@ -57,6 +57,7 @@ void OptAnalyzer::analyzeResultsSteps() {
       }
     }
   }
+  printf("Steps\tWins\tLosses\n");
   sindex_t wins=0, losses=0;
   for (nsteps_t resultStep = 0;; resultStep++) {
     printf("%d\t%" PRId64 "\t%" PRId64 "\n", resultStep, winsPerResultStep[resultStep], lossesPerResultStep[resultStep]);
