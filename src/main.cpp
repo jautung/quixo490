@@ -12,6 +12,7 @@
 #include <random>
 #include <string>
 #include <tclap/CmdLine.h>
+#include <tuple>
 #include <vector>
 
 std::mt19937 rng(time(0));
@@ -23,7 +24,7 @@ int main(int argc, char* argv[]) {
   try {
     TCLAP::CmdLine cmd("Quixo Project");
 
-    TCLAP::ValueArg<std::string> progArg("p", "program", "Program to run (`play`, `test`, `test-move-correctness`, `opt-compute*`, `opt-check`, `opt-analyze`, or `opt-analyze-adj`)", false, "play", "string", cmd);
+    TCLAP::ValueArg<std::string> progArg("p", "program", "Program to run (`play`, `test`, `test-move-correctness*`, `opt-compute*`, `opt-check`, `opt-analyze`, or `opt-analyze-adj`)", false, "play", "string", cmd);
     TCLAP::ValueArg<int> lenArg("l", "len", "For `play`, `test`, `test-move-correctness`, `opt-compute`, `opt-check`, `opt-analyze` or `opt-analyze-adj` program: number of tiles per side", false, 5, "integer", cmd);
     TCLAP::ValueArg<std::string> playerXTypeArg("X", "playerX", "For `play`, `test` or `test-move-correctness` program: player X type (`random`, `interact`, `opt*`, `heuris-simple`, `mcts*,*`, `mcts-cache-persist*,*`, or `q-learn*,*`)", false, "random", "string", cmd);
     TCLAP::ValueArg<std::string> playerOTypeArg("O", "playerO", "For `play` or `test` program: player O type (`random`, `interact`, `opt*`, `heuris-simple`, `mcts*,*`, `mcts-cache-persist*,*`, or `q-learn*,*`)", false, "random", "string", cmd);
@@ -171,28 +172,37 @@ int main(int argc, char* argv[]) {
       delete gamePlayHandler;
     }
 
-    else if (prog == "test-move-correctness") {
+    else if (prog.find("test-move-correctness", 0) == 0) { // string starts with test-move-correctness prefix
+      bool considerStepsQ = (prog.find("test-move-correctness-steps", 0) == 0);
       if (playerXType == "interact") {
         std::cerr << "warning: " << "using an interactive player for testing move correctness is not a good idea; aborting\n";
         exit(1);
       }
       auto cliHandler = new CliHandler();
       auto playerX = getPlayer(playerXType, gameStateHandler, cliHandler);
-      auto optimalPlayer = new OptimalPlayer(gameStateHandler);
+      auto optimalPlayer = new OptimalPlayer(gameStateHandler, NULL, 0.0, considerStepsQ);
       int numCorrectMovesFromLossState = 0, numCorrectMovesFromDrawState = 0, numCorrectMovesFromWinState = 0, numLossStates = 0, numDrawStates = 0, numWinStates = 0;
       for (int i = 0; i < numGames; i++) {
         playerX->clearCache();
         playerX->initLearn();
         auto state = gameStateHandler->genRandomNonTerminalState();
-        auto result = optimalPlayer->evalState(state);
+        auto resultTuple = optimalPlayer->evalState(state);
+        auto result = std::get<0>(resultTuple);
+        auto resultStep = std::get<1>(resultTuple);
         auto move = playerX->selectMove(state);
         auto nextState = gameStateHandler->swapPlayers(gameStateHandler->makeMove(state, move));
-        auto nextResult = optimalPlayer->evalState(nextState);
+        auto nextResultTuple = optimalPlayer->evalState(nextState);
+        auto nextResult = std::get<0>(nextResultTuple);
+        auto nextResultStep = std::get<1>(nextResultTuple);
         std::string toPrint;
         if (result == RESULT_LOSS) {
           numLossStates += 1;
-          toPrint = "Correct move for LOSS state";
-          numCorrectMovesFromLossState += 1;
+          if ((!considerStepsQ) || (considerStepsQ && resultStep == nextResultStep + 1)) {
+            toPrint = "Correct move for LOSS state";
+            numCorrectMovesFromLossState += 1;
+          } else {
+            toPrint = "Incorrect move for LOSS state";
+          }
         } else if (result == RESULT_DRAW) {
           numDrawStates += 1;
           if (nextResult == RESULT_DRAW) {
@@ -203,7 +213,7 @@ int main(int argc, char* argv[]) {
           }
         } else if (result == RESULT_WIN) {
           numWinStates += 1;
-          if (nextResult == RESULT_LOSS) {
+          if ((!considerStepsQ && nextResult == RESULT_LOSS) || (considerStepsQ && nextResult == RESULT_LOSS && resultStep == nextResultStep + 1)) {
             toPrint = "Correct move for WIN state";
             numCorrectMovesFromWinState += 1;
           } else {
@@ -269,12 +279,14 @@ int main(int argc, char* argv[]) {
     else if (prog == "opt-check") {
       auto graphicsHandler = graphicsRes > 0 ? new GraphicsHandler(gameStateHandler, graphicsRes) : NULL;
       auto state = getStateInteractive(graphicsHandler);
-      auto optimalPlayer = new OptimalPlayer(gameStateHandler);
-      auto result = optimalPlayer->evalState(state);
+      auto optimalPlayer = new OptimalPlayer(gameStateHandler, NULL, 0.0, len < 5); // evaluate steps if len < 5
+      auto resultTuple = optimalPlayer->evalState(state);
+      auto result = std::get<0>(resultTuple);
+      auto resultStep = std::get<1>(resultTuple);
       if (result == RESULT_WIN) {
-        std::cout << "Win state\n";
+        std::cout << "Win state" << (len < 5 ? " (in " + std::to_string(resultStep) + " steps)" : "") << "\n";
       } else if (result == RESULT_LOSS) {
-        std::cout << "Loss state\n";
+        std::cout << "Loss state" << (len < 5 ? " (in " + std::to_string(resultStep) + " steps)" : "") << "\n";
       } else if (result == RESULT_DRAW) {
         std::cout << "Draw state\n";
       }
@@ -319,7 +331,13 @@ Player* getPlayer(std::string playerType, GameStateHandler* gameStateHandler, Cl
   } else if (playerType == "interact") {
     return new InteractivePlayer(gameStateHandler, graphicsHandler);
   } else if (playerType.find("opt", 0) == 0) {
-    auto cliParams = cliHandler->readCliParams(playerType.substr(std::string("opt").length()));
+    std::string prefix = "opt";
+    bool considerStepsQ = false;
+    if (playerType.find("opt-steps", 0) == 0) { // string starts with opt-steps prefix
+      prefix = "opt-steps";
+      considerStepsQ = true;
+    }
+    auto cliParams = cliHandler->readCliParams(playerType.substr(std::string(prefix).length()));
     if (cliParams.size() != 0 && cliParams.size() != 1) {
       std::cerr << "error: " << "incorrect number of params for opt player type (expected 0 or 1; got " << cliParams.size() << ")\n";
       exit(1);
@@ -328,7 +346,7 @@ Player* getPlayer(std::string playerType, GameStateHandler* gameStateHandler, Cl
     if (cliParams.size() == 1 && cliParams[0] != "") {
       initErrorRate = cliHandler->readFracDoubleCliParam(cliParams[0], "opt initErrorRate");
     }
-    return new OptimalPlayer(gameStateHandler, graphicsHandler, initErrorRate);
+    return new OptimalPlayer(gameStateHandler, graphicsHandler, initErrorRate, considerStepsQ);
   } else if (playerType == "heuris-simple") {
     return new HeuristicSimplePlayer(gameStateHandler);
   } else if (playerType.find("mcts", 0) == 0) { // string starts with mcts prefix

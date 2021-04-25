@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <tuple>
 #include <vector>
 
 namespace {
@@ -111,7 +112,7 @@ std::vector<uint8_t> DataHandler::loadClassAux(len_t len, nbit_t numX, nbit_t nu
   return results;
 }
 
-result_t DataHandler::loadState(len_t len, nbit_t numX, nbit_t numO, sindex_t stateIndex) {
+std::tuple<result_t, nsteps_t> DataHandler::loadState(len_t len, nbit_t numX, nbit_t numO, sindex_t stateIndex, bool considerStepsQ) {
   byte_t byteBuffer[1];
   std::ifstream dataFileStream(dataFileName(len, numX, numO, false), std::ios::in|std::ios::binary);
 
@@ -127,7 +128,24 @@ result_t DataHandler::loadState(len_t len, nbit_t numX, nbit_t numO, sindex_t st
   result_t result = (result_t)((byteBuffer[0] >> (2 * (stateIndex%4))) & resultMask);
 
   dataFileStream.close();
-  return result;
+  if (!considerStepsQ) return std::make_tuple(result, 0);
+
+  std::ifstream dataFileStreamStep(dataFileName(len, numX, numO, true), std::ios::in|std::ios::binary);
+
+  #if OPT_COMPUTE_ERROR_CHECKING == 1
+  if (dataFileStreamStep.fail()) {
+    std::cerr << "error: " << "data file cannot be opened: " << dataFileName(len, numX, numO, true) << "\n";
+    exit(1);
+  }
+  #endif
+
+  dataFileStreamStep.seekg(stateIndex);
+  dataFileStreamStep.read(byteBuffer, 1);
+  nsteps_t resultStep = (nsteps_t)byteBuffer[0];
+
+  dataFileStreamStep.close();
+
+  return std::make_tuple(result, resultStep);
 }
 
 std::string DataHandler::dataFileName(len_t len, nbit_t numX, nbit_t numO, bool stepsQ) {

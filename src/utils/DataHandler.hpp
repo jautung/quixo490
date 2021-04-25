@@ -3,6 +3,7 @@
 #include <chrono>
 #include <cstdint>
 #include <string>
+#include <tuple>
 #include <vector>
 
 typedef uint64_t sindex_t; // index of a state
@@ -34,7 +35,7 @@ class DataHandler {
     bool existsClass(len_t len, nbit_t numX, nbit_t numO);
     std::vector<result4_t> loadClass(len_t len, nbit_t numX, nbit_t numO);
     std::vector<nsteps_t> loadClassSteps(len_t len, nbit_t numX, nbit_t numO);
-    result_t loadState(len_t len, nbit_t numX, nbit_t numO, sindex_t stateIndex);
+    std::tuple<result_t, nsteps_t> loadState(len_t len, nbit_t numX, nbit_t numO, sindex_t stateIndex, bool considerStepsQ);
   private:
     void saveClassAux(std::vector<uint8_t> &results, len_t len, nbit_t numX, nbit_t numO, bool stepsQ);
     std::vector<uint8_t> loadClassAux(len_t len, nbit_t numX, nbit_t numO, bool stepsQ);
