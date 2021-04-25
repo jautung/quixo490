@@ -35,6 +35,7 @@
     - `./bin/quixo -p opt-analyze -l 3`: prints to `stdout` some aggregate statistics about the optimal results on a 3X3 board.
     - `./bin/quixo -p opt-analyze -l 4`: prints to `stdout` some aggregate statistics about the optimal results on a 4X4 board.
     - `./bin/quixo -p opt-analyze -l 5`: prints to `stdout` some aggregate statistics about the optimal results on a 5X5 board.
+    - `./bin/quixo -p opt-analyze-steps -l 4`: prints to `stdout` some aggregate statistics about the optimal steps on a 4X4 board.
   - Single games (default):
     - `./bin/quixo -g 800 -X interact`: play interactively as X against a random player O (default) on a 5X5 board (default).
     - `./bin/quixo -g 800 -l 3 -X interact`: play interactively as X against a random player O (default) on a 3X3 board.

@@ -294,6 +294,12 @@ int main(int argc, char* argv[]) {
       delete optAnalyzer;
     }
 
+    else if (prog == "opt-analyze-steps") {
+      auto optAnalyzer = new OptAnalyzer(gameStateHandler);
+      optAnalyzer->analyzeResultsSteps(); // counts of win and loss states for each number of steps (what the paper does)
+      delete optAnalyzer;
+    }
+
     else {
       std::cerr << "error: " << "unknown program: " << prog << "\n";
       exit(1);

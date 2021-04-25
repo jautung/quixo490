@@ -6,6 +6,7 @@ class OptAnalyzer {
     OptAnalyzer(GameStateHandler* initGameStateHandler);
     ~OptAnalyzer();
     void analyzeNumWinLossDrawStates(bool adjacentXOs = false);
+    void analyzeResultsSteps();
   private:
     GameStateHandler* gameStateHandler;
     len_t len;
