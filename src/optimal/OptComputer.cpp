@@ -501,12 +501,27 @@ void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result
             END_TIMING(valueIterateClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeBuf1);
             START_TIMING(startTimeBuf1);
             auto result = dataHandler->getResult(resultsOther, parentStateIndex);
+            bool resultStepUpdated = false;
             if (result == RESULT_DRAW || result == RESULT_WIN_OR_DRAW || (considerStepsQ && result == RESULT_WIN)) {
               dataHandler->setResult(resultsOther, parentStateIndex, RESULT_WIN);
-              if (considerStepsQ) resultStepWinUpdate(resultsStepsOther, parentStateIndex, maxChildrenWinSteps + 1);
+              if (considerStepsQ) resultStepUpdated = resultStepWinUpdate(resultsStepsOther, parentStateIndex, maxChildrenWinSteps + 1);
             }
             omp_unset_lock(&resultsOtherLocks[(parentStateIndex/4) % numLocksPerArr]);
             END_TIMING(valueIterateClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeBuf1);
+            if (considerStepsQ && resultStepUpdated) { // propagate the update to the number of steps to win, to parents of parentState (which may be losses with their steps computed based on parentState's number of steps to win)
+              for (auto grandParentState : gameStateHandler->allZeroParents(parentState)) {
+                auto grandParentStateIndex = stateToIndex(grandParentState);
+                START_TIMING(startTimeBuf1);
+                omp_set_lock(&resultsLocks[(grandParentStateIndex/4) % numLocksPerArr]);
+                END_TIMING(valueIterateClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeBuf1);
+                START_TIMING(startTimeBuf1);
+                auto grandParentResult = dataHandler->getResult(results, grandParentStateIndex);
+                if (grandParentResult == RESULT_LOSS && !(!gameStateHandler->containsLine(grandParentState, TILE_X) && gameStateHandler->containsLine(grandParentState, TILE_O)))
+                  dataHandler->setResult(results, grandParentStateIndex, RESULT_DRAW); // a lazy way to force value iteration to re-compute (may be inefficient)
+                omp_unset_lock(&resultsLocks[(grandParentStateIndex/4) % numLocksPerArr]);
+                END_TIMING(valueIterateClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeBuf1);
+              }
+            }
           }
         }
       }
@@ -613,8 +628,11 @@ state_t OptComputer::filterOState(state_t oState, state_t xState) {
   return oFilteredState;
 }
 
-void OptComputer::resultStepWinUpdate(std::vector<nsteps_t> &resultsSteps, sindex_t stateIndex, nsteps_t lossChildResultStep) {
+bool OptComputer::resultStepWinUpdate(std::vector<nsteps_t> &resultsSteps, sindex_t stateIndex, nsteps_t lossChildResultStep) {
   auto incumResultStep = dataHandler->getResultStep(resultsSteps, stateIndex);
-  if (incumResultStep == initResultStep || 1 + lossChildResultStep < incumResultStep)
+  if (incumResultStep == initResultStep || 1 + lossChildResultStep < incumResultStep) {
     dataHandler->setResultStep(resultsSteps, stateIndex, 1 + lossChildResultStep);
+    return true;
+  }
+  return false;
 }
