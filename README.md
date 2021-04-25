@@ -45,6 +45,7 @@
     - `./bin/quixo -g 800 -l 5 -X opt -O opt -n 1000`: play optimal players against each other on a 5X5 board, with a turn limit of 1000 (one turn is defined as one move by each player).
   - Benchmarks:
     - `./bin/quixo -p test -l 3 -N 1000 -X opt`: test optimal player X against random player O (default) for 1000 games on a 3X3 board.
+    - `./bin/quixo -p test -l 3 -N 1000 -X opt-steps`: test optimal player X (which considers steps) against random player O (default) for 1000 games on a 3X3 board.
     - `./bin/quixo -p test -l 3 -N 1000 -O opt`: test optimal player O against random player X (default) for 1000 games on a 3X3 board.
     - `./bin/quixo -p test -l 4 -N 1000 -X opt -n 1000`: test optimal player X against random player O (default) for 1000 games on a 4X4 board, with a turn limit of 1000 per game.
     - `./bin/quixo -p test -l 4 -N 100 -X heuris-simple -O opt -n 1000`: test simple heuristic player X against optimal player O for 1000 games on a 4X4 board, with a turn limit of 1000 per game.
@@ -56,6 +57,7 @@
     - `./bin/quixo -p test -l 5 -N 100 -X opt -O random -n 1000`: test optimal player X against random player O for 1000 games on a 5X5 board, with a turn limit of 1000 per game.
     - `./bin/quixo -p test -l 5 -N 100 -X opt0.5 -O mcts0,200 -n 100`: test optimal player X with 50% random moves against MCTS player O with 0 initial training iterations and 200 training iterations per move for 1000 games on a 5X5 board, with a turn limit of 100 per game.
     - `./bin/quixo -p test-move-correctness -l 5 -N 100 -X mcts0,100`: test MCTS player with 0 initial training iterations and 100 training iterations per move for 100 random states on a 5X5 board.
+    - `./bin/quixo -p test-move-correctness-steps -l 5 -N 100 -X mcts0,100`: does the same as the above, except being stricter about correct moves (must optimize steps as well).
 
 ## References
 - [Quixo Is Solved](https://arxiv.org/abs/2007.15895).
