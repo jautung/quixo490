@@ -462,8 +462,8 @@ void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result
           auto moveKind = gameStateHandler->moveHandler->getKind(move);
           auto childState = gameStateHandler->swapPlayers(gameStateHandler->makeMove(state, move));
           auto childStateIndex = stateToIndex(childState);
-          result_t childResult = RESULT_DRAW; // dummy
-          nsteps_t childResultStep;
+          result_t childResult = RESULT_DRAW; // dummy (to silence -Wmaybe-uninitialized)
+          nsteps_t childResultStep = 0; // dummy (to silence -Wmaybe-uninitialized)
           if (moveKind == MKIND_ZERO) {
             START_TIMING(startTimeBuf1);
             omp_set_lock(&resultsOtherLocks[(childStateIndex/4) % numLocksPerArr]);
