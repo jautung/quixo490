@@ -14,7 +14,7 @@ namespace {
   nbit_t stateNBits = 64;
   nbit_t halfStateNBits = stateNBits/2;
   state_t halfStateMask = 0b11111111111111111111111111111111;
-  nsteps_t initResultStep = 0b11111111;
+  nsteps_t initResultStep = 0b1111111;
 }
 
 #define MAX_THREADS (16) // maximum that we will support for now
@@ -406,7 +406,7 @@ void OptComputer::parentLinkCacheClass(nbit_t numX, nbit_t numO, std::vector<res
             END_TIMING(parentLinkCacheClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeBuf1);
             START_TIMING(startTimeBuf1);
             auto result = dataHandler->getResult(results, stateIndex);
-            if (result == RESULT_DRAW || result == RESULT_WIN_OR_DRAW) {
+            if (result == RESULT_DRAW || result == RESULT_WIN_OR_DRAW || (considerStepsQ && result == RESULT_WIN)) {
               dataHandler->setResult(results, stateIndex, RESULT_WIN);
               if (considerStepsQ) {
                 auto incumResultStep = dataHandler->getResultStep(resultsSteps, stateIndex);
