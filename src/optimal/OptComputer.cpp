@@ -488,7 +488,7 @@ void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result
           if (childResult != RESULT_WIN) {
             allChildrenWin = false;
             if (!considerStepsQ) break;
-          } else if (considerStepsQ && maxChildrenWinSteps < childResultStep) {
+          } else if (considerStepsQ && childResultStep > maxChildrenWinSteps) {
             maxChildrenWinSteps = childResultStep;
           }
         }
@@ -499,10 +499,12 @@ void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result
           END_TIMING(valueIterateClassPerThreadWaitLockTimes[omp_get_thread_num()], startTimeBuf1);
           START_TIMING(startTimeBuf1);
           dataHandler->setResult(results, stateIndex, RESULT_LOSS);
+          nsteps_t lossChildResultStep;
           if (considerStepsQ) {
             auto incumResultStep = dataHandler->getResultStep(resultsSteps, stateIndex);
             auto winChildResultStep = maxChildrenWinSteps;
-            dataHandler->setResultStep(resultsSteps, stateIndex, resultStepLossUpdate(incumResultStep, winChildResultStep));
+            lossChildResultStep = resultStepLossUpdate(incumResultStep, winChildResultStep);
+            dataHandler->setResultStep(resultsSteps, stateIndex, lossChildResultStep);
           }
           omp_unset_lock(&resultsLocks[(stateIndex/4) % numLocksPerArr]);
           END_TIMING(valueIterateClassPerThreadInCritSecTimes[omp_get_thread_num()], startTimeBuf1);
@@ -517,7 +519,6 @@ void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result
               dataHandler->setResult(resultsOther, parentStateIndex, RESULT_WIN);
               if (considerStepsQ) {
                 auto incumResultStep = dataHandler->getResultStep(resultsStepsOther, parentStateIndex);
-                auto lossChildResultStep = dataHandler->getResultStep(resultsSteps, stateIndex);
                 dataHandler->setResultStep(resultsStepsOther, parentStateIndex, resultStepWinUpdate(incumResultStep, lossChildResultStep));
               }
             }

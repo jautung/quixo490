@@ -95,7 +95,7 @@ std::vector<uint8_t> DataHandler::loadClassAux(len_t len, nbit_t numX, nbit_t nu
   }
   #endif
 
-  std::vector<result4_t> results;
+  std::vector<uint8_t> results;
   while (dataFileStream) { // reading bytes in byte blocks of byteBufferSize
     dataFileStream.read(byteBuffer, byteBufferSize);
     for (nbyte_t i = 0; i < dataFileStream.gcount(); i++) {
