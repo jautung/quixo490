@@ -487,7 +487,7 @@ void OptComputer::valueIterateClass(nbit_t numX, nbit_t numO, std::vector<result
           }
           if (childResult != RESULT_WIN) {
             allChildrenWin = false;
-            break;
+            if (!considerStepsQ) break;
           } else if (considerStepsQ && maxChildrenWinSteps < childResultStep) {
             maxChildrenWinSteps = childResultStep;
           }
