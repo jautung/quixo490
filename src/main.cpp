@@ -238,8 +238,14 @@ int main(int argc, char* argv[]) {
     }
 
     else if (prog.find("opt-compute", 0) == 0) { // string starts with opt-compute prefix
+      std::string prefix = "opt-compute";
+      bool considerStepsQ = false;
+      if (prog.find("opt-compute-steps", 0) == 0) {
+        prefix = "opt-compute-steps";
+        considerStepsQ = true;
+      }
       auto cliHandler = new CliHandler();
-      auto cliParams = cliHandler->readCliParams(prog.substr(std::string("opt-compute").length()));
+      auto cliParams = cliHandler->readCliParams(prog.substr(prefix.length()));
       if (cliParams.size() != 0 && cliParams.size() != 1) {
         std::cerr << "error: " << "incorrect number of params for opt-compute program (expected 0 or 1; got " << cliParams.size() << ")\n";
         exit(1);
@@ -249,7 +255,7 @@ int main(int argc, char* argv[]) {
         numUsedComputeTill = cliHandler->readNonNegIntCliParam(cliParams[0], "opt-compute numUsedComputeTill");
       }
       auto startTime = std::chrono::high_resolution_clock::now();
-      auto optComputer = new OptComputer(gameStateHandler, numThreads, numLocksPerArr);
+      auto optComputer = new OptComputer(gameStateHandler, numThreads, numLocksPerArr, considerStepsQ);
       auto endTime = std::chrono::high_resolution_clock::now();
       std::cout << "OptComputer initialization time (s): " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime-startTime).count()/1000.0 << "\n";
       optComputer->computeAll(numUsedComputeTill);
