@@ -96,8 +96,8 @@
   - To be completed (each trial takes several hours). Mostly completed.
 - Apr 14, 2021:
   - Fixing bugs with Q-learning, and trying to speed it up perhaps? It was previously somehow _cheating_ and winning against optimal...
-
-## To Do / Next Steps
-1. Write the minimize-number-of-steps-to-win and maximize-number-of-steps-to-lose versions of optimal, and generate the cached data for 4X4 and 3X3 (only!).
-2. Run the game length tests for 3X3 and 4X4 with this optimal+ agent.
-3. Write up the report for CPSC490 and the presentation for mellon forum (a whole bunch of data analysis).
+- Apr 25, 2021:
+  - Finally finished writing and debugging the minimize-number-of-steps-to-win-and-maximize-number-of-steps-to-lose version of optimal.
+  - The grandparent relevance bug took forever for me to find :'(.
+  - Generated the cached data for 4X4 and 3X3 (takes about 20 seconds for 4X4 with 16 threads on the Zoo).
+  - This is probably the conclusion of coding for the senior project; I might make more scripts and runs after this, but unlikely to change the code base any further.
