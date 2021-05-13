@@ -25,11 +25,14 @@
 
   <ul>
     <li><em>Author:</em> Jau Tung Chan (jc3395)</li>
-    <li><em>Title:</em> Game 'Depth' in Quixo</li>
+    <li><em>Title:</em> Game &lsquo;Depth&rsquo; in Quixo</li>
     <li><em>Advisor:</em> Professor James Glenn</li>
   </ul>
 
-  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget erat nulla. Donec varius ullamcorper ipsum tincidunt tempor. Mauris tincidunt maximus pulvinar. Mauris tristique ultrices luctus. Morbi non gravida mi, egestas tincidunt eros. Duis commodo leo sed urna mollis, at convallis magna auctor. Donec ac suscipit odio, nec finibus sem. Nullam dignissim nisi condimentum nulla porta, a hendrerit leo efficitur. Aliquam molestie elit ut leo hendrerit varius. Proin sagittis varius interdum. Nunc pharetra venenatis massa, quis fermentum erat sagittis at.</p>
+  <p>The notion of &lsquo;depth&rsquo; is an informal concept commonly used within the game designing and playing community, to describe how absorbing or how profound a given game is. In 2017, Lantz et al. proposed a formal conceptual model to define &lsquo;depth&rsquo;, based on a strategy ladder graph of plotting &ldquo;Solution Strength&rdquo; against &ldquo;Computational Resources&rdquo;, for a computational learning agent learning to play a given game.</p>
+  <p>This project applies this strategy ladder model to the board game of Quixo — and in particular, to variants of Quixo played on different board sizes (namely, 5×5, 4×4, and 3×3). Two computational learning agents — a Monte Carlo Tree Search (MCTS) agent and a Q-learning agent — were implemented and investigated.</p>
+  <p>For this project, the <em>x</em>-axis of &ldquo;Computational Resources&rdquo; is quantified by the training time of the computational learning agent; while the <em>y</em>-axis of &ldquo;Solution Strength&rdquo; is quantified by the performance of the computational learning agent, in comparison to the exact optimal solution for Quixo (which was also implemented and computed for this project). Three such quantifications for the <em>y</em>-axis were used — via (1) game outcomes, (2) move accuracy, and (3) game length.</p>
+  <p>The main result of this project is that the strategy ladder model <em>can</em> be used to reveal differences in &lsquo;depth&rsquo; between the different sizes of Quixo — specifically, &lsquo;depth&rsquo; in Quixo is positively correlated with board size, as intuitively expected. However, some quantifications for the <em>y</em>-axis reveal this phenomenon more strongly than others — namely, quantification via game outcomes yielded the most significant results. Alongside this main result, other notable features of Quixo — that Quixo is a &lsquo;mistake-punishing&rsquo; game, and that Quixo is difficult to learn based only on easily human-identifiable features — were incidentally revealed by this project&rsquo;s investigation.</p>
 
   <a href="index.html">Back</a>
 
