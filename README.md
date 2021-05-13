@@ -1,5 +1,6 @@
 # Quixo Project for CPSC 490
 
+- [Submission Web Pages (Yale Only)](https://zoo.cs.yale.edu/classes/cs490/20-21b/chan.jau_tung.jc3395/index.html)
 - [Project Proposal](https://docs.google.com/document/d/1R93C6XVNl6pDwXdOTlAuGolf03njDcPjZosSgq-IqNI/edit#)
 - [Final Report](https://docs.google.com/document/d/1vO6DxW93JxJRxkcKjanpCkyZUVifivA7fcgbkvjoH-s/edit#)
 - [Presentation Slides](https://docs.google.com/presentation/d/1ecSf1qGPYeB12bCDbnHviSjNLNYezb-ev_ImzK-MskA/edit#)
